@@ -65,10 +65,12 @@ CREATE TABLE proses_bank (
   id                 VARCHAR(36),
   id_bank            VARCHAR(36)  NOT NULL,
   id_tagihan         VARCHAR(36)  NOT NULL,
-  waktu              TIMESTAMP    NOT NULL,
+  waktu_pembuatan    TIMESTAMP    NOT NULL,
+  waktu_eksekusi     TIMESTAMP,
   jenis_proses_bank  VARCHAR(255) NOT NULL,
   status_proses_bank VARCHAR(255) NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id_bank) REFERENCES bank (id),
   FOREIGN KEY (id_tagihan) REFERENCES tagihan (id)
 );
+

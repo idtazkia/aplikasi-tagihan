@@ -13,8 +13,12 @@ public class ProsesBank {
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
+    @NotNull
     @Temporal(TemporalType.TIMESTAMP)
-    private Date waktu;
+    private Date waktuPembuatan;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date waktuEksekusi;
 
     @NotNull
     @ManyToOne @JoinColumn(name = "id_bank")
@@ -40,12 +44,20 @@ public class ProsesBank {
         this.id = id;
     }
 
-    public Date getWaktu() {
-        return waktu;
+    public Date getWaktuPembuatan() {
+        return waktuPembuatan;
     }
 
-    public void setWaktu(Date waktu) {
-        this.waktu = waktu;
+    public void setWaktuPembuatan(Date waktuPembuatan) {
+        this.waktuPembuatan = waktuPembuatan;
+    }
+
+    public Date getWaktuEksekusi() {
+        return waktuEksekusi;
+    }
+
+    public void setWaktuEksekusi(Date waktuEksekusi) {
+        this.waktuEksekusi = waktuEksekusi;
     }
 
     public Bank getBank() {

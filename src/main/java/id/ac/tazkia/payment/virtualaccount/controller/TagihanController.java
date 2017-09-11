@@ -32,7 +32,7 @@ public class TagihanController {
                 continue;
             }
             ProsesBank pb = new ProsesBank();
-            pb.setWaktu(new Date());
+            pb.setWaktuPembuatan(new Date());
             pb.setTagihan(t);
             pb.setBank(b);
             pb.setJenisProsesBank(JenisProsesBank.CREATE_VA);
