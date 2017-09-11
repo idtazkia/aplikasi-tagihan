@@ -1,4 +1,4 @@
-package id.ac.tazkia.payment.virtualaccount.virtualaccountpayment;
+package id.ac.tazkia.payment.virtualaccount;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,6 +11,7 @@ public class PaymentVirtualAccountApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		System.out.println("Halo Dunia");
 	}
 
 }

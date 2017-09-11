@@ -1,4 +1,4 @@
-package id.ac.tazkia.payment.virtualaccount.virtualaccountpayment;
+package id.ac.tazkia.payment.virtualaccount;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
