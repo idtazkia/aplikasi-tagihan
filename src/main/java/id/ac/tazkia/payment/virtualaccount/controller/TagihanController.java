@@ -1,9 +1,10 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
+import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
 import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
+import id.ac.tazkia.payment.virtualaccount.dao.ProsesBankDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
-import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
-import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
+import id.ac.tazkia.payment.virtualaccount.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
 
 @Transactional @RestController
 @RequestMapping("/api/tagihan")
@@ -19,10 +21,24 @@ public class TagihanController {
 
     @Autowired private TagihanDao tagihanDao;
     @Autowired private PembayaranDao pembayaranDao;
+    @Autowired private ProsesBankDao prosesBankDao;
+    @Autowired private BankDao bankDao;
 
     @PostMapping("/") @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody @Valid Tagihan t){
         tagihanDao.save(t);
+        for (Bank b : bankDao.findAll()) {
+            if(!b.getAktif()) {
+                continue;
+            }
+            ProsesBank pb = new ProsesBank();
+            pb.setWaktu(new Date());
+            pb.setTagihan(t);
+            pb.setBank(b);
+            pb.setJenisProsesBank(JenisProsesBank.CREATE_VA);
+            pb.setStatusProsesBank(StatusProsesBank.BARU);
+            prosesBankDao.save(pb);
+        }
     }
 
     @PutMapping("/{id}") @ResponseStatus(HttpStatus.CREATED)

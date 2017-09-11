@@ -24,6 +24,17 @@ public class Bank {
     @NotNull @NotEmpty
     private String namaRekening;
 
+    @NotNull
+    private Boolean aktif = Boolean.TRUE;
+
+    public Boolean getAktif() {
+        return aktif;
+    }
+
+    public void setAktif(Boolean aktif) {
+        this.aktif = aktif;
+    }
+
     public String getId() {
         return id;
     }
