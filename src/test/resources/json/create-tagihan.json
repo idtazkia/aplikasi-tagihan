@@ -1,0 +1,10 @@
+{
+  "jenisTagihan" : { "id" : "pmb2017"},
+  "siswa" : { "id" : "33e33aff-caa9-49a2-bf0c-ad042c04874c"},
+  "jumlahTagihan" : 123000.12,
+  "jumlahPembayaran" : 0,
+  "tanggalKadaluarsa" : "2017-12-31",
+  "keterangan" : "Pendaftaran Mahasiswa Baru atas nama Tester Student 001",
+  "statusPembayaran" : "BELUM_DIBAYAR"
+
+}
