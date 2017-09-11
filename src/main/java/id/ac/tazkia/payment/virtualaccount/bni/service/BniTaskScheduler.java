@@ -1,5 +1,6 @@
 package id.ac.tazkia.payment.virtualaccount.bni.service;
 
+import id.ac.tazkia.payment.virtualaccount.bni.config.BniEcollectionConfiguration;
 import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
 import id.ac.tazkia.payment.virtualaccount.dao.ProsesBankDao;
 import id.ac.tazkia.payment.virtualaccount.entity.Bank;
@@ -18,16 +19,17 @@ import java.util.Date;
 @Transactional @Service
 public class BniTaskScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(BniTaskScheduler.class);
-    private static final String BANK_ID = "bnisy001";
 
     @Autowired private BankDao bankDao;
     @Autowired private ProsesBankDao prosesBankDao;
+    @Autowired private BniEcollectionConfiguration config;
+
 
     @Scheduled(fixedDelay = 10000L)
     public void prosesAntrianCreateVa(){
-        Bank b = bankDao.findOne(BANK_ID);
+        Bank b = bankDao.findOne(config.getBankId());
         if(b == null){
-            throw new IllegalStateException("Bank ID " + BANK_ID + " tidak ditemukan");
+            throw new IllegalStateException("Bank ID " + config.getBankId() + " tidak ditemukan");
         }
         for (ProsesBank pb : prosesBankDao.findByBankAndAndJenisProsesBankAndStatusProsesBankOrderByWaktuPembuatan(b, JenisProsesBank.CREATE_VA, StatusProsesBank.BARU)) {
             LOGGER.info("Membuat VA untuk tagihan {} atas nama {} sejumlah {}",
