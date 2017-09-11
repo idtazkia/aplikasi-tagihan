@@ -33,4 +33,52 @@ public class Pembayaran {
     @NotNull @NotEmpty
     private String referensiBank;
     private String keterangan;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Date getWaktuTransaksi() {
+        return waktuTransaksi;
+    }
+
+    public void setWaktuTransaksi(Date waktuTransaksi) {
+        this.waktuTransaksi = waktuTransaksi;
+    }
+
+    public VirtualAccount getVirtualAccount() {
+        return virtualAccount;
+    }
+
+    public void setVirtualAccount(VirtualAccount virtualAccount) {
+        this.virtualAccount = virtualAccount;
+    }
+
+    public BigDecimal getJumlah() {
+        return jumlah;
+    }
+
+    public void setJumlah(BigDecimal jumlah) {
+        this.jumlah = jumlah;
+    }
+
+    public String getReferensiBank() {
+        return referensiBank;
+    }
+
+    public void setReferensiBank(String referensiBank) {
+        this.referensiBank = referensiBank;
+    }
+
+    public String getKeterangan() {
+        return keterangan;
+    }
+
+    public void setKeterangan(String keterangan) {
+        this.keterangan = keterangan;
+    }
 }

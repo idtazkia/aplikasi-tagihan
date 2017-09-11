@@ -30,4 +30,44 @@ public class VirtualAccount {
     private String idVirtualAccount;
     @NotNull @NotEmpty
     private String nomorVirtualAccount;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Tagihan getTagihan() {
+        return tagihan;
+    }
+
+    public void setTagihan(Tagihan tagihan) {
+        this.tagihan = tagihan;
+    }
+
+    public Bank getBank() {
+        return bank;
+    }
+
+    public void setBank(Bank bank) {
+        this.bank = bank;
+    }
+
+    public String getIdVirtualAccount() {
+        return idVirtualAccount;
+    }
+
+    public void setIdVirtualAccount(String idVirtualAccount) {
+        this.idVirtualAccount = idVirtualAccount;
+    }
+
+    public String getNomorVirtualAccount() {
+        return nomorVirtualAccount;
+    }
+
+    public void setNomorVirtualAccount(String nomorVirtualAccount) {
+        this.nomorVirtualAccount = nomorVirtualAccount;
+    }
 }

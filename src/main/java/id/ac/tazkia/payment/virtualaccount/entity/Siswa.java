@@ -23,4 +23,28 @@ public class Siswa {
 
     @NotNull @NotEmpty
     private String nama;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getNomorSiswa() {
+        return nomorSiswa;
+    }
+
+    public void setNomorSiswa(String nomorSiswa) {
+        this.nomorSiswa = nomorSiswa;
+    }
+
+    public String getNama() {
+        return nama;
+    }
+
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
 }

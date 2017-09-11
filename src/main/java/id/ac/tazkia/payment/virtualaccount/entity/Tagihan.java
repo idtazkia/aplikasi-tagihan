@@ -40,4 +40,68 @@ public class Tagihan {
 
     @NotNull @Enumerated(EnumType.STRING)
     private StatusPembayaran statusPembayaran;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Siswa getSiswa() {
+        return siswa;
+    }
+
+    public void setSiswa(Siswa siswa) {
+        this.siswa = siswa;
+    }
+
+    public JenisTagihan getJenisTagihan() {
+        return jenisTagihan;
+    }
+
+    public void setJenisTagihan(JenisTagihan jenisTagihan) {
+        this.jenisTagihan = jenisTagihan;
+    }
+
+    public BigDecimal getJumlahTagihan() {
+        return jumlahTagihan;
+    }
+
+    public void setJumlahTagihan(BigDecimal jumlahTagihan) {
+        this.jumlahTagihan = jumlahTagihan;
+    }
+
+    public BigDecimal getJumlahPembayaran() {
+        return jumlahPembayaran;
+    }
+
+    public void setJumlahPembayaran(BigDecimal jumlahPembayaran) {
+        this.jumlahPembayaran = jumlahPembayaran;
+    }
+
+    public Date getTanggalKadaluarsa() {
+        return tanggalKadaluarsa;
+    }
+
+    public void setTanggalKadaluarsa(Date tanggalKadaluarsa) {
+        this.tanggalKadaluarsa = tanggalKadaluarsa;
+    }
+
+    public String getKeterangan() {
+        return keterangan;
+    }
+
+    public void setKeterangan(String keterangan) {
+        this.keterangan = keterangan;
+    }
+
+    public StatusPembayaran getStatusPembayaran() {
+        return statusPembayaran;
+    }
+
+    public void setStatusPembayaran(StatusPembayaran statusPembayaran) {
+        this.statusPembayaran = statusPembayaran;
+    }
 }
