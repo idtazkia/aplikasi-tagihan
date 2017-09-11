@@ -8,11 +8,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 public class JenisTagihan {
-    @Id
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @Id @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
     @NotNull @NotEmpty @Column(unique = true)

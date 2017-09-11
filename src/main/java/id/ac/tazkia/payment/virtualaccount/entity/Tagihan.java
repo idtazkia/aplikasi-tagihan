@@ -12,10 +12,8 @@ import java.util.Date;
 @Entity
 public class Tagihan {
 
-    @Id @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
+    @Id @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
     @ManyToOne @NotNull
