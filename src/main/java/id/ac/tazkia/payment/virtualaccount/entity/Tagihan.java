@@ -1,6 +1,8 @@
 package id.ac.tazkia.payment.virtualaccount.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Future;
@@ -33,6 +35,14 @@ public class Tagihan {
     @NotNull @Future
     @Temporal(TemporalType.DATE)
     private Date tanggalKadaluarsa;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
 
     private String keterangan;
 
@@ -101,5 +111,21 @@ public class Tagihan {
 
     public void setStatusPembayaran(StatusPembayaran statusPembayaran) {
         this.statusPembayaran = statusPembayaran;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
