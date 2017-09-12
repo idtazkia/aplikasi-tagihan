@@ -23,6 +23,7 @@ public class BniTaskScheduler {
     @Autowired private BankDao bankDao;
     @Autowired private ProsesBankDao prosesBankDao;
     @Autowired private BniEcollectionConfiguration config;
+    @Autowired private BniVaService bniVaService;
 
 
     @Scheduled(fixedDelay = 10000L)
@@ -37,6 +38,7 @@ public class BniTaskScheduler {
                     pb.getTagihan().getSiswa().getNomorSiswa() + " - "+ pb.getTagihan().getSiswa().getNama(),
                     pb.getTagihan().getJumlahTagihan());
 
+            bniVaService.createVa(pb.getTagihan());
 
             pb.setWaktuEksekusi(new Date());
             pb.setStatusProsesBank(StatusProsesBank.SUKSES);

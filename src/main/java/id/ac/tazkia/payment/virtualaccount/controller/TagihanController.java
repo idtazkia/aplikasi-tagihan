@@ -1,9 +1,6 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
-import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
-import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
-import id.ac.tazkia.payment.virtualaccount.dao.ProsesBankDao;
-import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
+import id.ac.tazkia.payment.virtualaccount.dao.*;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,9 +20,17 @@ public class TagihanController {
     @Autowired private PembayaranDao pembayaranDao;
     @Autowired private ProsesBankDao prosesBankDao;
     @Autowired private BankDao bankDao;
+    @Autowired private SiswaDao siswaDao;
 
     @PostMapping("/") @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody @Valid Tagihan t){
+        Siswa s = siswaDao.findByNomorSiswa(t.getSiswa().getNomorSiswa());
+
+        if(s == null){
+            s = t.getSiswa();
+            siswaDao.save(s);
+        }
+        t.setSiswa(s);
         tagihanDao.save(t);
         for (Bank b : bankDao.findAll()) {
             if(!b.getAktif()) {

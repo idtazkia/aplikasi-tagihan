@@ -11,9 +11,11 @@ CREATE TABLE bank (
 
 CREATE TABLE jenis_tagihan (
   id              VARCHAR(36),
+  kode            VARCHAR(10),
   nama            VARCHAR(255) NOT NULL,
   tipe_pembayaran VARCHAR(255) NOT NULL,
   PRIMARY KEY (id),
+  UNIQUE (kode),
   UNIQUE (nama)
 );
 
@@ -21,6 +23,8 @@ CREATE TABLE siswa (
   id          VARCHAR(36),
   nomor_siswa VARCHAR(255) NOT NULL,
   nama        VARCHAR(255) NOT NULL,
+  email       VARCHAR(255),
+  no_hp       VARCHAR(255),
   PRIMARY KEY (id),
   UNIQUE (nomor_siswa)
 );
@@ -73,4 +77,3 @@ CREATE TABLE proses_bank (
   FOREIGN KEY (id_bank) REFERENCES bank (id),
   FOREIGN KEY (id_tagihan) REFERENCES tagihan (id)
 );
-

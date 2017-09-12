@@ -13,6 +13,9 @@ public class JenisTagihan {
     private String id;
 
     @NotNull @NotEmpty @Column(unique = true)
+    private String kode;
+
+    @NotNull @NotEmpty @Column(unique = true)
     private String nama;
 
     @NotNull @Enumerated(EnumType.STRING)
@@ -24,6 +27,14 @@ public class JenisTagihan {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getKode() {
+        return kode;
+    }
+
+    public void setKode(String kode) {
+        this.kode = kode;
     }
 
     public String getNama() {
