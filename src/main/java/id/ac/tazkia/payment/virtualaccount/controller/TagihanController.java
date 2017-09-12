@@ -18,6 +18,7 @@ public class TagihanController {
 
     @Autowired private TagihanDao tagihanDao;
     @Autowired private PembayaranDao pembayaranDao;
+    @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private ProsesBankDao prosesBankDao;
     @Autowired private BankDao bankDao;
     @Autowired private SiswaDao siswaDao;
@@ -68,5 +69,10 @@ public class TagihanController {
     @GetMapping("/{id}/pembayaran")
     public Iterable<Pembayaran> findPembayaranByTagihan(@PathVariable("id") Tagihan t){
         return pembayaranDao.findByVirtualAccountTagihanOrderByWaktuTransaksi(t);
+    }
+
+    @GetMapping("/{id}/va")
+    public Iterable<VirtualAccount> findVirtualAccountByTagihan(@PathVariable("id") Tagihan t){
+        return virtualAccountDao.findByTagihanOrderByBankNomorRekening(t);
     }
 }
