@@ -1,0 +1,10 @@
+{
+  "trx_id" : "1230000001",
+  "virtual_account" : "8001000000000001",
+  "customer_name" : "Mr. X",
+  "trx_amount" : "100000",
+  "payment_amount" : "100000",
+  "cumulative_payment_amount" : "100000",
+  "payment_ntb" : "233171",
+  "datetime_payment" : "2016-03-01 14:00:00", "datetime_payment_iso8601" : "2016-03-01T14:00:00+07:00"
+}

@@ -11,4 +11,5 @@ public class StringFormattingTests {
         String nim = "123";
         System.out.println(String.format("%10s", nim).replace(' ', '0'));
     }
+
 }

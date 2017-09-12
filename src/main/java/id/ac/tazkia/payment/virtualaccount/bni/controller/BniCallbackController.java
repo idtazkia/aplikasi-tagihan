@@ -1,5 +1,8 @@
 package id.ac.tazkia.payment.virtualaccount.bni.controller;
 
+import com.bni.encrypt.BNIHash;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import id.ac.tazkia.payment.virtualaccount.bni.config.BniEcollectionConfiguration;
 import id.ac.tazkia.payment.virtualaccount.bni.dao.TagihanBniDao;
 import id.ac.tazkia.payment.virtualaccount.bni.dto.PaymentNotificationRequest;
 import id.ac.tazkia.payment.virtualaccount.bni.entity.TagihanBni;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -37,49 +41,69 @@ public class BniCallbackController {
     @Autowired private TagihanBniDao tagihanBniDao;
     @Autowired private PembayaranDao pembayaranDao;
     @Autowired private TagihanDao tagihanDao;
+    @Autowired private BniEcollectionConfiguration config;
+    @Autowired private ObjectMapper objectMapper;
+
 
     @PostMapping("/payment")
-    public Map<String, String> paymentNotification(@RequestBody @Valid PaymentNotificationRequest paymentNotificationRequest){
+    public Map<String, String> paymentNotification(@RequestBody Map<String, String> requestData){
+
         Map<String, String> response = new HashMap<>();
         response.put("status", "000");
 
-        TagihanBni t = tagihanBniDao.findByTrxId(paymentNotificationRequest.getTrxId());
-        if (t == null) {
-            LOGGER.error("BNI : Tagihan dengan trx_id {}, va {}, atas nama {}, dengan nominal {} tidak ada di database",
-                    paymentNotificationRequest.getTrxId(),
-                    paymentNotificationRequest.getVirtualAccount(),
-                    paymentNotificationRequest.getCustomerName(),
-                    paymentNotificationRequest.getTrxAmount());
+        String encryptedData = requestData.get("data");
+        if(encryptedData == null || encryptedData.length() < 1){
+            LOGGER.error("BNI : Invalid payment notification");
+            response.put("status", "999");
             return response;
         }
 
-        Pembayaran p = new Pembayaran();
-        p.setVirtualAccount(t.getVa());
-        p.setKeterangan("Pembayaran tagihan atas nama "+p.getVirtualAccount().getTagihan().getSiswa().getNama()
-        + "melalui BNI dengan VA "+t.getVirtualAccount());
-
-        p.setJumlah(new BigDecimal(paymentNotificationRequest.getPaymentAmount()));
-        p.setReferensiBank(paymentNotificationRequest.getPaymentNtb());
-
-        Tagihan tag = t.getTagihan();
-        tag.setJumlahPembayaran(tag.getJumlahPembayaran().add(p.getJumlah()));
-        if(tag.getJumlahPembayaran().compareTo(tag.getJumlahTagihan()) > -1 ){
-            tag.setStatusPembayaran(StatusPembayaran.LUNAS);
-        } else {
-            tag.setStatusPembayaran(StatusPembayaran.DIBAYAR_SEBAGIAN);
-        }
-
-        tagihanDao.save(tag);
+        String data = BNIHash.parseData(encryptedData, config.getClientId(), config.getClientKey());
 
         try {
-            p.setWaktuTransaksi(DATE_FORMAT.parse(paymentNotificationRequest.getDatetimePayment()));
-        } catch (ParseException err){
-            LOGGER.error("BNI : Format tanggal {} tidak sesuai yyyy-MM-dd HH:mm:ss", paymentNotificationRequest.getDatetimePayment());
-            p.setWaktuTransaksi(new Date());
+            PaymentNotificationRequest paymentNotificationRequest = objectMapper.readValue(data, PaymentNotificationRequest.class);
+            TagihanBni t = tagihanBniDao.findByTrxId(paymentNotificationRequest.getTrxId());
+            if (t == null) {
+                LOGGER.error("BNI : Tagihan dengan trx_id {}, va {}, atas nama {}, dengan nominal {} tidak ada di database",
+                        paymentNotificationRequest.getTrxId(),
+                        paymentNotificationRequest.getVirtualAccount(),
+                        paymentNotificationRequest.getCustomerName(),
+                        paymentNotificationRequest.getTrxAmount());
+                return response;
+            }
+
+            Pembayaran p = new Pembayaran();
+            p.setVirtualAccount(t.getVa());
+            p.setKeterangan("Pembayaran tagihan atas nama "+p.getVirtualAccount().getTagihan().getSiswa().getNama()
+                    + "melalui BNI dengan VA "+t.getVirtualAccount());
+
+            p.setJumlah(new BigDecimal(paymentNotificationRequest.getPaymentAmount()));
+            p.setReferensiBank(paymentNotificationRequest.getPaymentNtb());
+
+            Tagihan tag = t.getTagihan();
+            tag.setJumlahPembayaran(tag.getJumlahPembayaran().add(p.getJumlah()));
+            if(tag.getJumlahPembayaran().compareTo(tag.getJumlahTagihan()) > -1 ){
+                tag.setStatusPembayaran(StatusPembayaran.LUNAS);
+            } else {
+                tag.setStatusPembayaran(StatusPembayaran.DIBAYAR_SEBAGIAN);
+            }
+
+            tagihanDao.save(tag);
+
+            try {
+                p.setWaktuTransaksi(DATE_FORMAT.parse(paymentNotificationRequest.getDatetimePayment()));
+            } catch (ParseException err){
+                LOGGER.error("BNI : Format tanggal {} tidak sesuai yyyy-MM-dd HH:mm:ss", paymentNotificationRequest.getDatetimePayment());
+                p.setWaktuTransaksi(new Date());
+            }
+
+            pembayaranDao.save(p);
+
+            return response;
+        } catch (IOException e) {
+            LOGGER.error("BNI : Invalid payment notification payload : {}", data);
+            response.put("status", "999");
+            return response;
         }
-
-        pembayaranDao.save(p);
-
-        return response;
     }
 }
