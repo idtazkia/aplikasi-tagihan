@@ -75,7 +75,7 @@ public class BniVaService {
         b.setCustomerPhone(tagihan.getSiswa().getNoHp());
         b.setDatetimeExpired(toIso8601(new Date(tagihan.getTanggalKadaluarsa().getTime())));
         b.setDescription(tagihan.getKeterangan());
-        b.setTrxAmount(tagihan.getJumlahTagihan().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+        b.setTrxAmount(tagihan.getJumlahTagihan().setScale(0, BigDecimal.ROUND_HALF_EVEN).toString());
 
         String datePrefix = DATE_FORMAT.format(new Date());
         String prefix = PREFIX_VA + datePrefix;
@@ -102,6 +102,7 @@ public class BniVaService {
                 tb.setVa(va);
                 tb.setStatusTagihan(StatusTagihan.VA_AKTIF);
                 tagihanBniDao.save(tb);
+                LOGGER.info("BNI : VA {} sukses dibuat", b.getVirtualAccount());
             } else {
                 LOGGER.error("BNI : Error membuat VA {}", b.getVirtualAccount());
             }
