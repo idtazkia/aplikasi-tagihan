@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
-//@Entity @Table(name = "bni_pembayaran")
+@Entity @Table(name = "bni_pembayaran")
 public class PembayaranBni {
     @Id
     @GeneratedValue(generator = "uuid")
@@ -20,12 +20,12 @@ public class PembayaranBni {
     private String trxId;
     private String virtualAccount;
     private String customerName;
-    private BigDecimal trxAmount;
-    private BigDecimal paymentAmount;
-    private BigDecimal cumulativePaymentAmount;
-    private BigDecimal paymentNtb;
-    private Date datetimePayment;
-    private Date datetimePaymentIso8601;
+    private String trxAmount;
+    private String paymentAmount;
+    private String cumulativePaymentAmount;
+    private String paymentNtb;
+    private String datetimePayment;
+    private String datetimePaymentIso8601;
 
     public String getId() {
         return id;
@@ -67,51 +67,51 @@ public class PembayaranBni {
         this.customerName = customerName;
     }
 
-    public BigDecimal getTrxAmount() {
+    public String getTrxAmount() {
         return trxAmount;
     }
 
-    public void setTrxAmount(BigDecimal trxAmount) {
+    public void setTrxAmount(String trxAmount) {
         this.trxAmount = trxAmount;
     }
 
-    public BigDecimal getPaymentAmount() {
+    public String getPaymentAmount() {
         return paymentAmount;
     }
 
-    public void setPaymentAmount(BigDecimal paymentAmount) {
+    public void setPaymentAmount(String paymentAmount) {
         this.paymentAmount = paymentAmount;
     }
 
-    public BigDecimal getCumulativePaymentAmount() {
+    public String getCumulativePaymentAmount() {
         return cumulativePaymentAmount;
     }
 
-    public void setCumulativePaymentAmount(BigDecimal cumulativePaymentAmount) {
+    public void setCumulativePaymentAmount(String cumulativePaymentAmount) {
         this.cumulativePaymentAmount = cumulativePaymentAmount;
     }
 
-    public BigDecimal getPaymentNtb() {
+    public String getPaymentNtb() {
         return paymentNtb;
     }
 
-    public void setPaymentNtb(BigDecimal paymentNtb) {
+    public void setPaymentNtb(String paymentNtb) {
         this.paymentNtb = paymentNtb;
     }
 
-    public Date getDatetimePayment() {
+    public String getDatetimePayment() {
         return datetimePayment;
     }
 
-    public void setDatetimePayment(Date datetimePayment) {
+    public void setDatetimePayment(String datetimePayment) {
         this.datetimePayment = datetimePayment;
     }
 
-    public Date getDatetimePaymentIso8601() {
+    public String getDatetimePaymentIso8601() {
         return datetimePaymentIso8601;
     }
 
-    public void setDatetimePaymentIso8601(Date datetimePaymentIso8601) {
+    public void setDatetimePaymentIso8601(String datetimePaymentIso8601) {
         this.datetimePaymentIso8601 = datetimePaymentIso8601;
     }
 }

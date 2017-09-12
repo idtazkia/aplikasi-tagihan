@@ -3,8 +3,11 @@ package id.ac.tazkia.payment.virtualaccount.bni.controller;
 import com.bni.encrypt.BNIHash;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.bni.config.BniEcollectionConfiguration;
+import id.ac.tazkia.payment.virtualaccount.bni.dao.PembayaranBniDao;
 import id.ac.tazkia.payment.virtualaccount.bni.dao.TagihanBniDao;
 import id.ac.tazkia.payment.virtualaccount.bni.dto.PaymentNotificationRequest;
+import id.ac.tazkia.payment.virtualaccount.bni.entity.PembayaranBni;
+import id.ac.tazkia.payment.virtualaccount.bni.entity.StatusTagihan;
 import id.ac.tazkia.payment.virtualaccount.bni.entity.TagihanBni;
 import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
@@ -13,6 +16,7 @@ import id.ac.tazkia.payment.virtualaccount.entity.StatusPembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,6 +44,7 @@ public class BniCallbackController {
 
     @Autowired private TagihanBniDao tagihanBniDao;
     @Autowired private PembayaranDao pembayaranDao;
+    @Autowired private PembayaranBniDao pembayaranBniDao;
     @Autowired private TagihanDao tagihanDao;
     @Autowired private BniEcollectionConfiguration config;
     @Autowired private ObjectMapper objectMapper;
@@ -58,7 +63,9 @@ public class BniCallbackController {
             return response;
         }
 
+        LOGGER.debug("BNI : Callback : Encrypted Data : {}", encryptedData);
         String data = BNIHash.parseData(encryptedData, config.getClientId(), config.getClientKey());
+        LOGGER.debug("BNI : Callback : Decrypted Data : {}", data);
 
         try {
             PaymentNotificationRequest paymentNotificationRequest = objectMapper.readValue(data, PaymentNotificationRequest.class);
@@ -75,20 +82,23 @@ public class BniCallbackController {
             Pembayaran p = new Pembayaran();
             p.setVirtualAccount(t.getVa());
             p.setKeterangan("Pembayaran tagihan atas nama "+p.getVirtualAccount().getTagihan().getSiswa().getNama()
-                    + "melalui BNI dengan VA "+t.getVirtualAccount());
+                    + " melalui BNI dengan VA "+t.getVirtualAccount());
 
             p.setJumlah(new BigDecimal(paymentNotificationRequest.getPaymentAmount()));
             p.setReferensiBank(paymentNotificationRequest.getPaymentNtb());
 
             Tagihan tag = t.getTagihan();
             tag.setJumlahPembayaran(tag.getJumlahPembayaran().add(p.getJumlah()));
+
             if(tag.getJumlahPembayaran().compareTo(tag.getJumlahTagihan()) > -1 ){
                 tag.setStatusPembayaran(StatusPembayaran.LUNAS);
+                t.setStatusTagihan(StatusTagihan.VA_LUNAS);
             } else {
                 tag.setStatusPembayaran(StatusPembayaran.DIBAYAR_SEBAGIAN);
             }
 
             tagihanDao.save(tag);
+            tagihanBniDao.save(t);
 
             try {
                 p.setWaktuTransaksi(DATE_FORMAT.parse(paymentNotificationRequest.getDatetimePayment()));
@@ -99,6 +109,14 @@ public class BniCallbackController {
 
             pembayaranDao.save(p);
 
+            PembayaranBni pb = new PembayaranBni();
+            pb.setVa(t.getVa());
+            BeanUtils.copyProperties(paymentNotificationRequest, pb);
+            pembayaranBniDao.save(pb);
+            LOGGER.info("BNI : Payment untuk VA {} senilai {} dari total {}",
+                    t.getVirtualAccount(),
+                    pb.getPaymentAmount(),
+                    tag.getJumlahTagihan().setScale(0, BigDecimal.ROUND_HALF_EVEN));
             return response;
         } catch (IOException e) {
             LOGGER.error("BNI : Invalid payment notification payload : {}", data);

@@ -26,3 +26,20 @@ CREATE TABLE bni_tagihan (
   FOREIGN KEY (id_tagihan) REFERENCES tagihan (id),
   FOREIGN KEY (id_virtual_account) REFERENCES virtual_account (id)
 );
+
+CREATE TABLE bni_pembayaran (
+  id                        VARCHAR(36),
+  id_virtual_account        VARCHAR(36),
+  virtual_account           VARCHAR(255),
+  customer_name             VARCHAR(255),
+  trx_id                    VARCHAR(255),
+  trx_amount                VARCHAR(255),
+  payment_amount            VARCHAR(255),
+  cumulative_payment_amount VARCHAR(255),
+  payment_ntb               VARCHAR(255),
+  datetime_payment          VARCHAR(255),
+  datetime_payment_iso8601  VARCHAR(255),
+  PRIMARY KEY (id),
+  FOREIGN KEY (id_virtual_account) REFERENCES virtual_account (id)
+);
+
