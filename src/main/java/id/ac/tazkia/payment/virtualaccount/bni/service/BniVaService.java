@@ -56,9 +56,9 @@ public class BniVaService {
 
         CreateBillingRequest b = new CreateBillingRequest();
         if(TipePembayaran.CLOSED_PAYMENT.equals(tagihan.getJenisTagihan().getTipePembayaran())) {
-            b.setBillingType("o");
-        } else if (TipePembayaran.OPEN_PAYMENT.equals(tagihan.getJenisTagihan().getTipePembayaran())) {
             b.setBillingType("c");
+        } else if (TipePembayaran.OPEN_PAYMENT.equals(tagihan.getJenisTagihan().getTipePembayaran())) {
+            b.setBillingType("o");
         } else if (TipePembayaran.INSTALLMENT.equals(tagihan.getJenisTagihan().getTipePembayaran())) {
             b.setBillingType("i");
         }
