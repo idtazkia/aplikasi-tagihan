@@ -1,8 +1,10 @@
 package id.ac.tazkia.payment.virtualaccount.bni.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class InquiryBillingRequest {
     private final String type = RequestType.INQUIRY_BILLING;
