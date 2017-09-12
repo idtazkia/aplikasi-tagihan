@@ -2,7 +2,6 @@ package id.ac.tazkia.payment.virtualaccount.bni.service;
 
 import com.bni.encrypt.BNIHash;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import id.ac.tazkia.payment.virtualaccount.bni.config.BniEcollectionConfiguration;
 import id.ac.tazkia.payment.virtualaccount.bni.dao.TagihanBniDao;
 import id.ac.tazkia.payment.virtualaccount.bni.dto.CreateBillingRequest;
@@ -26,6 +25,12 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
@@ -67,7 +72,7 @@ public class BniVaService {
         b.setCustomerName(tagihan.getSiswa().getNama());
         b.setCustomerEmail(tagihan.getSiswa().getEmail());
         b.setCustomerPhone(tagihan.getSiswa().getNoHp());
-        b.setDatetimeExpired(tagihan.getTanggalKadaluarsa().toString());
+        b.setDatetimeExpired(toIso8601(new Date(tagihan.getTanggalKadaluarsa().getTime())));
         b.setDescription(tagihan.getKeterangan());
         b.setTrxAmount(tagihan.getJumlahTagihan().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
 
@@ -103,6 +108,14 @@ public class BniVaService {
             LOGGER.error(e.getMessage(), e);
         }
 
+    }
+
+    private String toIso8601(Date d) {
+        Instant i = d.toInstant();
+        LocalDate ld = i.atZone(ZoneId.systemDefault()).toLocalDate();
+        ZonedDateTime zdt = i.atZone(ZoneId.systemDefault());
+        return zdt.truncatedTo(ChronoUnit.SECONDS)
+                .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
     private Map<String, String> executeRequest(Object request) throws Exception {
