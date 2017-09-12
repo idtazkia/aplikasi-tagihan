@@ -37,7 +37,7 @@ public class Tagihan {
     private String keterangan;
 
     @NotNull @Enumerated(EnumType.STRING)
-    private StatusPembayaran statusPembayaran;
+    private StatusPembayaran statusPembayaran = StatusPembayaran.BELUM_DIBAYAR;
 
     public String getId() {
         return id;
