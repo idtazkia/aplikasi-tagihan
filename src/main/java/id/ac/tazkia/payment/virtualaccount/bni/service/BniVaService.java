@@ -41,6 +41,7 @@ public class BniVaService {
     private static final Logger LOGGER = LoggerFactory.getLogger(BniVaService.class);
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
     private static final String PREFIX_VA = "BNI-";
+    private static final String TIMEZONE = "GMT+07:00";
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -112,8 +113,7 @@ public class BniVaService {
 
     private String toIso8601(Date d) {
         Instant i = d.toInstant();
-        LocalDate ld = i.atZone(ZoneId.systemDefault()).toLocalDate();
-        ZonedDateTime zdt = i.atZone(ZoneId.systemDefault());
+        ZonedDateTime zdt = i.atZone(ZoneId.of(TIMEZONE));
         return zdt.truncatedTo(ChronoUnit.SECONDS)
                 .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
