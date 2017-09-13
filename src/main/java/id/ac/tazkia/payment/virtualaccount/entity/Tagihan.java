@@ -5,7 +5,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -32,7 +31,7 @@ public class Tagihan {
     @NotNull @Min(0)
     private BigDecimal jumlahPembayaran;
 
-    @NotNull @Future
+    @NotNull
     @Temporal(TemporalType.DATE)
     private Date tanggalKadaluarsa;
 

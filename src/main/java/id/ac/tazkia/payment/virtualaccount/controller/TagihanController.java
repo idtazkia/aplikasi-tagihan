@@ -1,16 +1,20 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
 import id.ac.tazkia.payment.virtualaccount.dao.*;
+import id.ac.tazkia.payment.virtualaccount.dto.UpdateTagihanRequest;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Transactional @RestController
 @RequestMapping("/api/tagihan")
@@ -47,13 +51,39 @@ public class TagihanController {
         }
     }
 
-    @PutMapping("/{id}") @ResponseStatus(HttpStatus.CREATED)
-    public void update(@PathVariable("id") String id, @RequestBody @Valid Tagihan t){
-        Tagihan tx = tagihanDao.findOne(id);
-        if(tx != null) {
-            t.setId(id);
-            tagihanDao.save(t);
+    @PutMapping("/{id}")
+    public ResponseEntity update(@PathVariable("id") Tagihan tx, @Valid @RequestBody UpdateTagihanRequest request) {
+
+        if(tx == null) {
+            return ResponseEntity.notFound().build();
         }
+
+        if(request.getNilaiTagihan().compareTo(tx.getJumlahPembayaran()) < 0){
+            Map<String, String> error = new HashMap<>();
+            error.put("status", "400");
+            error.put("message", "Nilai tagihan baru [" + request.getNilaiTagihan()
+                    + "] lebih kecil daripada yang sudah dibayar [" +
+                    tx.getJumlahPembayaran() + "]");
+            return ResponseEntity.badRequest().body(error);
+        }
+
+        tx.setJumlahTagihan(request.getNilaiTagihan());
+        tx.setTanggalKadaluarsa(request.getTanggalKadaluarsa());
+        tx.setKeterangan(request.getKeterangan());
+        tagihanDao.save(tx);
+        for (Bank b : bankDao.findAll()) {
+            if(!b.getAktif()) {
+                continue;
+            }
+            ProsesBank pb = new ProsesBank();
+            pb.setWaktuPembuatan(new Date());
+            pb.setTagihan(tx);
+            pb.setBank(b);
+            pb.setJenisProsesBank(JenisProsesBank.UPDATE_VA);
+            pb.setStatusProsesBank(StatusProsesBank.BARU);
+            prosesBankDao.save(pb);
+        }
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/")

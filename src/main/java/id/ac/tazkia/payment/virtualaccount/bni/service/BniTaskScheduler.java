@@ -44,4 +44,23 @@ public class BniTaskScheduler {
             pb.setStatusProsesBank(StatusProsesBank.SUKSES);
         }
     }
+
+    @Scheduled(fixedDelay = 10000L)
+    public void prosesAntrianUpdateVa(){
+        Bank b = bankDao.findOne(config.getBankId());
+        if(b == null){
+            throw new IllegalStateException("Bank ID " + config.getBankId() + " tidak ditemukan");
+        }
+        for (ProsesBank pb : prosesBankDao.findByBankAndAndJenisProsesBankAndStatusProsesBankOrderByWaktuPembuatan(b, JenisProsesBank.UPDATE_VA, StatusProsesBank.BARU)) {
+            LOGGER.info("Membuat VA untuk tagihan {} atas nama {} sejumlah {}",
+                    pb.getTagihan().getJenisTagihan().getNama(),
+                    pb.getTagihan().getSiswa().getNomorSiswa() + " - "+ pb.getTagihan().getSiswa().getNama(),
+                    pb.getTagihan().getJumlahTagihan());
+
+            bniVaService.updateVa(pb.getTagihan());
+
+            pb.setWaktuEksekusi(new Date());
+            pb.setStatusProsesBank(StatusProsesBank.SUKSES);
+        }
+    }
 }

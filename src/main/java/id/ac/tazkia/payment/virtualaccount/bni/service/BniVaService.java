@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.bni.config.BniEcollectionConfiguration;
 import id.ac.tazkia.payment.virtualaccount.bni.dao.TagihanBniDao;
 import id.ac.tazkia.payment.virtualaccount.bni.dto.CreateBillingRequest;
+import id.ac.tazkia.payment.virtualaccount.bni.dto.UpdateBillingRequest;
 import id.ac.tazkia.payment.virtualaccount.bni.entity.StatusTagihan;
 import id.ac.tazkia.payment.virtualaccount.bni.entity.TagihanBni;
 import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
@@ -73,7 +74,7 @@ public class BniVaService {
         b.setCustomerName(tagihan.getSiswa().getNama());
         b.setCustomerEmail(tagihan.getSiswa().getEmail());
         b.setCustomerPhone(tagihan.getSiswa().getNoHp());
-        b.setDatetimeExpired(toIso8601(new Date(tagihan.getTanggalKadaluarsa().getTime())));
+        b.setDatetimeExpired(toIso8601(tagihan.getTanggalKadaluarsa()));
         b.setDescription(tagihan.getKeterangan());
         b.setTrxAmount(tagihan.getJumlahTagihan().setScale(0, BigDecimal.ROUND_HALF_EVEN).toString());
 
@@ -112,8 +113,48 @@ public class BniVaService {
 
     }
 
+    public void updateVa(Tagihan tagihan) {
+        Bank bankBni = bankDao.findOne(config.getBankId());
+        if(bankBni == null){
+            LOGGER.error("Bank BNI belum terdaftar di database");
+            throw new IllegalStateException("Bank BNI belum terdaftar di database");
+        }
+
+        VirtualAccount va = virtualAccountDao.findByBankAndTagihan(bankBni, tagihan);
+        if(va == null){
+            LOGGER.error("Tidak ada VA di Bank BNI untuk Tagihan {}", tagihan.getId());
+            throw new IllegalStateException("Tidak ada VA di Bank BNI untuk Tagihan " + tagihan.getId());
+        }
+
+        UpdateBillingRequest request = new UpdateBillingRequest();
+        request.setClientId(config.getClientId());
+        request.setCustomerEmail(tagihan.getSiswa().getEmail());
+        request.setCustomerName(tagihan.getSiswa().getNama());
+        request.setCustomerPhone(tagihan.getSiswa().getNoHp());
+        request.setDatetimeExpired(toIso8601(tagihan.getTanggalKadaluarsa()));
+        request.setDescription(tagihan.getKeterangan());
+        request.setTrxAmount(tagihan.getJumlahTagihan().setScale(0, BigDecimal.ROUND_HALF_EVEN).toString());
+        request.setTrxId(va.getIdVirtualAccount());
+
+        try {
+            Map<String, String> hasil = executeRequest(request);
+            if(hasil != null) {
+                TagihanBni tb = tagihanBniDao.findByTrxId(request.getTrxId());
+                BeanUtils.copyProperties(request, tb);
+                tb.setStatusTagihan(StatusTagihan.VA_AKTIF);
+                tagihanBniDao.save(tb);
+                LOGGER.info("BNI : VA {} sukses diupdate", va.getNomorVirtualAccount());
+            } else {
+                LOGGER.error("BNI : Error update VA {}", va.getNomorVirtualAccount());
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
+    }
+
     private String toIso8601(Date d) {
-        Instant i = d.toInstant();
+        Instant i = new Date(d.getTime()).toInstant();
         ZonedDateTime zdt = i.atZone(ZoneId.of(TIMEZONE));
         return zdt.truncatedTo(ChronoUnit.SECONDS)
                 .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
