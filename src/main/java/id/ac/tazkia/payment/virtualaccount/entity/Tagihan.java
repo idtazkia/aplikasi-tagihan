@@ -29,7 +29,7 @@ public class Tagihan {
     private BigDecimal jumlahTagihan;
 
     @NotNull @Min(0)
-    private BigDecimal jumlahPembayaran;
+    private BigDecimal jumlahPembayaran = BigDecimal.ZERO;
 
     @NotNull
     @Temporal(TemporalType.DATE)
