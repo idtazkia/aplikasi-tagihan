@@ -33,6 +33,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -111,6 +112,20 @@ public class BniVaService {
             LOGGER.error(e.getMessage(), e);
         }
 
+    }
+
+    public Map<String, String> inquiryVa(String trxId){
+        Map<String, String> request = new HashMap<>();
+        request.put("type", "inquirybilling");
+        request.put("client_id", config.getClientId());
+        request.put("trx_id", trxId);
+
+        try {
+            return executeRequest(request);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
+        }
     }
 
     public void updateVa(Tagihan tagihan) {
