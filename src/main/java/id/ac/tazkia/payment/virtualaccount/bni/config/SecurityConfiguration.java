@@ -65,6 +65,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         web.ignoring()
                 .antMatchers("/api/callback/bni/payment")
                 .antMatchers("/info")
+                .antMatchers("/js/*")
+                .antMatchers("/img/*")
                 .antMatchers("/css/*");
     }
 }
