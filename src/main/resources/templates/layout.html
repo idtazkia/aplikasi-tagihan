@@ -53,7 +53,7 @@
                         <!-- Logout    -->
                         <li class="nav-item">
                             <form method="post" th:action="@{/logout}">
-                                <button type="submit" class="nav-link logout">Logout<i class="fa fa-sign-out"></i></button>
+                                <button type="submit" class="nav-link logout">Logout &nbsp; <i class="fa fa-sign-out"></i></button>
                             </form>
                         </li>
                     </ul>
@@ -66,7 +66,7 @@
         <nav class="side-navbar">
             <!-- Sidebar Header-->
             <div class="sidebar-header d-flex align-items-center">
-                <div class="avatar"><img src="img/avatar-1.jpg" alt="..." class="img-fluid rounded-circle" /></div>
+                <div class="avatar"><img th:src="@{/img/avatar-1.jpg}" alt="..." class="img-fluid rounded-circle" /></div>
                 <div class="title">
                     <h1 class="h4">Mark Stephen</h1>
                     <p>Web Designer</p>
@@ -116,11 +116,11 @@
 <!-- Javascript files-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script th:src="@{/js/tether.min.js}"></script>
-<script th:src="@{js/bootstrap.min.js}"></script>
-<script th:src="@{js/jquery.cookie.js}"> </script>
-<script th:src="@{js/jquery.validate.min.js}"></script>
-<script th:src="@{js/front.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.cookie.js}"> </script>
+<script th:src="@{/js/jquery.validate.min.js}"></script>
+<script th:src="@{/js/front.js}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-<script th:src="@{js/charts-home.js}"></script>
+<script th:src="@{/js/charts-home.js}"></script>
 </body>
 </html>
