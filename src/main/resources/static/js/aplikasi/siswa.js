@@ -3,31 +3,36 @@ var daftarSiswa = new Vue({
     data: {
         dataSiswa : null,
         sudahDicari : false,
-        searchSiswa: ""
+        searchSiswa: "",
+        searchedKeyword: ""
     },
     methods: {
-        cariSiswa: function () {
+        cariSiswa: _.debounce(function(){
             var vm = this;
             vm.dataSiswa = null;
             vm.sudahDicari = false;
-            console.log("Mencari "+this.searchSiswa);
+
+            if(vm.searchSiswa.trim().length < 1){
+                vm.dataSiswa = null;
+                return;
+            }
+
             axios.get('/api/siswa/', {
                 params: {
                     search: vm.searchSiswa
                 }
             })
             .then(function (response) {
-                console.log(response);
-                console.log("Response Data ");
                 vm.dataSiswa = response.data;
-                console.log(vm.dataSiswa);
                 vm.sudahDicari = true;
+                vm.searchedKeyword = vm.searchSiswa;
 
             })
             .catch(function (error) {
                 console.log(error);
                 vm.sudahDicari = true;
+                vm.searchedKeyword = vm.searchSiswa;
             });
-        }
+        },1000)
     }
-})
+});
