@@ -28,7 +28,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="bank, rowStat : ${daftarBank.content}">
+                            <tr th:each="bank, rowStat : ${daftarBank}">
                                 <th scope="row" th:text="${rowStat.count}">1</th>
                                 <td th:text="${bank.kode}">011</td>
                                 <td th:text="${bank.nama}">BNI</td>

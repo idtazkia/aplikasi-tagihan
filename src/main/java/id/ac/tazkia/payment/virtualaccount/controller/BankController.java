@@ -23,9 +23,9 @@ public class BankController {
     }
 
     @GetMapping("/bank/list")
-    public ModelMap listBank(Pageable page){
+    public ModelMap listBank(){
         return new ModelMap()
-                .addAttribute("daftarBank", bankDao.findAll(page))
+                .addAttribute("daftarBank", bankDao.findAll())
                 .addAttribute("pageTitle", "Daftar Bank");
     }
 }
