@@ -3,6 +3,7 @@ package id.ac.tazkia.payment.virtualaccount.entity;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -16,6 +17,9 @@ public class Tagihan {
     @Id @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
+
+    @NotNull @NotEmpty
+    private String nomor;
 
     @ManyToOne @NotNull
     @JoinColumn(name = "id_siswa")
@@ -54,6 +58,14 @@ public class Tagihan {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getNomor() {
+        return nomor;
+    }
+
+    public void setNomor(String nomor) {
+        this.nomor = nomor;
     }
 
     public Siswa getSiswa() {
