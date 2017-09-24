@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Bank</title>
+</head>
+<body>
+<section layout:fragment="content" class="tables">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Kode Bank</th>
+                                <th>Nama Bank</th>
+                                <th>No. Rekening</th>
+                                <th>Nama Rekening</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="bank, rowStat : ${daftarBank.content}">
+                                <th scope="row" th:text="${rowStat.count}">1</th>
+                                <td th:text="${bank.kode}">011</td>
+                                <td th:text="${bank.nama}">BNI</td>
+                                <td th:text="${bank.nomorRekening}">1234567890</td>
+                                <td th:text="${bank.namaRekening}">Yayasan Tazkia</td>
+                                <td th:text="*{bank.aktif}? 'Aktif' :'Tidak Aktif'">Aktif</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
