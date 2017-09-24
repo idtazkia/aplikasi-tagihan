@@ -1,12 +1,13 @@
 package id.ac.tazkia.payment.virtualaccount.entity;
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity @Data
 public class JenisTagihan {
     @Id @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -20,36 +21,4 @@ public class JenisTagihan {
 
     @NotNull @Enumerated(EnumType.STRING)
     private TipePembayaran tipePembayaran;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getKode() {
-        return kode;
-    }
-
-    public void setKode(String kode) {
-        this.kode = kode;
-    }
-
-    public String getNama() {
-        return nama;
-    }
-
-    public void setNama(String nama) {
-        this.nama = nama;
-    }
-
-    public TipePembayaran getTipePembayaran() {
-        return tipePembayaran;
-    }
-
-    public void setTipePembayaran(TipePembayaran tipePembayaran) {
-        this.tipePembayaran = tipePembayaran;
-    }
 }

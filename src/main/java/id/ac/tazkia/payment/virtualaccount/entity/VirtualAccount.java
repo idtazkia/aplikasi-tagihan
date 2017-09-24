@@ -1,12 +1,13 @@
 package id.ac.tazkia.payment.virtualaccount.entity;
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
-@Entity
+@Entity @Data
 public class VirtualAccount {
 
     @Id @GeneratedValue(generator = "uuid")
@@ -24,44 +25,4 @@ public class VirtualAccount {
     private String idVirtualAccount;
     @NotNull @NotEmpty
     private String nomorVirtualAccount;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Tagihan getTagihan() {
-        return tagihan;
-    }
-
-    public void setTagihan(Tagihan tagihan) {
-        this.tagihan = tagihan;
-    }
-
-    public Bank getBank() {
-        return bank;
-    }
-
-    public void setBank(Bank bank) {
-        this.bank = bank;
-    }
-
-    public String getIdVirtualAccount() {
-        return idVirtualAccount;
-    }
-
-    public void setIdVirtualAccount(String idVirtualAccount) {
-        this.idVirtualAccount = idVirtualAccount;
-    }
-
-    public String getNomorVirtualAccount() {
-        return nomorVirtualAccount;
-    }
-
-    public void setNomorVirtualAccount(String nomorVirtualAccount) {
-        this.nomorVirtualAccount = nomorVirtualAccount;
-    }
 }

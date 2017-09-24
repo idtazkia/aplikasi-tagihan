@@ -1,5 +1,6 @@
 package id.ac.tazkia.payment.virtualaccount.bni.entity;
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -10,7 +11,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
-@Entity @Table(name = "bni_running_number")
+@Entity @Data @Table(name = "bni_running_number")
 public class RunningNumber {
 
     @Id
@@ -23,28 +24,4 @@ public class RunningNumber {
 
     @NotNull @Min(0)
     private Long lastNumber = 0L;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public Long getLastNumber() {
-        return lastNumber;
-    }
-
-    public void setLastNumber(Long lastNumber) {
-        this.lastNumber = lastNumber;
-    }
 }
