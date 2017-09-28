@@ -12,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 import javax.validation.Valid;
 import java.util.Arrays;
@@ -39,7 +41,29 @@ public class SiswaController {
     }
 
     @GetMapping("/siswa/list")
-    public ModelMap daftarSiswa(){
-        return new ModelMap().addAttribute("pageTitle", "Data Siswa");
+    public void daftarSiswa(){ }
+
+    @ModelAttribute("pageTitle")
+    public String pageTitle(){
+        return "Data Siswa";
+    }
+
+    @GetMapping("/siswa/form")
+    public ModelMap tampilkanForm(@RequestParam(value = "id", required = false) Siswa siswa){
+        if(siswa == null){
+            siswa = new Siswa();
+        }
+        return new ModelMap("siswa", siswa);
+    }
+
+    @PostMapping("/siswa/form")
+    public String prosesForm(@ModelAttribute @Valid Siswa siswa, BindingResult errors, SessionStatus status) {
+        if (errors.hasErrors()) {
+            return "/siswa/form";
+        }
+
+        siswaDao.save(siswa);
+        status.setComplete();
+        return "redirect:list";
     }
 }

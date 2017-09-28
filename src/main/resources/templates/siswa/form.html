@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-if="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Data Siswa</title>
+</head>
+<body>
+
+<section layout:fragment="content" class="tables">
+    <div id="daftarSiswa">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-10">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <h3 class="h4">Input Data Siswa</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="form-horizontal" th:method="post"  th:action="@{/siswa/form}" th:object="${siswa}">
+                                <input type="hidden" th:field="*{id}">
+                                <div
+                                     th:class="${#fields.hasErrors('nama')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Nama</label>
+                                    <div class="col-sm-9">
+                                        <input id="nama" type="text" placeholder="Nama Lengkap"
+                                               name="nama"
+                                               th:field="*{nama}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nama')}" th:errors="*{nama}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('nomorSiswa')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">NIM</label>
+                                    <div class="col-sm-9">
+                                        <input id="nim" type="text"
+                                               name="nomorSiswa"
+                                               placeholder="Nomor Induk Mahasiswa"
+                                               th:field="*{nomorSiswa}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nomorSiswa')}" th:errors="*{nomorSiswa}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('email')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Email</label>
+                                    <div class="col-sm-9">
+                                        <input id="email" type="email"
+                                               name="email" placeholder="Email Address"
+                                               th:field="*{email}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('noHp')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">No HP</label>
+                                    <div class="col-sm-9">
+                                        <input id="noHp" type="text"
+                                               name="noHp"
+                                               placeholder="081xxxxx"
+                                               th:field="*{noHp}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('noHp')}" th:errors="*{noHp}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-9 offset-sm-3">
+                                        <input type="submit" value="Simpan" class="btn btn-primary">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/aplikasi/siswa.js}"></script>
+</section>
+</body>
+</html>

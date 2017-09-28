@@ -33,6 +33,10 @@ var daftarSiswa = new Vue({
                 vm.sudahDicari = true;
                 vm.searchedKeyword = vm.searchSiswa;
             });
-        },1000)
+        },1000),
+        editSiswa: function(siswa){
+            console.log(siswa);
+            window.location.href = "form?id=" + siswa.id;
+        }
     }
 });

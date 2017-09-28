@@ -14,6 +14,13 @@
     <div id="daftarSiswa">
         <div class="container-fluid">
             <div class="row">
+                <div class="col-lg-4">
+                    <div class="card">
+                        <a th:href="@{/siswa/form}" class="btn btn-lg btn-primary">Tambah Data Siswa</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-lg-10">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
@@ -49,6 +56,7 @@
                                     <th>Nama Siswa</th>
                                     <th>Email</th>
                                     <th>No HP</th>
+                                    <th>&nbsp;</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -58,6 +66,9 @@
                                     <td>{{ siswa.nama }}</td>
                                     <td>{{ siswa.email }}</td>
                                     <td>{{ siswa.noHp }}</td>
+                                    <td>
+                                        <button class="btn btn-xs" @click="editSiswa(siswa)">edit</button>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>

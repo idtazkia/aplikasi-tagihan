@@ -30,7 +30,6 @@
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Jenis Pembayaran</th>
-                                <th>&nbsp;</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -39,11 +38,6 @@
                                 <td th:text="${jt.kode}">011</td>
                                 <td th:text="${jt.nama}">BNI</td>
                                 <td th:text="${jt.tipePembayaran}">1234567890</td>
-                                <td>
-                                    <a th:href="@{/jenistagihan/form(id=${jt.id})}" class="btn btn-xs btn-secondary">
-                                        edit
-                                    </a>
-                                </td>
                             </tr>
                             </tbody>
                         </table>
