@@ -15,16 +15,23 @@ before_script:
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && ssh-keyscan -H "$SSH_HOSTNAME" > ~/.ssh/known_hosts'
   - scp root@$SSH_HOSTNAME:~/bni-ecollection-1.0.0.jar /tmp/
-  - mvn deploy:deploy-file -DgroupId=id.co.bni.ecollection -DartifactId=bni-ecollection -Dversion=1.0.0 -Durl=file://$PWD/.mvn/repository/ -Dfile=/tmp/bni-ecollection-1.0.0.jar
 
 build:
  stage: build
  script:
+ - mvn install:install-file -DgroupId=id.co.bni.ecollection -DartifactId=bni-ecollection -Dversion=1.0.0 -Dpackaging=jar -Dfile=/tmp/bni-ecollection-1.0.0.jar
  - mvn clean package -DskipTests
+ artifacts:
+     paths:
+       - target/*.jar
 
 deploy-dev:
  stage: deploy
+ image: ubuntu:latest
  variables:
    HEROKU_API_KEY: $HEROKU_API_KEY
  script:
- - mvn heroku:deploy -Dheroku.appName=$HEROKU_APP_NAME -DskipTests
+   - apt install wget openjdk-8-jdk-headless -y
+   - wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+   - heroku plugins:install heroku-cli-deploy
+   - heroku deploy:jar target/*.jar --app $HEROKU_APP_NAME

@@ -26,14 +26,6 @@
 		<thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>
 	</properties>
 
-    <repositories>
-        <repository>
-            <id>project.local</id>
-            <name>project</name>
-            <url>file:${project.basedir}/.mvn/repository</url>
-        </repository>
-    </repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -110,22 +102,7 @@
 					<failOnNoGitDirectory>false</failOnNoGitDirectory>
 				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>com.heroku.sdk</groupId>
-                <artifactId>heroku-maven-plugin</artifactId>
-                <version>1.2.0</version>
-                <configuration>
-                    <processTypes>
-                        <web>java $JAVA_OPTS -jar target/*jar</web>
-                    </processTypes>
-                    <includeTarget>false</includeTarget>
-                    <includes>
-                        <include>target/*.jar</include>
-                    </includes>
-                </configuration>
-            </plugin>
 		</plugins>
 	</build>
-
 
 </project>
