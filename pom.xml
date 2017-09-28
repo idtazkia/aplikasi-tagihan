@@ -110,6 +110,20 @@
 					<failOnNoGitDirectory>false</failOnNoGitDirectory>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>com.heroku.sdk</groupId>
+                <artifactId>heroku-maven-plugin</artifactId>
+                <version>1.2.0</version>
+                <configuration>
+                    <processTypes>
+                        <web>java $JAVA_OPTS -jar target/*jar</web>
+                    </processTypes>
+                    <includeTarget>false</includeTarget>
+                    <includes>
+                        <include>target/*.jar</include>
+                    </includes>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 

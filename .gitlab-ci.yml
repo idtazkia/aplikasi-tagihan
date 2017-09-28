@@ -1,4 +1,4 @@
-image: alpine:latest
+image: maven:3-jdk-8
 
 cache:
  paths:
@@ -15,19 +15,16 @@ before_script:
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && ssh-keyscan -H "$SSH_HOSTNAME" > ~/.ssh/known_hosts'
   - scp root@$SSH_HOSTNAME:~/bni-ecollection-1.0.0.jar /tmp/
+  - mvn deploy:deploy-file -DgroupId=id.co.bni.ecollection -DartifactId=bni-ecollection -Dversion=1.0.0 -Durl=file://$PWD/.mvn/repository/ -Dfile=/tmp/bni-ecollection-1.0.0.jar
 
 build:
  stage: build
- image: maven:3-jdk-8
  script:
- - mvn deploy:deploy-file -DgroupId=id.co.bni.ecollection -DartifactId=bni-ecollection -Dversion=1.0.0 -Durl=file://$PWD/.mvn/repository/ -Dfile=/tmp/bni-ecollection-1.0.0.jar
  - mvn clean package -DskipTests
 
 deploy-dev:
  stage: deploy
- image: ruby:2.3
+ variables:
+   HEROKU_API_KEY: $HEROKU_API_KEY
  script:
- - apt-get update -qy
- - apt-get install -y ruby-dev
- - gem install dpl
- - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
+ - mvn heroku:deploy -Dheroku.appName=$HEROKU_APP_NAME -DskipTests
