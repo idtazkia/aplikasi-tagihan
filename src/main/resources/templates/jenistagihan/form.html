@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-if="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Jenis Tagihan</title>
+</head>
+<body>
+
+<section layout:fragment="content" class="tables">
+    <div id="daftarSiswa">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-10">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <h3 class="h4">Input Jenis Tagihan</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="form-horizontal" th:method="post"  th:action="@{/jenistagihan/form}" th:object="${jenisTagihan}">
+                                <input type="hidden" th:field="*{id}">
+                                <div th:class="${#fields.hasErrors('kode')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Kode Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <input id="nim" type="text"
+                                               name="kode"
+                                               placeholder="Kode Tagihan"
+                                               th:field="*{kode}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('kode')}" th:errors="*{kode}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div
+                                     th:class="${#fields.hasErrors('nama')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Nama</label>
+                                    <div class="col-sm-9">
+                                        <input id="nama" type="text" placeholder="Nama Lengkap"
+                                               name="nama"
+                                               th:field="*{nama}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nama')}" th:errors="*{nama}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('tipePembayaran')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Tipe Pembayaran</label>
+                                    <div class="col-sm-9">
+                                        <div th:each="ty : ${T(id.ac.tazkia.payment.virtualaccount.entity.TipePembayaran).values()}">
+                                            <input type="radio"  th:field="*{tipePembayaran}" th:value="${ty}" />
+                                            <label th:for="${#ids.prev('tipePembayaran')}" th:text="${ty.label}">Option one is this and that be sure to include why it's great</label>
+                                        </div>
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('tipePembayaran')}" th:errors="*{tipePembayaran}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-9 offset-sm-3">
+                                        <input type="submit" value="Simpan" class="btn btn-primary">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/aplikasi/siswa.js}"></script>
+</section>
+</body>
+</html>
