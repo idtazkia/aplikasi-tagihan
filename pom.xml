@@ -5,7 +5,7 @@
 
 	<groupId>id.ac.tazkia.payment.virtualaccount</groupId>
 	<artifactId>payment-virtualaccount</artifactId>
-	<version>1.0.0.RELEASE</version>
+	<version>1.0.1-M.001</version>
 	<packaging>jar</packaging>
 
 	<name>payment-virtualaccount</name>

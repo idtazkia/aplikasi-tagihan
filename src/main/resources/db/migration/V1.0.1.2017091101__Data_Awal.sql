@@ -1,5 +1,5 @@
 insert into bank (id, kode, nama, nomor_rekening, nama_rekening, aktif) values
-  ('bnisy001', '009', 'BNI Syariah YTC','1100319991', 'Yayasan Tazkia Cendekia', true);
+  ('bnisy001', '009', 'BNI Syariah YTC','1100319991', 'Yayasan Tazkia Cendekia', false);
 
 insert into bank (id, kode, nama, nomor_rekening, nama_rekening, aktif) values
   ('bsm001', '451', 'BSM STEI Tazkia', '7031904018', 'STEI Tazkia', false);
