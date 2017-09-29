@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity @Data
 @Table(name = "bni_tagihan")
@@ -36,7 +37,7 @@ public class TagihanBni {
     private String trxAmount;
     @NotNull @NotEmpty
     private String billingType;
-    @NotNull @NotEmpty
+    @NotNull @NotEmpty @Size(max = 30)
     private String customerName;
     private String customerEmail;
     private String customerPhone;

@@ -15,7 +15,7 @@ CREATE TABLE bni_tagihan (
   trx_id             VARCHAR(255) NOT NULL,
   trx_amount         VARCHAR(255) NOT NULL,
   billing_type       VARCHAR(3) NOT NULL,
-  customer_name      VARCHAR(255) NOT NULL,
+  customer_name      VARCHAR(30) NOT NULL,
   customer_email     VARCHAR(255),
   customer_phone     VARCHAR(255),
   virtual_account    VARCHAR(255),
