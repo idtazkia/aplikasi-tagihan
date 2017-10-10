@@ -18,9 +18,16 @@ before_script:
 
 build:
  stage: build
+ services:
+ - postgres:latest
+ variables:
+   POSTGRES_DB : "paymentva"
+   POSTGRES_USER: "tazkiava"
+   POSTGRES_PASSWORD: "HBQD1KLFmjfD3GjeMkLS"
+   SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/paymentva
  script:
- - mvn install:install-file -DgroupId=id.co.bni.ecollection -DartifactId=bni-ecollection -Dversion=1.0.0 -Dpackaging=jar -Dfile=/tmp/bni-ecollection-1.0.0.jar
- - mvn clean package -DskipTests
+ - mvn deploy:deploy-file -Durl=file://$(pwd)/.mvn/repository -DgroupId=id.co.bni.ecollection -DartifactId=bni-ecollection -Dversion=1.0.0 -Dpackaging=jar -Dfile=/tmp/bni-ecollection-1.0.0.jar
+ - mvn clean package
  artifacts:
      paths:
        - target/*.jar
