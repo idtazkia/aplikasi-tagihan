@@ -2,8 +2,8 @@ INSERT INTO s_permission (id, permission_label, permission_value) VALUES
   ('configuresystem', 'CONFIGURE_SYSTEM', 'Configure System'),
   ('editsiswa', 'EDIT_SISWA', 'Edit Siswa'),
   ('viewsiswa', 'VIEW_SISWA', 'View Siswa'),
-  ('editbilling', 'EDIT_BILLING', 'Edit Billing'),
-  ('viewbilling', 'VIEW_BILLING', 'View Billing');
+  ('edittagihan', 'EDIT_TAGIHAN', 'Edit Tagihan'),
+  ('viewtagihan', 'VIEW_TAGIHAN', 'View Tagihan');
 
 INSERT INTO s_role (id, description, name) VALUES
   ('superuser', 'SUPERUSER', 'Super User'),
@@ -12,13 +12,13 @@ INSERT INTO s_role (id, description, name) VALUES
   ('manager', 'MANAGER', 'Manager');
 
 INSERT INTO s_role_permission (id_role, id_permission) VALUES
-  ('clientapp', 'editbilling'),
+  ('clientapp', 'edittagihan'),
   ('clientapp', 'editsiswa'),
-  ('staff', 'viewbilling'),
-  ('manager', 'viewbilling'),
-  ('manager', 'editbilling'),
-  ('superuser', 'viewbilling'),
-  ('superuser', 'editbilling'),
+  ('staff', 'viewtagihan'),
+  ('manager', 'viewtagihan'),
+  ('manager', 'edittagihan'),
+  ('superuser', 'viewtagihan'),
+  ('superuser', 'edittagihan'),
   ('superuser', 'configuresystem');
 
 INSERT INTO s_user (id, active, username, id_role) VALUES
