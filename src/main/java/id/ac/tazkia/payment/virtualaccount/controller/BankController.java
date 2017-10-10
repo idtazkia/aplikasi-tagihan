@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class BankController {
     @Autowired private BankDao bankDao;
 
-    @GetMapping("/api/bank/")
+    @GetMapping("/api/client/bank/")
     @ResponseBody
     public Page<Bank> findAll(Pageable page){
         return bankDao.findAll(page);

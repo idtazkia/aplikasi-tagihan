@@ -12,7 +12,9 @@ INSERT INTO s_role (id, description, name) VALUES
   ('manager', 'MANAGER', 'Manager');
 
 INSERT INTO s_role_permission (id_role, id_permission) VALUES
+  ('clientapp', 'viewtagihan'),
   ('clientapp', 'edittagihan'),
+  ('clientapp', 'viewsiswa'),
   ('clientapp', 'editsiswa'),
   ('staff', 'viewtagihan'),
   ('staff', 'viewsiswa'),
@@ -28,3 +30,10 @@ INSERT INTO s_user (id, active, username, id_role) VALUES
 INSERT INTO s_user_password (id_user, password) VALUES
   -- password : test123
   ('u001', '$2a$13$d2GZHGr6gedUiNk8r3Pbo.Jc8eH7oBVdTta.WGMG9g1dO9T4hlNPG');
+
+INSERT INTO s_user (id, active, username, id_role) VALUES
+  ('c001', true, 'client001', 'clientapp');
+
+INSERT INTO s_user_password (id_user, password) VALUES
+  -- password : test123
+  ('c001', '$2a$13$d2GZHGr6gedUiNk8r3Pbo.Jc8eH7oBVdTta.WGMG9g1dO9T4hlNPG');

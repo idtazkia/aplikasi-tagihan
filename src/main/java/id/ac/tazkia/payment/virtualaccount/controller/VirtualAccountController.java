@@ -15,7 +15,7 @@ import javax.validation.Valid;
 
 
 @Transactional
-@RestController @RequestMapping("/api/va")
+@RestController @RequestMapping("/api/client/va")
 public class VirtualAccountController {
     @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private PembayaranDao pembayaranDao;

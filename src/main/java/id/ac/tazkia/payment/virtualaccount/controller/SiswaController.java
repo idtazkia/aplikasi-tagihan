@@ -26,22 +26,28 @@ public class SiswaController {
     @Autowired private TagihanDao tagihanDao;
 
     @PreAuthorize("hasAuthority('VIEW_SISWA')")
-    @GetMapping("/api/siswa/") @ResponseBody
-    public Page<Siswa> findAll(String search, Pageable page){
-        return siswaDao.findByNomorSiswaOrNamaContainingIgnoreCase(search, search, page);
+    @GetMapping("/api/client/siswa/") @ResponseBody
+    public Page<Siswa> findAll(Pageable page){
+        return siswaDao.findAll(page);
     }
 
     @PreAuthorize("hasAuthority('EDIT_SISWA')")
-    @PostMapping("/api/siswa/") @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/api/client/siswa/") @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody @Valid Siswa s){
         siswaDao.save(s);
     }
 
     @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")
-    @GetMapping("/api/siswa/{id}/tagihan") @ResponseBody
+    @GetMapping("/api/client/siswa/{id}/tagihan") @ResponseBody
     public Page<Tagihan> findTagihanOutstandingBySiswa(Siswa s, Pageable page){
         return tagihanDao.findBySiswaAndStatusPembayaranInOrderByUpdatedAtDesc(s,
                 Arrays.asList(StatusPembayaran.BELUM_DIBAYAR, StatusPembayaran.DIBAYAR_SEBAGIAN), page);
+    }
+
+    @PreAuthorize("hasAuthority('VIEW_SISWA')")
+    @GetMapping("/api/siswa/") @ResponseBody
+    public Page<Siswa> findAll(String search, Pageable page){
+        return siswaDao.findByNomorSiswaOrNamaContainingIgnoreCase(search, search, page);
     }
 
     @PreAuthorize("hasAuthority('VIEW_SISWA')")

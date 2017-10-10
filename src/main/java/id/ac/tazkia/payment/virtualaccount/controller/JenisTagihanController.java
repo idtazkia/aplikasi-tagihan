@@ -23,7 +23,7 @@ public class JenisTagihanController {
     @Autowired
     private JenisTagihanDao jenisTagihanDao;
 
-    @GetMapping("/api/jenistagihan/")
+    @GetMapping("/api/client/jenistagihan/")
     public Page<JenisTagihan> findAll(Pageable page) {
         return jenisTagihanDao.findAll(page);
     }

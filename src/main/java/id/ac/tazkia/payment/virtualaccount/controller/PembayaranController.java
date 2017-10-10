@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Transactional @RestController
-@RequestMapping("/api/pembayaran")
+@RequestMapping("/api/client/pembayaran")
 public class PembayaranController {
     @Autowired private PembayaranDao pembayaranDao;
 

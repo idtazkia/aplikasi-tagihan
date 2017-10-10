@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Transactional @RestController
-@RequestMapping("/api/tagihan")
+@RequestMapping("/api/client/tagihan")
 public class TagihanController {
 
     @Autowired private TagihanDao tagihanDao;
