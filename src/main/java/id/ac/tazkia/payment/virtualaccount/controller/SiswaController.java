@@ -26,7 +26,7 @@ public class SiswaController {
 
     @GetMapping("/api/siswa/") @ResponseBody
     public Page<Siswa> findAll(String search, Pageable page){
-        return siswaDao.findByNomorSiswaContainsOrNamaContains(search, search, page);
+        return siswaDao.findByNomorSiswaOrNamaContainingIgnoreCase(search, search, page);
     }
 
     @PostMapping("/api/siswa/") @ResponseStatus(HttpStatus.CREATED)

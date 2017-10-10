@@ -7,5 +7,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface SiswaDao extends PagingAndSortingRepository<Siswa, String> {
     public Siswa findByNomorSiswa(String nomor);
-    public Page<Siswa> findByNomorSiswaContainsOrNamaContains(String nomorSiswa, String nama, Pageable page);
+    public Page<Siswa> findByNomorSiswaOrNamaContainingIgnoreCase(String nomorSiswa, String nama, Pageable page);
 }
