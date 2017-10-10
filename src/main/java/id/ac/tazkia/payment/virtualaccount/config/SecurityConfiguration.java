@@ -80,7 +80,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/api/client/**")
                     .authorizeRequests()
-                    .anyRequest().authenticated().and().httpBasic();
+                    .anyRequest().authenticated().and().httpBasic()
+                    .and().csrf().disable();
         }
     }
 

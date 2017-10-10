@@ -3,6 +3,7 @@ package id.ac.tazkia.payment.virtualaccount.controller;
 import id.ac.tazkia.payment.virtualaccount.dao.*;
 import id.ac.tazkia.payment.virtualaccount.dto.UpdateTagihanRequest;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
+import id.ac.tazkia.payment.virtualaccount.service.TagihanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,29 +29,12 @@ public class TagihanController {
     @Autowired private BankDao bankDao;
     @Autowired private SiswaDao siswaDao;
 
+    @Autowired private TagihanService tagihanService;
+
     @PreAuthorize("hasAuthority('EDIT_TAGIHAN')")
     @PostMapping("/") @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody @Valid Tagihan t){
-        Siswa s = siswaDao.findByNomorSiswa(t.getSiswa().getNomorSiswa());
-
-        if(s == null){
-            s = t.getSiswa();
-            siswaDao.save(s);
-        }
-        t.setSiswa(s);
-        tagihanDao.save(t);
-        for (Bank b : bankDao.findAll()) {
-            if(!b.getAktif()) {
-                continue;
-            }
-            ProsesBank pb = new ProsesBank();
-            pb.setWaktuPembuatan(new Date());
-            pb.setTagihan(t);
-            pb.setBank(b);
-            pb.setJenisProsesBank(JenisProsesBank.CREATE_VA);
-            pb.setStatusProsesBank(StatusProsesBank.BARU);
-            prosesBankDao.save(pb);
-        }
+        tagihanService.createTagihan(t);
     }
 
     @PreAuthorize("hasAuthority('EDIT_TAGIHAN')")
@@ -73,19 +57,7 @@ public class TagihanController {
         tx.setJumlahTagihan(request.getNilaiTagihan());
         tx.setTanggalKadaluarsa(request.getTanggalKadaluarsa());
         tx.setKeterangan(request.getKeterangan());
-        tagihanDao.save(tx);
-        for (Bank b : bankDao.findAll()) {
-            if(!b.getAktif()) {
-                continue;
-            }
-            ProsesBank pb = new ProsesBank();
-            pb.setWaktuPembuatan(new Date());
-            pb.setTagihan(tx);
-            pb.setBank(b);
-            pb.setJenisProsesBank(JenisProsesBank.UPDATE_VA);
-            pb.setStatusProsesBank(StatusProsesBank.BARU);
-            prosesBankDao.save(pb);
-        }
+        tagihanService.updateTagihan(tx);
         return ResponseEntity.ok().build();
     }
 
