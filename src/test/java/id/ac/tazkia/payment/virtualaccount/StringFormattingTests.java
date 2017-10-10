@@ -43,7 +43,7 @@ public class StringFormattingTests {
     @Test
     public void bcryptPassword(){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(13);
-        String password = "5qpRkP13vyJpZ4u2nu7B";
+        String password = "test123";
         String hashed = encoder.encode(password);
         System.out.println("Hashed : "+hashed);
     }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -73,15 +74,18 @@
             <div class="sidebar-header d-flex align-items-center">
                 <div class="avatar"><img th:src="@{/img/avatar-1.jpg}" alt="..." class="img-fluid rounded-circle" /></div>
                 <div class="title">
-                    <h1 class="h4">Mark Stephen</h1>
+                    <h1 class="h4" sec:authentication="name">Mark Stephen</h1>
                     <p>Web Designer</p>
                 </div>
             </div>
+            <div sec:authorize="hasAuthority('CONFIGURE_SYSTEM')">
             <!-- Sidebar Navidation Menus--><span class="heading">Konfigurasi</span>
             <ul class="list-unstyled">
                 <li> <a th:href="@{/jenistagihan/list}"><i class="icon-grid"></i>Jenis Tagihan</a></li>
                 <li> <a th:href="@{/bank/list}"> <i class="fa fa-university"></i>Bank</a></li>
-            </ul><span class="heading">Transaksi</span>
+            </ul>
+            </div>
+            <span class="heading">Transaksi</span>
             <ul class="list-unstyled">
                 <li> <a th:href="@{/siswa/list}"> <i class="icon-user"></i>Siswa</a></li>
                 <li> <a href="#"> <i class="fa fa-newspaper-o"></i>Tagihan</a></li>

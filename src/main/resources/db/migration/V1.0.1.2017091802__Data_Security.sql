@@ -1,4 +1,4 @@
-INSERT INTO s_permission (id, permission_label, permission_value) VALUES
+INSERT INTO s_permission (id, permission_value, permission_label) VALUES
   ('configuresystem', 'CONFIGURE_SYSTEM', 'Configure System'),
   ('editsiswa', 'EDIT_SISWA', 'Edit Siswa'),
   ('viewsiswa', 'VIEW_SISWA', 'View Siswa'),
@@ -15,6 +15,7 @@ INSERT INTO s_role_permission (id_role, id_permission) VALUES
   ('clientapp', 'edittagihan'),
   ('clientapp', 'editsiswa'),
   ('staff', 'viewtagihan'),
+  ('staff', 'viewsiswa'),
   ('manager', 'viewtagihan'),
   ('manager', 'edittagihan'),
   ('superuser', 'viewtagihan'),
@@ -22,8 +23,8 @@ INSERT INTO s_role_permission (id_role, id_permission) VALUES
   ('superuser', 'configuresystem');
 
 INSERT INTO s_user (id, active, username, id_role) VALUES
-  ('staff', true,'staff', 'staff');
+  ('u001', true, 'user001', 'staff');
 
 INSERT INTO s_user_password (id_user, password) VALUES
-  -- password : CfZKBe7IZHxBCgH9Dz49
-  ('staff', '$2a$13$WlKVWzXzLLFi5bCRQJ6Ao.oDh61Ptm/ePWb8Y6E3fkxet/Q2.VEi.');
+  -- password : test123
+  ('u001', '$2a$13$d2GZHGr6gedUiNk8r3Pbo.Jc8eH7oBVdTta.WGMG9g1dO9T4hlNPG');

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class TagihanController {
     @Autowired private BankDao bankDao;
     @Autowired private SiswaDao siswaDao;
 
+    @PreAuthorize("hasAuthority('EDIT_TAGIHAN')")
     @PostMapping("/") @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody @Valid Tagihan t){
         Siswa s = siswaDao.findByNomorSiswa(t.getSiswa().getNomorSiswa());
@@ -51,6 +53,7 @@ public class TagihanController {
         }
     }
 
+    @PreAuthorize("hasAuthority('EDIT_TAGIHAN')")
     @PutMapping("/{id}")
     public ResponseEntity update(@PathVariable("id") Tagihan tx, @Valid @RequestBody UpdateTagihanRequest request) {
 
@@ -86,21 +89,25 @@ public class TagihanController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")
     @GetMapping("/")
     public Page<Tagihan> findAll(Pageable page){
         return tagihanDao.findAll(page);
     }
 
+    @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")
     @GetMapping("/{id}")
     public Tagihan findById(@PathVariable("id") Tagihan t){
         return t;
     }
 
+    @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")
     @GetMapping("/{id}/pembayaran")
     public Iterable<Pembayaran> findPembayaranByTagihan(@PathVariable("id") Tagihan t){
         return pembayaranDao.findByVirtualAccountTagihanOrderByWaktuTransaksi(t);
     }
 
+    @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")
     @GetMapping("/{id}/va")
     public Iterable<VirtualAccount> findVirtualAccountByTagihan(@PathVariable("id") Tagihan t){
         return virtualAccountDao.findByTagihanOrderByBankNomorRekening(t);

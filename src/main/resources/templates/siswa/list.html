@@ -3,6 +3,7 @@
       xmlns:v-on="http://www.w3.org/1999/xhtml"
       xmlns:v-if="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +14,7 @@
 <section layout:fragment="content" class="tables">
     <div id="daftarSiswa">
         <div class="container-fluid">
-            <div class="row">
+            <div class="row" sec:authorize="hasAuthority('EDIT_SISWA')">
                 <div class="col-lg-4">
                     <div class="card">
                         <a th:href="@{/siswa/form}" class="btn btn-lg btn-primary">Tambah Data Siswa</a>
@@ -66,7 +67,7 @@
                                     <td>{{ siswa.nama }}</td>
                                     <td>{{ siswa.email }}</td>
                                     <td>{{ siswa.noHp }}</td>
-                                    <td>
+                                    <td sec:authorize="hasAuthority('EDIT_SISWA')">
                                         <button class="btn btn-xs" @click="editSiswa(siswa)">edit</button>
                                     </td>
                                 </tr>
