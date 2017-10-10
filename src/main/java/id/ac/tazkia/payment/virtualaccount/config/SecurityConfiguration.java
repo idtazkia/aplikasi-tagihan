@@ -1,4 +1,4 @@
-package id.ac.tazkia.payment.virtualaccount.bni.config;
+package id.ac.tazkia.payment.virtualaccount.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
