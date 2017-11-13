@@ -12,14 +12,14 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
 @Entity @Data
-public class Siswa {
+public class Debitur {
     @Id @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
 
     @NotNull @NotEmpty
     @Column(unique = true)
-    private String nomorSiswa;
+    private String nomorDebitur;
 
     @NotNull @NotEmpty
     private String nama;

@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -81,7 +80,7 @@ public class BniCallbackController {
 
             Pembayaran p = new Pembayaran();
             p.setVirtualAccount(t.getVa());
-            p.setKeterangan("Pembayaran tagihan atas nama "+p.getVirtualAccount().getTagihan().getSiswa().getNama()
+            p.setKeterangan("Pembayaran tagihan atas nama "+p.getVirtualAccount().getTagihan().getDebitur().getNama()
                     + " melalui BNI dengan VA "+t.getVirtualAccount());
 
             p.setJumlah(new BigDecimal(paymentNotificationRequest.getPaymentAmount()));

@@ -23,8 +23,8 @@ public class Tagihan {
     private String nomor;
 
     @ManyToOne @NotNull
-    @JoinColumn(name = "id_siswa")
-    private Siswa siswa;
+    @JoinColumn(name = "id_debitur")
+    private Debitur debitur;
 
     @ManyToOne @NotNull
     @JoinColumn(name = "id_jenis_tagihan")

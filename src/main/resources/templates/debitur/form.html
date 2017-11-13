@@ -6,21 +6,21 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Data Siswa</title>
+    <title>Data Debitur</title>
 </head>
 <body>
 
 <section layout:fragment="content" class="tables">
-    <div id="daftarSiswa">
+    <div id="daftarDebitur">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-10">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="h4">Input Data Siswa</h3>
+                            <h3 class="h4">Input Data Debitur</h3>
                         </div>
                         <div class="card-body">
-                            <form class="form-horizontal" th:method="post"  th:action="@{/siswa/form}" th:object="${siswa}">
+                            <form class="form-horizontal" th:method="post"  th:action="@{/debitur/form}" th:object="${debitur}">
                                 <input type="hidden" th:field="*{id}">
                                 <div
                                      th:class="${#fields.hasErrors('nama')}? 'row form-group has-danger' : 'row form-group'">
@@ -32,14 +32,14 @@
                                         <small class="invalid-feedback" th:if="${#fields.hasErrors('nama')}" th:errors="*{nama}">Example help text that remains unchanged.</small>
                                     </div>
                                 </div>
-                                <div th:class="${#fields.hasErrors('nomorSiswa')}? 'row form-group has-danger' : 'row form-group'">
+                                <div th:class="${#fields.hasErrors('nomorDebitur')}? 'row form-group has-danger' : 'row form-group'">
                                     <label class="col-sm-3 form-control-label">NIM</label>
                                     <div class="col-sm-9">
                                         <input id="nim" type="text"
-                                               name="nomorSiswa"
-                                               placeholder="Nomor Induk Mahasiswa"
-                                               th:field="*{nomorSiswa}" th:errorclass="form-control-feedback" th:class="form-control">
-                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nomorSiswa')}" th:errors="*{nomorSiswa}">Example help text that remains unchanged.</small>
+                                               name="nomorDebitur"
+                                               placeholder="Nomor Debitur"
+                                               th:field="*{nomorDebitur}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nomorDebitur')}" th:errors="*{nomorDebitur}">Example help text that remains unchanged.</small>
                                     </div>
                                 </div>
                                 <div th:class="${#fields.hasErrors('email')}? 'row form-group has-danger' : 'row form-group'">
@@ -73,7 +73,7 @@
             </div>
         </div>
     </div>
-    <script th:src="@{/js/aplikasi/siswa.js}"></script>
+    <script th:src="@{/js/aplikasi/debitur.js}"></script>
 </section>
 </body>
 </html>

@@ -19,31 +19,31 @@ CREATE TABLE jenis_tagihan (
   UNIQUE (nama)
 );
 
-CREATE TABLE siswa (
-  id          VARCHAR(36),
-  nomor_siswa VARCHAR(255) NOT NULL,
-  nama        VARCHAR(255) NOT NULL,
-  email       VARCHAR(255),
-  no_hp       VARCHAR(255),
+CREATE TABLE debitur (
+  id            VARCHAR(36),
+  nomor_debitur VARCHAR(255) NOT NULL,
+  nama          VARCHAR(255) NOT NULL,
+  email         VARCHAR(255),
+  no_hp         VARCHAR(255),
   PRIMARY KEY (id),
-  UNIQUE (nomor_siswa)
+  UNIQUE (nomor_debitur)
 );
 
 CREATE TABLE tagihan (
   id                 VARCHAR(36),
-  id_siswa           VARCHAR(36) NOT NULL,
-  id_jenis_tagihan   VARCHAR(36) NOT NULL,
-  nomor VARCHAR(255),
+  id_debitur         VARCHAR(36)    NOT NULL,
+  id_jenis_tagihan   VARCHAR(36)    NOT NULL,
+  nomor              VARCHAR(255),
   jumlah_tagihan     DECIMAL(19, 2) NOT NULL,
   jumlah_pembayaran  DECIMAL(19, 2) NOT NULL,
-  tanggal_kadaluarsa DATE NOT NULL,
+  tanggal_kadaluarsa DATE           NOT NULL,
   keterangan         VARCHAR(255),
-  status_pembayaran  VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  status_pembayaran  VARCHAR(255)   NOT NULL,
+  created_at         TIMESTAMP      NOT NULL DEFAULT NOW(),
+  updated_at         TIMESTAMP      NOT NULL DEFAULT NOW(),
   PRIMARY KEY (id),
   FOREIGN KEY (id_jenis_tagihan) REFERENCES jenis_tagihan (id),
-  FOREIGN KEY (id_siswa) REFERENCES siswa (id)
+  FOREIGN KEY (id_debitur) REFERENCES debitur (id)
 );
 
 CREATE TABLE virtual_account (

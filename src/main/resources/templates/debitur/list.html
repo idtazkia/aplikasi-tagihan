@@ -7,17 +7,17 @@
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Data Siswa</title>
+    <title>Data Debitur</title>
 </head>
 <body>
 
 <section layout:fragment="content" class="tables">
-    <div id="daftarSiswa">
+    <div id="daftarDebitur">
         <div class="container-fluid">
-            <div class="row" sec:authorize="hasAuthority('EDIT_SISWA')">
+            <div class="row" sec:authorize="hasAuthority('EDIT_DEBITUR')">
                 <div class="col-lg-4">
                     <div class="card">
-                        <a th:href="@{/siswa/form}" class="btn btn-lg btn-primary">Tambah Data Siswa</a>
+                        <a th:href="@{/debitur/form}" class="btn btn-lg btn-primary">Tambah Data Debitur</a>
                     </div>
                 </div>
             </div>
@@ -25,15 +25,15 @@
                 <div class="col-lg-10">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="h4">Cari Data Siswa</h3>
+                            <h3 class="h4">Cari Data Debitur</h3>
                         </div>
                         <div class="card-body">
                             <form class="form-inline">
                                 <div class="form-group">
-                                    <label for="searchSiswa" class="sr-only">Search</label>
-                                    <input id="searchSiswa"
-                                           v-model="searchSiswa"
-                                           @keyup="cariSiswa"
+                                    <label for="searchDebitur" class="sr-only">Search</label>
+                                    <input id="searchDebitur"
+                                           v-model="searchDebitur"
+                                           @keyup="cariDebitur"
                                            type="text" name="search" placeholder="Nama atau NIM" class="mx-sm-3 form-control form-control">
                                 </div>
                             </form>
@@ -43,32 +43,32 @@
                 <div class="col-lg-10">
                     <div class="card" v-if="sudahDicari">
                         <div class="card-header d-flex align-items-center">
-                            <h3 class="h4">Daftar Siswa</h3>
+                            <h3 class="h4">Daftar Debitur</h3>
                         </div>
                         <div class="card-body">
-                            <div v-if="sudahDicari && dataSiswa != null && dataSiswa.totalElements < 1">
+                            <div v-if="sudahDicari && dataDebitur != null && dataDebitur.totalElements < 1">
                                 {{ this.searchedKeyword }} tidak ditemukan
                             </div>
-                            <table class="table table-striped table-hover"  v-if="dataSiswa != null && dataSiswa.numberOfElements > 0">
+                            <table class="table table-striped table-hover"  v-if="dataDebitur != null && dataDebitur.numberOfElements > 0">
                                 <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>Nomor Siswa</th>
-                                    <th>Nama Siswa</th>
+                                    <th>Nomor Debitur</th>
+                                    <th>Nama Debitur</th>
                                     <th>Email</th>
                                     <th>No HP</th>
                                     <th>&nbsp;</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for="(siswa, index) in dataSiswa.content">
+                                <tr v-for="(debitur, index) in dataDebitur.content">
                                     <th scope="row">{{ index + 1 }}</th>
-                                    <td>{{ siswa.nomorSiswa }}</td>
-                                    <td>{{ siswa.nama }}</td>
-                                    <td>{{ siswa.email }}</td>
-                                    <td>{{ siswa.noHp }}</td>
-                                    <td sec:authorize="hasAuthority('EDIT_SISWA')">
-                                        <button class="btn btn-xs" @click="editSiswa(siswa)">edit</button>
+                                    <td>{{ debitur.nomorDebitur }}</td>
+                                    <td>{{ debitur.nama }}</td>
+                                    <td>{{ debitur.email }}</td>
+                                    <td>{{ debitur.noHp }}</td>
+                                    <td sec:authorize="hasAuthority('EDIT_DEBITUR')">
+                                        <button class="btn btn-xs" @click="editDebitur(debitur)">edit</button>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -79,7 +79,7 @@
             </div>
         </div>
     </div>
-    <script th:src="@{/js/aplikasi/siswa.js}"></script>
+    <script th:src="@{/js/aplikasi/debitur.js}"></script>
 </section>
 </body>
 </html>

@@ -16,16 +16,16 @@ public class TagihanService {
     @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private ProsesBankDao prosesBankDao;
     @Autowired private BankDao bankDao;
-    @Autowired private SiswaDao siswaDao;
+    @Autowired private DebiturDao debiturDao;
 
     public void createTagihan(Tagihan t){
-        Siswa s = siswaDao.findByNomorSiswa(t.getSiswa().getNomorSiswa());
+        Debitur s = debiturDao.findByNomorDebitur(t.getDebitur().getNomorDebitur());
 
         if(s == null){
-            s = t.getSiswa();
-            siswaDao.save(s);
+            s = t.getDebitur();
+            debiturDao.save(s);
         }
-        t.setSiswa(s);
+        t.setDebitur(s);
         tagihanDao.save(t);
         for (Bank b : bankDao.findAll()) {
             if(!b.getAktif()) {

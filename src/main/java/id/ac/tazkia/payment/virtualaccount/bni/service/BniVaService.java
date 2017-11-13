@@ -27,7 +27,6 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -72,9 +71,9 @@ public class BniVaService {
         }
 
         b.setClientId(config.getClientId());
-        b.setCustomerName(tagihan.getSiswa().getNama());
-        b.setCustomerEmail(tagihan.getSiswa().getEmail());
-        b.setCustomerPhone(tagihan.getSiswa().getNoHp());
+        b.setCustomerName(tagihan.getDebitur().getNama());
+        b.setCustomerEmail(tagihan.getDebitur().getEmail());
+        b.setCustomerPhone(tagihan.getDebitur().getNoHp());
         b.setDatetimeExpired(toIso8601(tagihan.getTanggalKadaluarsa()));
         b.setDescription(tagihan.getKeterangan());
         b.setTrxAmount(tagihan.getJumlahTagihan().setScale(0, BigDecimal.ROUND_HALF_EVEN).toString());
@@ -86,7 +85,7 @@ public class BniVaService {
         b.setTrxId(datePrefix + String.format("%06d", runningNumber));
         b.setVirtualAccount("8"+config.getClientId()
                 + tagihan.getJenisTagihan().getKode()
-                + String.format("%10s", tagihan.getSiswa().getNomorSiswa()).replace(' ', '0'));
+                + String.format("%10s", tagihan.getDebitur().getNomorDebitur()).replace(' ', '0'));
 
         try {
             Map<String, String> hasil = executeRequest(b);
@@ -143,9 +142,9 @@ public class BniVaService {
 
         UpdateBillingRequest request = new UpdateBillingRequest();
         request.setClientId(config.getClientId());
-        request.setCustomerEmail(tagihan.getSiswa().getEmail());
-        request.setCustomerName(tagihan.getSiswa().getNama());
-        request.setCustomerPhone(tagihan.getSiswa().getNoHp());
+        request.setCustomerEmail(tagihan.getDebitur().getEmail());
+        request.setCustomerName(tagihan.getDebitur().getNama());
+        request.setCustomerPhone(tagihan.getDebitur().getNoHp());
         request.setDatetimeExpired(toIso8601(tagihan.getTanggalKadaluarsa()));
         request.setDescription(tagihan.getKeterangan());
         request.setTrxAmount(tagihan.getJumlahTagihan().setScale(0, BigDecimal.ROUND_HALF_EVEN).toString());

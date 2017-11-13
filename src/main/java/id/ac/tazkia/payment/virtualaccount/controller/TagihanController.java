@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +26,7 @@ public class TagihanController {
     @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private ProsesBankDao prosesBankDao;
     @Autowired private BankDao bankDao;
-    @Autowired private SiswaDao siswaDao;
+    @Autowired private DebiturDao debiturDao;
 
     @Autowired private TagihanService tagihanService;
 

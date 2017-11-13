@@ -35,7 +35,7 @@ public class BniTaskScheduler {
         for (ProsesBank pb : prosesBankDao.findByBankAndAndJenisProsesBankAndStatusProsesBankOrderByWaktuPembuatan(b, JenisProsesBank.CREATE_VA, StatusProsesBank.BARU)) {
             LOGGER.info("Membuat VA untuk tagihan {} atas nama {} sejumlah {}",
                     pb.getTagihan().getJenisTagihan().getNama(),
-                    pb.getTagihan().getSiswa().getNomorSiswa() + " - "+ pb.getTagihan().getSiswa().getNama(),
+                    pb.getTagihan().getDebitur().getNomorDebitur() + " - "+ pb.getTagihan().getDebitur().getNama(),
                     pb.getTagihan().getJumlahTagihan());
 
             bniVaService.createVa(pb.getTagihan());
@@ -54,7 +54,7 @@ public class BniTaskScheduler {
         for (ProsesBank pb : prosesBankDao.findByBankAndAndJenisProsesBankAndStatusProsesBankOrderByWaktuPembuatan(b, JenisProsesBank.UPDATE_VA, StatusProsesBank.BARU)) {
             LOGGER.info("Membuat VA untuk tagihan {} atas nama {} sejumlah {}",
                     pb.getTagihan().getJenisTagihan().getNama(),
-                    pb.getTagihan().getSiswa().getNomorSiswa() + " - "+ pb.getTagihan().getSiswa().getNama(),
+                    pb.getTagihan().getDebitur().getNomorDebitur() + " - "+ pb.getTagihan().getDebitur().getNama(),
                     pb.getTagihan().getJumlahTagihan());
 
             bniVaService.updateVa(pb.getTagihan());

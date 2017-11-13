@@ -5,7 +5,7 @@ insert into bank (id, kode, nama, nomor_rekening, nama_rekening, aktif) values
   ('bsm001', '451', 'BSM STEI Tazkia', '7031904018', 'STEI Tazkia', false);
 
 insert into jenis_tagihan (id, kode, nama, tipe_pembayaran) values
-  ('pmb2017', '01', 'Pendaftaran Mahasiswa Baru 2017', 'CLOSED_PAYMENT');
+  ('pmb2017', '01', 'Pendaftaran 2017', 'CLOSED_PAYMENT');
 
 insert into jenis_tagihan (id, kode, nama, tipe_pembayaran) values
   ('du2017', '02', 'Daftar Ulang', 'INSTALLMENT');
