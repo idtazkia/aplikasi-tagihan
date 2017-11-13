@@ -22,6 +22,8 @@ INSERT INTO s_role_permission (id_role, id_permission) VALUES
   ('manager', 'edittagihan'),
   ('superuser', 'viewtagihan'),
   ('superuser', 'edittagihan'),
+  ('superuser', 'viewdebitur'),
+  ('superuser', 'editdebitur'),
   ('superuser', 'configuresystem');
 
 INSERT INTO s_user (id, active, username, id_role) VALUES
