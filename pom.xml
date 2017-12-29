@@ -28,14 +28,6 @@
 		<revision>1.1.0-M.001</revision>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>project.local</id>
-			<name>Local Repo</name>
-			<url>file:${project.basedir}/.mvn/repository</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -68,11 +60,6 @@
 		<dependency>
 			<groupId>org.thymeleaf.extras</groupId>
 			<artifactId>thymeleaf-extras-springsecurity4</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>id.co.bni.ecollection</groupId>
-			<artifactId>bni-ecollection</artifactId>
-			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
