@@ -29,14 +29,3 @@ build:
  artifacts:
      paths:
        - target/*.jar
-
-deploy-dev:
- stage: deploy
- image: ubuntu:latest
- variables:
-   HEROKU_API_KEY: $HEROKU_API_KEY
- script:
-   - apt install wget openjdk-8-jdk-headless -y
-   - wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
-   - heroku plugins:install heroku-cli-deploy
-   - heroku deploy:jar target/*.jar --app $HEROKU_APP_NAME
