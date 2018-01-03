@@ -14,7 +14,6 @@ before_script:
   - ssh-add <(echo "$SSH_PRIVATE_KEY")
   - mkdir -p ~/.ssh
   - '[[ -f /.dockerenv ]] && ssh-keyscan -H "$SSH_HOSTNAME" > ~/.ssh/known_hosts'
-  - scp root@$SSH_HOSTNAME:~/bni-ecollection-1.0.0.jar /tmp/
 
 build:
  stage: build
@@ -26,7 +25,6 @@ build:
    POSTGRES_PASSWORD: "HBQD1KLFmjfD3GjeMkLS"
    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/paymentva
  script:
- - mvn deploy:deploy-file -Durl=file://$(pwd)/.mvn/repository -DgroupId=id.co.bni.ecollection -DartifactId=bni-ecollection -Dversion=1.0.0 -Dpackaging=jar -Dfile=/tmp/bni-ecollection-1.0.0.jar
  - mvn clean package
  artifacts:
      paths:
