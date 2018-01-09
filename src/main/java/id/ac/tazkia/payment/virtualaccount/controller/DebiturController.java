@@ -52,7 +52,10 @@ public class DebiturController {
 
     @PreAuthorize("hasAuthority('VIEW_DEBITUR')")
     @GetMapping("/debitur/list")
-    public void daftarDebitur(){ }
+    public String daftarDebitur(ModelMap mm){ 
+        mm.addAttribute("data", debiturDao.findAll());
+        return "debitur/list";
+    }
 
     @ModelAttribute("pageTitle")
     public String pageTitle(){
