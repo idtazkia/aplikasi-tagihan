@@ -4,6 +4,7 @@
     "nomorDebitur" : "1234567890",
     "nama" : "Tester Student 001"
   },
+  "nomor" : "20180101123",
   "jumlahTagihan" : 123000.12,
   "jumlahPembayaran" : 0,
   "tanggalKadaluarsa" : "2017-12-31",
