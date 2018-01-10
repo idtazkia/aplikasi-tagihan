@@ -32,7 +32,7 @@ public class Tagihan {
     private JenisTagihan jenisTagihan;
 
     @NotNull @Min(0)
-    private BigDecimal jumlahTagihan;
+    private BigDecimal nilaiTagihan;
 
     @NotNull @Min(0)
     private BigDecimal jumlahPembayaran = BigDecimal.ZERO;
@@ -40,11 +40,12 @@ public class Tagihan {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
     @Temporal(TemporalType.DATE)
-    private Date tanggalKadaluarsa;
+    private Date tanggalJatuhTempo;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    private Date tanggalTagihan = new Date();
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)

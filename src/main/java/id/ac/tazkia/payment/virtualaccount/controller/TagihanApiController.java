@@ -53,8 +53,8 @@ public class TagihanApiController {
             return ResponseEntity.badRequest().body(error);
         }
 
-        tx.setJumlahTagihan(request.getNilaiTagihan());
-        tx.setTanggalKadaluarsa(request.getTanggalKadaluarsa());
+        tx.setNilaiTagihan(request.getNilaiTagihan());
+        tx.setTanggalJatuhTempo(request.getTanggalJatuhTempo());
         tx.setKeterangan(request.getKeterangan());
         tagihanService.updateTagihan(tx);
         return ResponseEntity.ok().build();

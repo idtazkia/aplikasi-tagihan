@@ -59,22 +59,31 @@
                                         <small class="invalid-feedback" th:if="${#fields.hasErrors('nomor')}" th:errors="*{nomor}">Example help text that remains unchanged.</small>
                                     </div>
                                 </div>
-                                <div th:class="${#fields.hasErrors('jumlahTagihan')}? 'row form-group has-danger' : 'row form-group'">
-                                    <label class="col-sm-3 form-control-label">Jumlah Tagihan</label>
+                                <div th:class="${#fields.hasErrors('nilaiTagihan')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Nilai Tagihan</label>
                                     <div class="col-sm-9">
-                                        <input id="jumlahTagihan" type="text" placeholder="Jumlah Tagihan"
-                                               name="jumlahTagihan"
-                                               th:field="*{jumlahTagihan}" th:errorclass="form-control-feedback" th:class="form-control">
-                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('jumlahTagihan')}" th:errors="*{jumlahTagihan}">Example help text that remains unchanged.</small>
+                                        <input id="nilaiTagihan" type="text" placeholder="Nilai Tagihan"
+                                               name="nilaiTagihan"
+                                               th:field="*{nilaiTagihan}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nilaiTagihan')}" th:errors="*{nilaiTagihan}">Example help text that remains unchanged.</small>
                                     </div>
                                 </div>
-                                <div th:class="${#fields.hasErrors('tanggalKadaluarsa')}? 'row form-group has-danger' : 'row form-group'">
+                                <div th:class="${#fields.hasErrors('tanggalTagihan')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Tanggal Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <input id="tanggalTagihan" type="text" placeholder="yyyy-MM-dd"
+                                               name="tanggalTagihan" readonly
+                                               th:field="*{tanggalTagihan}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('tanggalTagihan')}" th:errors="*{tanggalTagihan}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('tanggalJatuhTempo')}? 'row form-group has-danger' : 'row form-group'">
                                     <label class="col-sm-3 form-control-label">Tanggal Jatuh Tempo</label>
                                     <div class="col-sm-9">
-                                        <input id="tanggalKadaluarsa" type="text" placeholder="yyyy-MM-dd"
-                                               name="tanggalKadaluarsa"
-                                               th:field="*{tanggalKadaluarsa}" th:errorclass="form-control-feedback" th:class="form-control">
-                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('tanggalKadaluarsa')}" th:errors="*{tanggalKadaluarsa}">Example help text that remains unchanged.</small>
+                                        <input id="tanggalJatuhTempo" type="text" placeholder="yyyy-MM-dd"
+                                               name="tanggalJatuhTempo"
+                                               th:field="*{tanggalJatuhTempo}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('tanggalJatuhTempo')}" th:errors="*{tanggalJatuhTempo}">Example help text that remains unchanged.</small>
                                     </div>
                                 </div>
                                 <div class="form-group row">
