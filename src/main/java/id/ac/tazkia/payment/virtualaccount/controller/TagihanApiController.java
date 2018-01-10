@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Transactional @RestController
 @RequestMapping("/api/client/tagihan")
-public class TagihanController {
+public class TagihanApiController {
 
     @Autowired private TagihanDao tagihanDao;
     @Autowired private PembayaranDao pembayaranDao;
