@@ -14,15 +14,11 @@
 <section layout:fragment="content" class="tables">
     <div id="daftarDebitur">
         <div class="container-fluid">
-            <div class="row" sec:authorize="hasAuthority('EDIT_DEBITUR')">
-                <div class="col-lg-4">
-                    <div class="card">
-                        <a th:href="@{/debitur/form}" class="btn btn-lg btn-primary">Tambah Data Debitur</a>
-                    </div>
-                </div>
-            </div>
             <div class="row">
-                <div class="col-lg-10">
+                <div class="col-lg-12">
+                    <p sec:authorize="hasAuthority('EDIT_DEBITUR')">
+                        <a th:href="@{/debitur/form}" class="btn btn-primary">Tambah Data Debitur</a>
+                    </p>
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
                             <h3 class="h4">Cari Data Debitur</h3>
