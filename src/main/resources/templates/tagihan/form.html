@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-if="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Input Tagihan</title>
+</head>
+<body>
+
+<section layout:fragment="content" class="tables">
+    <div id="daftarDebitur">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-10">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <h3 class="h4">Input Tagihan</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="form-horizontal" th:method="post"  th:action="@{/tagihan/form}" th:object="${tagihan}">
+                                <p th:if="${#fields.hasErrors('all')}" th:errors="*{all}">Invalid Input</p>
+                                <input type="hidden" th:field="*{id}">
+                                <div th:class="${#fields.hasErrors('jenisTagihan')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Jenis Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <select name="jenisTagihan" th:class="form-control" th:field="*{jenisTagihan}">
+                                            <option value="">... Pilih Jenis Tagihan ...</option>
+                                            <option th:each="jenis : ${listJenisTagihan}"
+                                                    th:value="${jenis.id}"
+                                                    th:text="${jenis.kode + ' - ' + jenis.nama}"></option>
+                                        </select>
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('jenisTagihan')}" th:errors="*{jenisTagihan}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+
+                                <div th:class="${#fields.hasErrors('debitur')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Jenis Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <select name="debitur" th:class="form-control" th:field="*{debitur}">
+                                            <option value="">... Pilih Debitur ...</option>
+                                            <option th:each="d : ${listDebitur}"
+                                                    th:value="${d.id}"
+                                                    th:text="${d.nomorDebitur + ' - ' + d.nama}"></option>
+                                        </select>
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('jenisTagihan')}" th:errors="*{jenisTagihan}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+
+                                <div th:class="${#fields.hasErrors('nomor')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Nomor Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <input id="nomor" type="text"
+                                               name="nomor"
+                                               placeholder="Nomor Tagihan"
+                                               th:field="*{nomor}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nomor')}" th:errors="*{nomor}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('jumlahTagihan')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Jumlah Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <input id="jumlahTagihan" type="text" placeholder="Jumlah Tagihan"
+                                               name="jumlahTagihan"
+                                               th:field="*{jumlahTagihan}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('jumlahTagihan')}" th:errors="*{jumlahTagihan}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div th:class="${#fields.hasErrors('tanggalKadaluarsa')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Tanggal Jatuh Tempo</label>
+                                    <div class="col-sm-9">
+                                        <input id="tanggalKadaluarsa" type="text" placeholder="yyyy-MM-dd"
+                                               name="tanggalKadaluarsa"
+                                               th:field="*{tanggalKadaluarsa}" th:errorclass="form-control-feedback" th:class="form-control">
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('tanggalKadaluarsa')}" th:errors="*{tanggalKadaluarsa}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-9 offset-sm-3">
+                                        <input type="submit" value="Simpan" class="btn btn-primary">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/aplikasi/debitur.js}"></script>
+</section>
+</body>
+</html>

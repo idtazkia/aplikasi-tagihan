@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Tagihan</title>
+</head>
+<body>
+<section layout:fragment="content" class="tables">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <h3 class="h4">Daftar Tagihan</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4 th:if="${#lists.isEmpty(listTagihan)}">Tidak ada data tagihan</h4>
+                        <table class="table table-striped table-hover" th:unless="${#lists.isEmpty(listTagihan)}">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nomor Tagihan</th>
+                                <th>Nomor Debitur</th>
+                                <th>Nama Debitur</th>
+                                <th>Nilai Tagihan</th>
+                                <th>Nilai Pembayaran</th>
+                                <th>Tanggal Dibuat</th>
+                                <th>Tanggal Jatuh Tempo</th>
+                                <th>Status Pembayaran</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="tagihan, rowStat : ${listTagihan}">
+                                <th scope="row" th:text="${rowStat.count}">1</th>
+                                <td th:text="${tagihan.nomor}">011</td>
+                                <td th:text="${tagihan.debitur.nomorDebitur}">BNI</td>
+                                <td th:text="${tagihan.debitur.nama}">1234567890</td>
+                                <td th:text="${tagihan.jumlahTagihan}">Yayasan Tazkia</td>
+                                <td th:text="${tagihan.jumlahPembayaran}">Yayasan Tazkia</td>
+                                <td th:text="${tagihan.createdAt}">Yayasan Tazkia</td>
+                                <td th:text="${tagihan.tanggalKadaluarsa}">Yayasan Tazkia</td>
+                                <td th:text="${tagihan.statusPembayaran}">Yayasan Tazkia</td>
+                                <td>
+                                    <a th:href="@{/tagihan/form(id=${tagihan.id})}" class="btn btn-xs">edit</a>
+                                    <a th:href="@{/tagihan/delete(id=${tagihan.id})}" class="btn btn-xs">delete</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
