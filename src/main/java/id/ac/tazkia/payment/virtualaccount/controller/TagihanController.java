@@ -86,7 +86,7 @@ public class TagihanController {
     public void displayFormUpload(){}
 
     @PostMapping("/upload/form")
-    public String processForm(@RequestParam JenisTagihan jenisTagihan,
+    public String processFormUpload(@RequestParam JenisTagihan jenisTagihan,
                               @RequestParam(required = false) Boolean pakaiHeader,
                               MultipartFile fileTagihan,
                               RedirectAttributes redirectAttrs) {

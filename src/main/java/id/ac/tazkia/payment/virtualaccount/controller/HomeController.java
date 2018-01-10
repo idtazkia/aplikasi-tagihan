@@ -15,6 +15,9 @@ public class HomeController {
     @Value("classpath:sample/tagihan.csv")
     private Resource contohFileTagihan;
 
+    @Value("classpath:sample/debitur.csv")
+    private Resource contohFileDebitur;
+
     @GetMapping("/home")
     public ModelMap home(){
         return new ModelMap().addAttribute("pageTitle", "Dashboard");
@@ -25,6 +28,14 @@ public class HomeController {
         response.setContentType("text/csv");
         response.setHeader("Content-Disposition", "attachment; filename=contoh-tagihan.csv");
         FileCopyUtils.copy(contohFileTagihan.getInputStream(), response.getOutputStream());
+        response.getOutputStream().flush();
+    }
+
+    @GetMapping("/contoh/debitur")
+    public void downloadContohFileDebitur(HttpServletResponse response) throws Exception {
+        response.setContentType("text/csv");
+        response.setHeader("Content-Disposition", "attachment; filename=contoh-debitur.csv");
+        FileCopyUtils.copy(contohFileDebitur.getInputStream(), response.getOutputStream());
         response.getOutputStream().flush();
     }
 }
