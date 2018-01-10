@@ -1,0 +1,6 @@
+nomor_debitur,nama_debitur,nomor_tagihan,keterangan,nilai_tagihan,jatuh_tempo
+2018011231,Pendaftar 001,201801123101,Tagihan Pendaftaran 001,500001.12,2018-03-01
+2018011232,Pendaftar 002,201801123201,Tagihan Pendaftaran 002,500002.12,2018-03-02
+2018011233,Pendaftar 003,201801123301,Tagihan Pendaftaran 003,500003.12,2018-03-03
+2018011234,Pendaftar 004,201801123401,Tagihan Pendaftaran 004,500004.12,2018-03-04
+2018011235,Pendaftar 005,201801123501,Tagihan Pendaftaran 005,500005.12,2018-03-05
