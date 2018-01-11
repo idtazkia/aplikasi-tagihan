@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -52,12 +53,12 @@ public class TagihanController {
 
     @ModelAttribute("listJenisTagihan")
     public Iterable<JenisTagihan> daftarJenisTagihan() {
-        return jenisTagihanDao.findAll();
+        return jenisTagihanDao.findAll(new Sort(Sort.Direction.ASC, "kode"));
     }
 
     @ModelAttribute("listDebitur")
     public Iterable<Debitur> daftarDebitur() {
-        return debiturDao.findAll();
+        return debiturDao.findAll(new Sort(Sort.Direction.ASC, "nomorDebitur"));
     }
 
     @GetMapping("/form")
