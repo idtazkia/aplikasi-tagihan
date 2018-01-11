@@ -3,10 +3,11 @@
       xmlns:v-on="http://www.w3.org/1999/xhtml"
       xmlns:v-if="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
 <head>
     <meta charset="UTF-8">
-    <title>Data Debitur</title>
+    <title>Input Debitur</title>
 </head>
 <body>
 
@@ -14,54 +15,39 @@
     <div id="daftarDebitur">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-10">
+                <div class="col-lg-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
                             <h3 class="h4">Input Data Debitur</h3>
                         </div>
                         <div class="card-body">
-                            <form class="form-horizontal" th:method="post"  th:action="@{/debitur/form}" th:object="${debitur}">
+                            <form class="form-horizontal" th:method="post" th:action="@{/api/client/debitur/}" th:object="${debitur}">
                                 <input type="hidden" th:field="*{id}">
-                                <div
-                                     th:class="${#fields.hasErrors('nama')}? 'row form-group has-danger' : 'row form-group'">
+                                <div>
+                                    <label class="col-sm-3 form-control-label">Nomor Debitur</label>
+                                    <div class="col-sm-12">
+                                        <input type="text" placeholder="Nomor Debitur" name="nomorDebitur" th:field="*{nomorDebitur}" class="form-control">
+                                    </div>
+                                </div>
+                                <div>
                                     <label class="col-sm-3 form-control-label">Nama</label>
-                                    <div class="col-sm-9">
-                                        <input id="nama" type="text" placeholder="Nama Lengkap"
-                                               name="nama"
-                                               th:field="*{nama}" th:errorclass="form-control-feedback" th:class="form-control">
-                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nama')}" th:errors="*{nama}">Example help text that remains unchanged.</small>
+                                    <div class="col-sm-12">
+                                        <input type="text" name="nama" th:field="*{nama}" placeholder="Nama"  class="form-control">
                                     </div>
                                 </div>
-                                <div th:class="${#fields.hasErrors('nomorDebitur')}? 'row form-group has-danger' : 'row form-group'">
-                                    <label class="col-sm-3 form-control-label">NIM</label>
-                                    <div class="col-sm-9">
-                                        <input id="nim" type="text"
-                                               name="nomorDebitur"
-                                               placeholder="Nomor Debitur"
-                                               th:field="*{nomorDebitur}" th:errorclass="form-control-feedback" th:class="form-control">
-                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nomorDebitur')}" th:errors="*{nomorDebitur}">Example help text that remains unchanged.</small>
-                                    </div>
-                                </div>
-                                <div th:class="${#fields.hasErrors('email')}? 'row form-group has-danger' : 'row form-group'">
+                                <div>
                                     <label class="col-sm-3 form-control-label">Email</label>
-                                    <div class="col-sm-9">
-                                        <input id="email" type="email"
-                                               name="email" placeholder="Email Address"
-                                               th:field="*{email}" th:errorclass="form-control-feedback" th:class="form-control">
-                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Example help text that remains unchanged.</small>
+                                    <div class="col-sm-12">
+                                        <input type="email"name="email" th:field="*{email}" placeholder="Email Address"class="form-control">
                                     </div>
                                 </div>
-                                <div th:class="${#fields.hasErrors('noHp')}? 'row form-group has-danger' : 'row form-group'">
+                                <div>
                                     <label class="col-sm-3 form-control-label">No HP</label>
-                                    <div class="col-sm-9">
-                                        <input id="noHp" type="text"
-                                               name="noHp"
-                                               placeholder="081xxxxx"
-                                               th:field="*{noHp}" th:errorclass="form-control-feedback" th:class="form-control">
-                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('noHp')}" th:errors="*{noHp}">Example help text that remains unchanged.</small>
+                                    <div class="col-sm-12">
+                                        <input type="text" name="noHp" th:field="*{noHp}" placeholder="081xxxxx" class="form-control">
                                     </div>
                                 </div>
-                                <div class="form-group row">
+                                <div class="form-group">
                                     <div class="col-sm-9 offset-sm-3">
                                         <input type="submit" value="Simpan" class="btn btn-primary">
                                     </div>
