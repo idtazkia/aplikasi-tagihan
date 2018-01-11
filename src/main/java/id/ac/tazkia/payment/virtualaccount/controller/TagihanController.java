@@ -154,7 +154,18 @@ public class TagihanController {
                     continue;
                 }
 
-                tagihanDao.save(t);
+                if (tagihanDao.findByNomor(data[0]) != null) {
+                    errors.add(new UploadError(baris, "Nomor tagihan "+data[0]+" sudah digunakan", content));
+                    continue;
+                }
+
+                try {
+                    tagihanDao.save(t);
+                } catch (Exception ex) {
+                    LOGGER.warn(ex.getMessage(), ex);
+                    errors.add(new UploadError(baris, "Gagal simpan ke database", content));
+                    continue;
+                }
 
             }
         } catch (Exception err){

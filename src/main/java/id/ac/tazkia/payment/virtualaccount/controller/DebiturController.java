@@ -163,7 +163,18 @@ public class DebiturController {
                     d.setNoHp(data[3]);
                 }
 
-                debiturDao.save(d);
+                if (debiturDao.findByNomorDebitur(d.getNomorDebitur()) != null) {
+                    errors.add(new UploadError(baris, "Nomor debitur "+data[0]+" sudah digunakan", content));
+                    continue;
+                }
+
+                try {
+                    debiturDao.save(d);
+                } catch (Exception ex) {
+                    errors.add(new UploadError(baris, "Gagal simpan ke database", content));
+                    LOGGER.warn(ex.getMessage(), ex);
+                    continue;
+                }
             }
         } catch (Exception err){
             LOGGER.warn(err.getMessage(), err);

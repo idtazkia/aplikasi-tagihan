@@ -11,4 +11,5 @@ import java.util.Collection;
 
 public interface TagihanDao extends PagingAndSortingRepository<Tagihan, String> {
     Page<Tagihan> findByDebiturAndStatusPembayaranInOrderByUpdatedAtDesc(Debitur d, Collection<StatusPembayaran> status, Pageable pageable);
+    Tagihan findByNomor(String nomor);
 }
