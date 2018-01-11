@@ -21,7 +21,11 @@ public class Pembayaran {
     @Temporal(TemporalType.TIMESTAMP)
     private Date waktuTransaksi;
 
-    @ManyToOne @NotNull
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private JenisPembayaran jenisPembayaran;
+
+    @ManyToOne
     @JoinColumn(name = "id_virtual_account")
     private VirtualAccount virtualAccount;
 
@@ -29,6 +33,6 @@ public class Pembayaran {
     private BigDecimal jumlah;
 
     @NotNull @NotEmpty
-    private String referensiBank;
+    private String referensi;
     private String keterangan;
 }

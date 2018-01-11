@@ -20,9 +20,6 @@ public class VirtualAccount {
     @ManyToOne @NotNull
     @JoinColumn(name = "id_bank")
     private Bank bank;
-
-    @NotNull @NotEmpty
-    private String idVirtualAccount;
     @NotNull @NotEmpty
     private String nomorVirtualAccount;
 }
