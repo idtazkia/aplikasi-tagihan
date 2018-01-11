@@ -45,6 +45,7 @@
                                 <td th:text="${tagihan.tanggalTagihan +'/'+ tagihan.tanggalJatuhTempo}">Yayasan Tazkia</td>
                                 <td th:text="${tagihan.statusPembayaran}">Yayasan Tazkia</td>
                                 <td>
+                                    <a th:href="@{/va/list(tagihan=${tagihan.id})}" class="btn btn-xs">virtual account</a><br>
                                     <a th:href="@{/pembayaran/list(tagihan=${tagihan.id})}" class="btn btn-xs">riwayat pembayaran</a>
                                 </td>
                             </tr>
