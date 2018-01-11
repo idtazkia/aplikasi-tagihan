@@ -6,4 +6,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface VirtualAccountDao extends PagingAndSortingRepository<VirtualAccount, String> {
     Iterable<VirtualAccount> findByVaStatus(VaStatus status);
+    VirtualAccount findByVaStatusAndTagihanNomor(VaStatus status, String nomor);
 }
