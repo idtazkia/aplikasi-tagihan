@@ -25,7 +25,7 @@
 		<thymeleaf.version>3.0.8.RELEASE</thymeleaf.version>
 		<thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
 		<thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>
-		<revision>1.1.0-M.001</revision>
+		<revision>1.1.0-M.002</revision>
 	</properties>
 
 	<dependencies>
