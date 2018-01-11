@@ -13,13 +13,14 @@ public class VirtualAccount {
     @Id @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
-
     @ManyToOne @NotNull
     @JoinColumn(name = "id_tagihan")
     private Tagihan tagihan;
     @ManyToOne @NotNull
     @JoinColumn(name = "id_bank")
     private Bank bank;
-    @NotNull @NotEmpty
-    private String nomorVirtualAccount;
+    private String nomor;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private VaStatus vaStatus = VaStatus.BARU;
 }

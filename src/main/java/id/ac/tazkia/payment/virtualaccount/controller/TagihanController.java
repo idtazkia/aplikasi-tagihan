@@ -7,6 +7,7 @@ import id.ac.tazkia.payment.virtualaccount.dto.UploadError;
 import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
+import id.ac.tazkia.payment.virtualaccount.service.TagihanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,10 @@ import java.util.List;
 public class TagihanController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagihanController.class);
 
-
     @Autowired
     private TagihanDao tagihanDao;
+    @Autowired
+    private TagihanService tagihanService;
     @Autowired
     private JenisTagihanDao jenisTagihanDao;
     @Autowired private DebiturDao debiturDao;
@@ -73,7 +75,7 @@ public class TagihanController {
         if (errors.hasErrors()) {
             return "tagihan/form";
         }
-        tagihanDao.save(tagihan);
+        tagihanService.createTagihan(tagihan);
         status.setComplete();
         return "redirect:list";
     }
@@ -156,7 +158,7 @@ public class TagihanController {
                 }
 
                 try {
-                    tagihanDao.save(t);
+                    tagihanService.createTagihan(t);
                 } catch (Exception ex) {
                     LOGGER.warn(ex.getMessage(), ex);
                     errors.add(new UploadError(baris, "Gagal simpan ke database", content));
