@@ -25,6 +25,11 @@ public class Pembayaran {
     @Enumerated(EnumType.STRING)
     private JenisPembayaran jenisPembayaran;
 
+    @NotNull
+    @ManyToOne
+    @JoinColumn(name = "id_tagihan")
+    private Tagihan tagihan;
+
     @ManyToOne
     @JoinColumn(name = "id_virtual_account")
     private VirtualAccount virtualAccount;
