@@ -1,11 +1,11 @@
 package id.ac.tazkia.payment.virtualaccount.service;
 
-import id.ac.tazkia.payment.virtualaccount.dao.*;
+import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
+import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
+import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
 import id.ac.tazkia.payment.virtualaccount.entity.Bank;
-import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
-import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
