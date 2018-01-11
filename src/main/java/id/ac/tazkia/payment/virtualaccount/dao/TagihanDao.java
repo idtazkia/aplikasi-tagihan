@@ -10,5 +10,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.Collection;
 
 public interface TagihanDao extends PagingAndSortingRepository<Tagihan, String> {
-    public Page<Tagihan> findByDebiturAndStatusPembayaranInOrderByUpdatedAtDesc(Debitur d, Collection<StatusPembayaran> status, Pageable pageable);
+    Page<Tagihan> findByDebiturAndStatusPembayaranInOrderByUpdatedAtDesc(Debitur d, Collection<StatusPembayaran> status, Pageable pageable);
 }
