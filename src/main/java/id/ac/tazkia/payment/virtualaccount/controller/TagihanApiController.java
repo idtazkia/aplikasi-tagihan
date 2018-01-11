@@ -2,7 +2,9 @@ package id.ac.tazkia.payment.virtualaccount.controller;
 
 import id.ac.tazkia.payment.virtualaccount.dao.*;
 import id.ac.tazkia.payment.virtualaccount.dto.UpdateTagihanRequest;
-import id.ac.tazkia.payment.virtualaccount.entity.*;
+import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
+import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
+import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
 import id.ac.tazkia.payment.virtualaccount.service.TagihanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

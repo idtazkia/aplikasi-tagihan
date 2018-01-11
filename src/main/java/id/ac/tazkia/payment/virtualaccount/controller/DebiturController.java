@@ -4,7 +4,6 @@ import id.ac.tazkia.payment.virtualaccount.dao.DebiturDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dto.UploadError;
 import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
-import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.StatusPembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import org.slf4j.Logger;
@@ -29,14 +28,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 @Transactional @Controller
