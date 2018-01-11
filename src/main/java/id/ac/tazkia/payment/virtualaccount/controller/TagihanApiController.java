@@ -26,7 +26,6 @@ public class TagihanApiController {
     @Autowired private TagihanDao tagihanDao;
     @Autowired private PembayaranDao pembayaranDao;
     @Autowired private VirtualAccountDao virtualAccountDao;
-    @Autowired private ProsesBankDao prosesBankDao;
     @Autowired private BankDao bankDao;
     @Autowired private DebiturDao debiturDao;
 
