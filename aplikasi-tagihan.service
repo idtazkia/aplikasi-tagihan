@@ -1,0 +1,11 @@
+[Unit]
+Description=Aplikasi Tagihan dan Virtual Account
+After=syslog.target
+
+[Service]
+User=root
+ExecStart=/var/aplikasi-tagihan/aplikasi-tagihan.jar
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
