@@ -13,7 +13,7 @@ import javax.validation.Valid;
 
 @Transactional @RestController
 @RequestMapping("/api/client/pembayaran")
-public class PembayaranController {
+public class PembayaranApiController {
     @Autowired private PembayaranDao pembayaranDao;
 
     @GetMapping("/")
