@@ -1,9 +1,9 @@
 nomor,nama,email,hp
-001,Debitur 001,deb1@contoh.com,081234556789
-002,Debitur 002, ,
-003,Debitur 003, ,08111111111
-004,Debitur 004,deb4@contoh.id,
-005,Debitur 005,,
-006,,deb6@test.id,
-007,Agent 007,007@mi6,08555555
-008,Debitur 008,008,123
+171101,Siswa 001,siswa1@contoh.com,081234556789
+171102,Siswa 002, ,
+171103,Siswa 003, ,08111111111
+171104,Siswa 004,sis4@contoh.id,
+171105,Siswa 005,,
+171106,,siswa6@test.id,
+171107,Siswa 007,007@mi6,08555555
+171108,Siswa 008,008,123
