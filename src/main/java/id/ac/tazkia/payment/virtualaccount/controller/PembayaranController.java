@@ -4,6 +4,8 @@ import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
 import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,11 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PembayaranController {
     @Autowired private PembayaranDao pembayaranDao;
 
-    @GetMapping("/form")
-    public ModelMap displayForm(@RequestParam Tagihan tagihan) {
-        Pembayaran p = new Pembayaran();
-        p.setTagihan(tagihan);
+    @GetMapping("/list")
+    public ModelMap daftarPembayaran(@RequestParam Tagihan tagihan, Pageable page) {
         return new ModelMap()
-                .addAttribute("pembayaran", p);
+                .addAttribute("listPembayaran",
+                        pembayaranDao.findByTagihanOrderByWaktuTransaksi(tagihan, page));
     }
 }
