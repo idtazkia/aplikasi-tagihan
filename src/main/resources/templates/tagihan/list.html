@@ -45,8 +45,7 @@
                                 <td th:text="${tagihan.tanggalTagihan +'/'+ tagihan.tanggalJatuhTempo}">Yayasan Tazkia</td>
                                 <td th:text="${tagihan.statusPembayaran}">Yayasan Tazkia</td>
                                 <td>
-                                    <a th:href="@{/tagihan/form(id=${tagihan.id})}" class="btn btn-xs">edit</a>
-                                    <a th:href="@{/pembayaran/form(tagihan=${tagihan.id})}" class="btn btn-xs">bayar</a>
+                                    <a th:href="@{/pembayaran/list(tagihan=${tagihan.id})}" class="btn btn-xs">history pembayaran</a>
                                 </td>
                             </tr>
                             </tbody>
