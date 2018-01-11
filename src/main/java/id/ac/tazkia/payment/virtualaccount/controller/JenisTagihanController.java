@@ -5,6 +5,7 @@ import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -36,7 +37,7 @@ public class JenisTagihanController {
     @GetMapping("/jenistagihan/list")
     public ModelMap findAllHtml() {
         return new ModelMap()
-                .addAttribute("daftarJenisTagihan", jenisTagihanDao.findAll());
+                .addAttribute("daftarJenisTagihan", jenisTagihanDao.findAll(new Sort(Sort.Direction.ASC, "kode")));
     }
 
     @GetMapping("/jenistagihan/form")
