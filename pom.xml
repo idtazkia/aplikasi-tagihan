@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>id.ac.tazkia.payment.virtualaccount</groupId>
-	<artifactId>payment-virtualaccount</artifactId>
+	<artifactId>aplikasi-tagihan</artifactId>
 	<version>${revision}</version>
 	<packaging>jar</packaging>
 
-	<name>payment-virtualaccount</name>
+	<name>aplikasi-tagihan</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
