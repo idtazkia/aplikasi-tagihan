@@ -72,6 +72,14 @@ CREATE TABLE pembayaran (
   FOREIGN KEY (id_virtual_account) REFERENCES virtual_account (id)
 );
 
+CREATE TABLE bukti_pembayaran (
+  id            VARCHAR(36),
+  id_pembayaran VARCHAR(36)  NOT NULL,
+  lokasi_file   VARCHAR(255) NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id_pembayaran) REFERENCES pembayaran (id),
+  UNIQUE (lokasi_file)
+);
 
 CREATE TABLE proses_bank (
   id                 VARCHAR(36),
