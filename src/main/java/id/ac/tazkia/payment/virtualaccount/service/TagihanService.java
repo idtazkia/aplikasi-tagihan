@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.RoundingMode;
+
 @Service @Transactional
 public class TagihanService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagihanService.class);
@@ -21,6 +23,7 @@ public class TagihanService {
     @Autowired private BankDao bankDao;
 
     public void createTagihan(Tagihan t) {
+        t.setNilaiTagihan(t.getNilaiTagihan().setScale(0, RoundingMode.DOWN));
         tagihanDao.save(t);
         for (Bank b : bankDao.findAll()) {
             if (b.getAktif()) {
