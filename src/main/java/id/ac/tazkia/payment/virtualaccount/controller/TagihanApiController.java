@@ -1,10 +1,8 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
-import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
 import id.ac.tazkia.payment.virtualaccount.dto.UpdateTagihanRequest;
-import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
 import id.ac.tazkia.payment.virtualaccount.service.TagihanService;
@@ -26,7 +24,6 @@ import java.util.Map;
 public class TagihanApiController {
 
     @Autowired private TagihanDao tagihanDao;
-    @Autowired private PembayaranDao pembayaranDao;
     @Autowired private VirtualAccountDao virtualAccountDao;
 
     @Autowired private TagihanService tagihanService;
@@ -71,12 +68,6 @@ public class TagihanApiController {
     @GetMapping("/{id}")
     public Tagihan findById(@PathVariable("id") Tagihan t){
         return t;
-    }
-
-    @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")
-    @GetMapping("/{id}/pembayaran")
-    public Iterable<Pembayaran> findPembayaranByTagihan(@PathVariable("id") Tagihan t){
-        return pembayaranDao.findByVirtualAccountTagihanOrderByWaktuTransaksi(t);
     }
 
     @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")

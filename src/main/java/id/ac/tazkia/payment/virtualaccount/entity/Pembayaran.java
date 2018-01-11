@@ -31,8 +31,8 @@ public class Pembayaran {
     private Tagihan tagihan;
 
     @ManyToOne
-    @JoinColumn(name = "id_virtual_account")
-    private VirtualAccount virtualAccount;
+    @JoinColumn(name = "id_bank")
+    private Bank bank;
 
     @NotNull @Min(1)
     private BigDecimal jumlah;

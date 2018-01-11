@@ -1,8 +1,6 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
-import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
-import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +16,6 @@ import javax.validation.Valid;
 @RestController @RequestMapping("/api/client/va")
 public class VirtualAccountController {
     @Autowired private VirtualAccountDao virtualAccountDao;
-    @Autowired private PembayaranDao pembayaranDao;
 
     @GetMapping("/")
     public Page<VirtualAccount> findAll(Pageable page){
@@ -35,8 +32,4 @@ public class VirtualAccountController {
         return va;
     }
 
-    @GetMapping("/{id}/pembayaran")
-    public Iterable<Pembayaran> findPembayaranByVA(@PathVariable("id") VirtualAccount va){
-        return pembayaranDao.findByVirtualAccountOrderByWaktuTransaksi(va);
-    }
 }
