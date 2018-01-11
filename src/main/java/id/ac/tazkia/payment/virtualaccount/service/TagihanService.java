@@ -21,7 +21,6 @@ public class TagihanService {
     @Autowired private BankDao bankDao;
 
     public void createTagihan(Tagihan t) {
-        LOGGER.debug("ID Tagihan : "+t.getId());
         tagihanDao.save(t);
         for (Bank b : bankDao.findAll()) {
             if (b.getAktif()) {
