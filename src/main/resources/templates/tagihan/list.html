@@ -46,7 +46,7 @@
                                 <td th:text="${tagihan.statusPembayaran}">Yayasan Tazkia</td>
                                 <td>
                                     <a th:href="@{/tagihan/form(id=${tagihan.id})}" class="btn btn-xs">edit</a>
-                                    <a th:href="@{/tagihan/delete(id=${tagihan.id})}" class="btn btn-xs">delete</a>
+                                    <a th:href="@{/pembayaran/form(tagihan=${tagihan.id})}" class="btn btn-xs">bayar</a>
                                 </td>
                             </tr>
                             </tbody>
