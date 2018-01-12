@@ -4,6 +4,7 @@ CREATE TABLE bank (
   nama           VARCHAR(255) NOT NULL,
   nomor_rekening VARCHAR(255) NOT NULL,
   nama_rekening  VARCHAR(255) NOT NULL,
+  jumlah_digit_virtual_account INT NOT NULL DEFAULT 0,
   aktif          BOOLEAN      NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (kode)
@@ -51,7 +52,8 @@ CREATE TABLE virtual_account (
   id                    VARCHAR(36),
   id_bank               VARCHAR(36)  NOT NULL,
   id_tagihan            VARCHAR(36)  NOT NULL,
-  nomor_virtual_account VARCHAR(255) NOT NULL,
+  nomor VARCHAR(255),
+  va_status VARCHAR(255) NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id_bank) REFERENCES bank (id),
   FOREIGN KEY (id_tagihan) REFERENCES tagihan (id),
@@ -59,16 +61,18 @@ CREATE TABLE virtual_account (
 );
 
 CREATE TABLE pembayaran (
-  id                 VARCHAR(36),
-  id_tagihan         VARCHAR(36)    NOT NULL,
-  id_virtual_account VARCHAR(36),
-  waktu_transaksi    TIMESTAMP      NOT NULL,
-  jumlah             DECIMAL(19, 2) NOT NULL,
-  jenis_pembayaran   VARCHAR(255)   NOT NULL,
-  referensi          VARCHAR(255)   NOT NULL,
-  keterangan         VARCHAR(255),
+  id                   VARCHAR(36),
+  id_tagihan           VARCHAR(36)    NOT NULL,
+  id_bank              VARCHAR(36),
+  id_virtual_account   VARCHAR(36),
+  waktu_transaksi      TIMESTAMP      NOT NULL,
+  jumlah               DECIMAL(19, 2) NOT NULL,
+  jenis_pembayaran     VARCHAR(255)   NOT NULL,
+  referensi            VARCHAR(255)   NOT NULL,
+  keterangan           VARCHAR(255),
   PRIMARY KEY (id),
   FOREIGN KEY (id_tagihan) REFERENCES tagihan (id),
+  FOREIGN KEY (id_bank) REFERENCES bank (id),
   FOREIGN KEY (id_virtual_account) REFERENCES virtual_account (id)
 );
 

@@ -5,6 +5,7 @@ import id.ac.tazkia.payment.virtualaccount.entity.Bank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
@@ -25,7 +26,7 @@ public class BankController {
     @GetMapping("/bank/list")
     public ModelMap listBank(){
         return new ModelMap()
-                .addAttribute("daftarBank", bankDao.findAll())
+                .addAttribute("daftarBank", bankDao.findAll(new Sort(Sort.Direction.ASC, "kode")))
                 .addAttribute("pageTitle", "Daftar Bank");
     }
 }

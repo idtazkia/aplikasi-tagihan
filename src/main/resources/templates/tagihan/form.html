@@ -22,7 +22,6 @@
                         <div class="card-body">
                             <form class="form-horizontal" th:method="post"  th:action="@{/tagihan/form}" th:object="${tagihan}">
                                 <p th:if="${#fields.hasErrors('all')}" th:errors="*{all}">Invalid Input</p>
-                                <input type="hidden" th:field="*{id}">
                                 <div th:class="${#fields.hasErrors('jenisTagihan')}? 'row form-group has-danger' : 'row form-group'">
                                     <label class="col-sm-3 form-control-label">Jenis Tagihan</label>
                                     <div class="col-sm-9">

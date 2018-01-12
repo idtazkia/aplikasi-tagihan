@@ -3,10 +3,14 @@ package id.ac.tazkia.payment.virtualaccount;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.thymeleaf.dialect.springdata.SpringDataDialect;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
 @SpringBootApplication
+@EnableScheduling
+@EnableKafka
 public class PaymentVirtualAccountApplication {
 
 	public static void main(String[] args) {

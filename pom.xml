@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>id.ac.tazkia.payment.virtualaccount</groupId>
-    <artifactId>payment-virtualaccount</artifactId>
+    <artifactId>aplikasi-tagihan</artifactId>
     <version>${revision}</version>
     <packaging>jar</packaging>
 
-    <name>payment-virtualaccount</name>
+    <name>aplikasi-tagihan</name>
     <description>Demo project for Spring Boot</description>
 
     <parent>
@@ -25,10 +25,14 @@
         <thymeleaf.version>3.0.8.RELEASE</thymeleaf.version>
         <thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
         <thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>
-        <revision>1.1.0-M.001</revision>
+        <revision>1.1.0-M.003</revision>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -60,6 +64,10 @@
         <dependency>
             <groupId>org.thymeleaf.extras</groupId>
             <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

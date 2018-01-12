@@ -1,5 +1,6 @@
 package id.ac.tazkia.payment.virtualaccount;
 
+import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
 import org.junit.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -17,8 +18,10 @@ public class StringFormattingTests {
         Long runningNumber = 10L;
         System.out.println(String.format("%06d", runningNumber));
 
-        String nim = "123";
-        System.out.println(String.format("%10s", nim).replace(' ', '0'));
+        System.out.println(VirtualAccountNumberGenerator
+                .generateVirtualAccountNumber("123", 8));
+        System.out.println(VirtualAccountNumberGenerator
+                .generateVirtualAccountNumber("1234567890", 8));
     }
 
     @Test

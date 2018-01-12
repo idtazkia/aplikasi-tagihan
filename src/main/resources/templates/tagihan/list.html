@@ -49,12 +49,8 @@
                                 <td th:text="${tagihan.tanggalTagihan +'/'+ tagihan.tanggalJatuhTempo}">Yayasan Tazkia</td>
                                 <td th:text="${tagihan.statusPembayaran}">Yayasan Tazkia</td>
                                 <td>
-                                    <a th:href="@{/tagihan/form(id=${tagihan.id})}">
-                                        <button class="btn btn-info btn-sm ladda-button"><i class="fa fa-pencil"></i> edit</button>
-                                    </a>
-                                    <a th:href="@{/pembayaran/form(tagihan=${tagihan.id})}">
-                                        <button class="btn btn-primary btn-sm ladda-button"><i class="fa fa-handshake-o"></i> Bayar</button>
-                                    </a>
+                                    <a th:href="@{/va/list(tagihan=${tagihan.id})}" class="btn btn-xs">virtual account</a><br>
+                                    <a th:href="@{/pembayaran/list(tagihan=${tagihan.id})}" class="btn btn-xs">riwayat pembayaran</a>
                                 </td>
                             </tr>
                             </tbody>
@@ -64,7 +60,6 @@
             </div>
         </div>
     </div>
-    <script th:src="@{/js/aplikasi/debitur.js}"></script>
 </section>
 </body>
 </html>

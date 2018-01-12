@@ -31,6 +31,10 @@ public class Pembayaran {
     private Tagihan tagihan;
 
     @ManyToOne
+    @JoinColumn(name = "id_bank")
+    private Bank bank;
+    
+    @ManyToOne
     @JoinColumn(name = "id_virtual_account")
     private VirtualAccount virtualAccount;
 
@@ -104,6 +108,13 @@ public class Pembayaran {
     public void setKeterangan(String keterangan) {
         this.keterangan = keterangan;
     }
-    
+
+    public Bank getBank() {
+        return bank;
+    }
+
+    public void setBank(Bank bank) {
+        this.bank = bank;
+    }
     
 }
