@@ -29,9 +29,24 @@ INSERT INTO s_role_permission (id_role, id_permission) VALUES
 INSERT INTO s_user (id, active, username, id_role) VALUES
   ('u001', true, 'user001', 'staff');
 
+INSERT INTO s_user (id, active, username, id_role) VALUES
+  ('u002', true, 'user002', 'manager');
+
+INSERT INTO s_user (id, active, username, id_role) VALUES
+  ('u003', true, 'user003', 'superuser');
+
 INSERT INTO s_user_password (id_user, password) VALUES
   -- password : test123
   ('u001', '$2a$13$d2GZHGr6gedUiNk8r3Pbo.Jc8eH7oBVdTta.WGMG9g1dO9T4hlNPG');
+
+INSERT INTO s_user_password (id_user, password) VALUES
+  -- password : test123
+  ('u002', '$2a$13$d2GZHGr6gedUiNk8r3Pbo.Jc8eH7oBVdTta.WGMG9g1dO9T4hlNPG');
+
+INSERT INTO s_user_password (id_user, password) VALUES
+  -- password : test123
+  ('u003', '$2a$13$d2GZHGr6gedUiNk8r3Pbo.Jc8eH7oBVdTta.WGMG9g1dO9T4hlNPG');
+
 
 INSERT INTO s_user (id, active, username, id_role) VALUES
   ('c001', true, 'client001', 'clientapp');

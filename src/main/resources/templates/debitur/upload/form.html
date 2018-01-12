@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-if="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Tagihan</title>
+</head>
+<body>
+
+<section layout:fragment="content" class="tables">
+    <div id="formUploadDebitur">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-10">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <h3 class="h4">Upload Debitur</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <a th:href="@{/contoh/debitur}" class="btn btn-xs btn-primary">Contoh File Debitur</a>
+                            </p>
+                            <form class="form-horizontal" th:method="post"  th:action="@{/debitur/upload/form}" enctype="multipart/form-data">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">File Debitur</label>
+                                    <div class="col-sm-9">
+                                        <input id="fileDebitur" type="file"
+                                               name="fileDebitur"
+                                               placeholder="File Debitur"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Pakai Judul Kolom</label>
+                                    <div class="col-sm-9">
+                                        <input id="pakaiHeader" type="checkbox"
+                                               name="pakaiHeader" checked value="true"
+                                               class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-9 offset-sm-3">
+                                        <input type="submit" value="Simpan" class="btn btn-primary">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/aplikasi/debitur.js}"></script>
+</section>
+</body>
+</html>

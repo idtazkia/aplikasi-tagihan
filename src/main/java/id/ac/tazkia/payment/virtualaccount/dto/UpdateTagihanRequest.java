@@ -15,7 +15,7 @@ public class UpdateTagihanRequest {
     private BigDecimal nilaiTagihan;
 
     @NotNull
-    private Date tanggalKadaluarsa;
+    private Date tanggalJatuhTempo;
 
     @NotNull @NotEmpty
     private String keterangan;

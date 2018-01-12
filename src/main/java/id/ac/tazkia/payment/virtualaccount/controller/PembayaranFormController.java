@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class PembayaranFormController {
     @Autowired private PembayaranDao pembayaranDao;
     
-    @GetMapping("/pembayaran/list")
+    @GetMapping("/pembayaran/listt")
     public ModelMap findAllHtml() {
         return new ModelMap()
                 .addAttribute("data", pembayaranDao.findAll());

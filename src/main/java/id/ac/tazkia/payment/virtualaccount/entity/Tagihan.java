@@ -1,10 +1,10 @@
 package id.ac.tazkia.payment.virtualaccount.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -31,18 +31,20 @@ public class Tagihan {
     private JenisTagihan jenisTagihan;
 
     @NotNull @Min(0)
-    private BigDecimal jumlahTagihan;
+    private BigDecimal nilaiTagihan;
 
     @NotNull @Min(0)
     private BigDecimal jumlahPembayaran = BigDecimal.ZERO;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
     @Temporal(TemporalType.DATE)
-    private Date tanggalKadaluarsa;
+    private Date tanggalJatuhTempo;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    private Date tanggalTagihan = new Date();
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
