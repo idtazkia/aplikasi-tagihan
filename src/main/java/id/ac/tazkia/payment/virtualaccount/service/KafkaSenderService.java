@@ -23,7 +23,7 @@ public class KafkaSenderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSenderService.class);
     private static final SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
 
-    @Value("${kafka.topic.bni.va.request}") private String kafkaTopicBniVaRequest;
+    @Value("${kafka.topic.va.request}") private String kafkaTopicBniVaRequest;
 
     @Autowired private ObjectMapper objectMapper;
     @Autowired private KafkaTemplate<String, String> kafkaTemplate;
@@ -47,6 +47,7 @@ public class KafkaSenderService {
                                 .expireDate(FORMATTER_ISO_DATE.format(va.getTagihan().getTanggalJatuhTempo()))
                                 .invoiceNumber(va.getTagihan().getNomor())
                                 .name(va.getTagihan().getDebitur().getNama())
+                                .bankId(va.getBank().getId())
                                 .build();
 
                         String json = objectMapper.writeValueAsString(vaRequest);

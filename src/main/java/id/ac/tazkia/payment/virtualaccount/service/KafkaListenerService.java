@@ -27,7 +27,7 @@ public class KafkaListenerService {
     @Autowired private TagihanDao tagihanDao;
     @Autowired private PembayaranDao pembayaranDao;
 
-    @KafkaListener(topics = "${kafka.topic.bni.va.response}", group = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${kafka.topic.va.response}", group = "${spring.kafka.consumer.group-id}")
     public void handleVaResponse(String message) {
         try {
             LOGGER.debug("Terima message : {}", message);
