@@ -6,6 +6,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity @Data
 public class JenisTagihan {
@@ -21,4 +23,12 @@ public class JenisTagihan {
 
     @NotNull @Enumerated(EnumType.STRING)
     private TipePembayaran tipePembayaran;
+
+    @ManyToMany
+    @JoinTable(
+            name = "jenis_tagihan_bank",
+            joinColumns = @JoinColumn(name = "id_jenis_tagihan"),
+            inverseJoinColumns = @JoinColumn(name = "id_bank")
+    )
+    private Set<Bank> daftarBank = new HashSet<>();
 }

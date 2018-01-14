@@ -60,6 +60,14 @@ CREATE TABLE virtual_account (
   UNIQUE (id_tagihan, id_bank)
 );
 
+CREATE TABLE jenis_tagihan_bank (
+  id_jenis_tagihan VARCHAR(36),
+  id_bank          VARCHAR(36),
+  PRIMARY KEY (id_jenis_tagihan, id_bank),
+  FOREIGN KEY (id_bank) REFERENCES bank (id),
+  FOREIGN KEY (id_jenis_tagihan) REFERENCES jenis_tagihan (id)
+);
+
 CREATE TABLE pembayaran (
   id               VARCHAR(36),
   id_tagihan       VARCHAR(36)    NOT NULL,
