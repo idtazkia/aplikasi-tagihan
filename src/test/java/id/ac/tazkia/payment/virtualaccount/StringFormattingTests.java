@@ -1,13 +1,16 @@
 package id.ac.tazkia.payment.virtualaccount;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
+import id.ac.tazkia.payment.virtualaccount.dto.VaRequestType;
+import id.ac.tazkia.payment.virtualaccount.entity.TipePembayaran;
 import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
 import org.junit.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -22,6 +25,26 @@ public class StringFormattingTests {
                 .generateVirtualAccountNumber("123", 8));
         System.out.println(VirtualAccountNumberGenerator
                 .generateVirtualAccountNumber("1234567890", 8));
+    }
+
+    @Test
+    public void testVaRequest() throws Exception {
+        SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
+        VaRequest vaRequest
+                = VaRequest.builder()
+                .accountType(TipePembayaran.CLOSED)
+                .requestType(VaRequestType.CREATE)
+                .accountNumber("123")
+                .amount(BigDecimal.TEN)
+                .description("Test VA")
+                .expireDate(FORMATTER_ISO_DATE.format(new Date()))
+                .invoiceNumber("123")
+                .name("Test Debitur")
+                .bankId("b123")
+                .build();
+
+        String json = new ObjectMapper().writeValueAsString(vaRequest);
+        System.out.println(json);
     }
 
     @Test

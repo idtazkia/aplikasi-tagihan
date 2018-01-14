@@ -1,6 +1,7 @@
 package id.ac.tazkia.payment.virtualaccount.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import id.ac.tazkia.payment.virtualaccount.entity.TipePembayaran;
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,6 +19,6 @@ public class VaRequest {
     private String phone;
     private BigDecimal amount;
     private String expireDate;
-    private AccountType accountType = AccountType.CLOSED;
+    private TipePembayaran accountType = TipePembayaran.CLOSED;
     private VaRequestType requestType = VaRequestType.CREATE;
 }

@@ -2,7 +2,6 @@ package id.ac.tazkia.payment.virtualaccount.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
-import id.ac.tazkia.payment.virtualaccount.dto.AccountType;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequestType;
 import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
@@ -37,7 +36,7 @@ public class KafkaSenderService {
                     try {
                         VaRequest vaRequest
                                 = VaRequest.builder()
-                                .accountType(AccountType.CLOSED)
+                                .accountType(va.getTagihan().getJenisTagihan().getTipePembayaran())
                                 .requestType(VaRequestType.CREATE)
                                 .accountNumber(VirtualAccountNumberGenerator.generateVirtualAccountNumber(va.getTagihan().getDebitur().getNomorDebitur(), va.getBank().getJumlahDigitVirtualAccount()))
                                 .amount(va.getTagihan().getNilaiTagihan())
