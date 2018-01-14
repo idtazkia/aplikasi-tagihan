@@ -30,7 +30,7 @@ public class KafkaSenderService {
 
     @Autowired private VirtualAccountDao virtualAccountDao;
 
-    @Scheduled(fixedDelay = 10)
+    @Scheduled(fixedDelay = 3000)
     public void prosesVaBaru() {
         virtualAccountDao.findByVaStatus(VaStatus.BARU)
                 .forEach((va -> {
