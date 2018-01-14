@@ -16,7 +16,6 @@ public class Bank {
     @Id @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
-
     @NotNull @NotEmpty @Column(unique = true)
     private String kode;
     @NotNull @NotEmpty
@@ -25,8 +24,6 @@ public class Bank {
     private String nomorRekening;
     @NotNull @NotEmpty
     private String namaRekening;
-    @NotNull
-    private Boolean aktif = Boolean.TRUE;
     @NotNull @Min(0)
     private Integer jumlahDigitVirtualAccount = 0;
 }

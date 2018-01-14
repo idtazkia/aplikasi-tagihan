@@ -25,13 +25,11 @@ public class TagihanService {
     public void createTagihan(Tagihan t) {
         t.setNilaiTagihan(t.getNilaiTagihan().setScale(0, RoundingMode.DOWN));
         tagihanDao.save(t);
-        for (Bank b : bankDao.findAll()) {
-            if (b.getAktif()) {
-                VirtualAccount va = new VirtualAccount();
-                va.setBank(b);
-                va.setTagihan(t);
-                virtualAccountDao.save(va);
-            }
+        for (Bank b : t.getJenisTagihan().getDaftarBank()) {
+            VirtualAccount va = new VirtualAccount();
+            va.setBank(b);
+            va.setTagihan(t);
+            virtualAccountDao.save(va);
         }
 
     }

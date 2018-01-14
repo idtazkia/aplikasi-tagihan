@@ -1,8 +1,8 @@
-insert into bank (id, kode, nama, nomor_rekening, nama_rekening, jumlah_digit_virtual_account, aktif) values
-  ('bnisy001', '009', 'BNI Syariah YTC','1234567890', 'Yayasan Tazkia Cendekia', 12, false);
+insert into bank (id, kode, nama, nomor_rekening, nama_rekening, jumlah_digit_virtual_account) values
+  ('bnisy001', '009', 'BNI Syariah YTC','1234567890', 'Yayasan Tazkia Cendekia', 12);
 
-insert into bank (id, kode, nama, nomor_rekening, nama_rekening, jumlah_digit_virtual_account, aktif) values
-  ('bsm001', '451', 'BSM STEI Tazkia', '9876543210', 'STEI Tazkia', 8, false);
+insert into bank (id, kode, nama, nomor_rekening, nama_rekening, jumlah_digit_virtual_account) values
+  ('bsm001', '451', 'BSM STEI Tazkia', '9876543210', 'STEI Tazkia', 8);
 
 insert into jenis_tagihan (id, kode, nama, tipe_pembayaran) values
   ('pmb2017', '01', 'Pendaftaran 2017', 'CLOSED_PAYMENT');

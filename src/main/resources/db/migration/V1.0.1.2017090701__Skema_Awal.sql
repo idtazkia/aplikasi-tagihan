@@ -5,7 +5,6 @@ CREATE TABLE bank (
   nomor_rekening VARCHAR(255) NOT NULL,
   nama_rekening  VARCHAR(255) NOT NULL,
   jumlah_digit_virtual_account INT NOT NULL DEFAULT 0,
-  aktif          BOOLEAN      NOT NULL,
   PRIMARY KEY (id),
   UNIQUE (kode)
 );
