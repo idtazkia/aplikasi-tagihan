@@ -65,6 +65,7 @@ public class TagihanController {
     public ModelMap displayForm(@RequestParam(name = "id", required = false) Tagihan tagihan) {
         if (tagihan == null) {
             tagihan = new Tagihan();
+            tagihan.setNomor("--- otomatis ditentukan sistem ---");
         }
 
         return new ModelMap().addAttribute("tagihan", tagihan);

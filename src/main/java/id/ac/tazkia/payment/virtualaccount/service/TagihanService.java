@@ -12,16 +12,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Service @Transactional
 public class TagihanService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagihanService.class);
 
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private static final String TIMEZONE = "GMT+07:00";
+
+    @Autowired private RunningNumberService runningNumberService;
     @Autowired private TagihanDao tagihanDao;
     @Autowired private VirtualAccountDao virtualAccountDao;
 
     public void createTagihan(Tagihan t) {
         t.setNilaiTagihan(t.getNilaiTagihan().setScale(0, RoundingMode.DOWN));
+        if (t.getId() == null) {
+            String datePrefix = DATE_FORMAT.format(LocalDateTime.now(ZoneId.of(TIMEZONE)));
+            Long runningNumber = runningNumberService.getNumber(datePrefix);
+            String nomorTagihan = datePrefix + t.getJenisTagihan().getKode() + String.format("%06d", runningNumber);
+            t.setNomor(nomorTagihan);
+        }
         tagihanDao.save(t);
         for (Bank b : t.getJenisTagihan().getDaftarBank()) {
             VirtualAccount va = new VirtualAccount();
