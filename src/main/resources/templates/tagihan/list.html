@@ -29,7 +29,7 @@
                                 <th>Nomor</th>
                                 <th>Jenis</th>
                                 <th>Debitur</th>
-                                <th>Nilai</th>
+                                <th>Tagihan/Pembayaran</th>
                                 <th>Terbit/Jatuh Tempo</th>
                                 <th>Status</th>
                                 <th>&nbsp;</th>
@@ -41,7 +41,10 @@
                                 <td th:text="${tagihan.nomor}">011</td>
                                 <td th:text="${tagihan.jenisTagihan.nama}">011</td>
                                 <td th:text="${tagihan.debitur.nomorDebitur + ' - ' + tagihan.debitur.nama}">1234567890</td>
-                                <td th:text="${tagihan.nilaiTagihan}">Yayasan Tazkia</td>
+                                <td>
+                                    <span th:text="${tagihan.nilaiTagihan}">Rp. xxx</span> <br>
+                                    <span th:text="${tagihan.jumlahPembayaran}">Rp. xxx</span>
+                                </td>
                                 <td th:text="${tagihan.tanggalTagihan +'/'+ tagihan.tanggalJatuhTempo}">Yayasan Tazkia</td>
                                 <td th:text="${tagihan.statusPembayaran}">Yayasan Tazkia</td>
                                 <td>
