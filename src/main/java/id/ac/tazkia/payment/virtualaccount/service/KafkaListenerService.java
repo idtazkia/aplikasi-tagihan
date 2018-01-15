@@ -6,6 +6,7 @@ import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
 import id.ac.tazkia.payment.virtualaccount.dto.VaPayment;
+import id.ac.tazkia.payment.virtualaccount.dto.VaRequestStatus;
 import id.ac.tazkia.payment.virtualaccount.dto.VaResponse;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
 import org.slf4j.Logger;
@@ -36,6 +37,12 @@ public class KafkaListenerService {
             VirtualAccount va = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.SEDANG_PROSES, vaResponse.getInvoiceNumber());
             if (va == null) {
                 LOGGER.warn("Tagihan dengan nomor {} tidak ditemukan", vaResponse.getInvoiceNumber());
+                return;
+            }
+
+            if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
+                va.setVaStatus(VaStatus.AKTIF);
+                virtualAccountDao.save(va);
                 return;
             }
 
@@ -77,6 +84,9 @@ public class KafkaListenerService {
                 tagihan.setStatusPembayaran(StatusPembayaran.DIBAYAR_SEBAGIAN);
             } else {
                 tagihan.setStatusPembayaran(StatusPembayaran.LUNAS);
+                VirtualAccount va = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
+                va.setVaStatus(VaStatus.NONAKTIF);
+                virtualAccountDao.save(va);
             }
             tagihan.setJumlahPembayaran(akumulasiPembayaran);
 
