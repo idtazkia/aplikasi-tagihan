@@ -1,6 +1,8 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
+import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
 import id.ac.tazkia.payment.virtualaccount.dao.JenisTagihanDao;
+import id.ac.tazkia.payment.virtualaccount.entity.Bank;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,12 +19,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
 
 import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.Set;
 
 @Transactional
 @Controller
 public class JenisTagihanController {
     @Autowired
     private JenisTagihanDao jenisTagihanDao;
+
+    @Autowired
+    private BankDao bankDao;
 
     @GetMapping("/api/client/jenistagihan/")
     public Page<JenisTagihan> findAll(Pageable page) {
@@ -58,5 +65,52 @@ public class JenisTagihanController {
         jenisTagihanDao.save(jenisTagihan);
         status.setComplete();
         return "redirect:list";
+    }
+
+    @GetMapping("/jenistagihan/bank")
+    public ModelMap jenisTagihanBank(@RequestParam(value = "id") JenisTagihan jenisTagihan) {
+        Iterable<Bank> pilihanBankJenisTagihan = bankDao.findAll();
+        if (!jenisTagihan.getDaftarBank().isEmpty()) {
+            Set<String> idBanks = new HashSet<>();
+            jenisTagihan.getDaftarBank().forEach(bank -> {
+                idBanks.add(bank.getId());
+            });
+            pilihanBankJenisTagihan = bankDao.findByIdNotIn(idBanks);
+        }
+
+        return new ModelMap()
+                .addAttribute("jenisTagihan", jenisTagihan)
+                .addAttribute("pilihanBankJenisTagihan", pilihanBankJenisTagihan);
+    }
+
+    @PostMapping("/jenistagihan/bank")
+    public String tambahJenisTagihanBank(@RequestParam(value = "id") JenisTagihan jenisTagihan, @RequestParam(name = "bank") Bank bank) {
+        if (jenisTagihan == null) {
+            return "redirect:/jenistagihan/list";
+        }
+
+        if (bank == null) {
+            return "redirect:/jenistagihan/bank?id=" + jenisTagihan.getId();
+        }
+
+        jenisTagihan.getDaftarBank().add(bank);
+        jenisTagihanDao.save(jenisTagihan);
+        return "redirect:/jenistagihan/bank?id=" + jenisTagihan.getId();
+    }
+
+    @PostMapping("/jenistagihan/bank/hapus")
+    public String hapusJenisTagihanBank(@RequestParam(value = "id") JenisTagihan jenisTagihan, @RequestParam(name = "bank") Bank bank) {
+        if (jenisTagihan == null) {
+            return "redirect:/jenistagihan/list";
+        }
+
+        if (bank == null) {
+            return "redirect:/jenistagihan/bank?id=" + jenisTagihan.getId();
+        }
+
+        jenisTagihan.getDaftarBank().remove(bank);
+        jenisTagihanDao.save(jenisTagihan);
+
+        return "redirect:/jenistagihan/bank?id=" + jenisTagihan.getId();
     }
 }

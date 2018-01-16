@@ -1,8 +1,8 @@
 package id.ac.tazkia.payment.virtualaccount.entity;
 
 public enum TipePembayaran {
-    OPEN_PAYMENT("Jumlah Bebas"),
-    CLOSED_PAYMENT("Jumlah Tertentu"),
+    OPEN("Jumlah Bebas"),
+    CLOSED("Jumlah Tertentu"),
     INSTALLMENT("Cicilan");
 
     private final String label;

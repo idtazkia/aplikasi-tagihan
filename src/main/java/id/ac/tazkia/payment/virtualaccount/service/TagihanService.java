@@ -1,6 +1,5 @@
 package id.ac.tazkia.payment.virtualaccount.service;
 
-import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
 import id.ac.tazkia.payment.virtualaccount.entity.Bank;
@@ -20,18 +19,15 @@ public class TagihanService {
 
     @Autowired private TagihanDao tagihanDao;
     @Autowired private VirtualAccountDao virtualAccountDao;
-    @Autowired private BankDao bankDao;
 
     public void createTagihan(Tagihan t) {
         t.setNilaiTagihan(t.getNilaiTagihan().setScale(0, RoundingMode.DOWN));
         tagihanDao.save(t);
-        for (Bank b : bankDao.findAll()) {
-            if (b.getAktif()) {
-                VirtualAccount va = new VirtualAccount();
-                va.setBank(b);
-                va.setTagihan(t);
-                virtualAccountDao.save(va);
-            }
+        for (Bank b : t.getJenisTagihan().getDaftarBank()) {
+            VirtualAccount va = new VirtualAccount();
+            va.setBank(b);
+            va.setTagihan(t);
+            virtualAccountDao.save(va);
         }
 
     }

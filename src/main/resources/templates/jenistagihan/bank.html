@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Jenis Tagihan - Bank</title>
+</head>
+<body>
+<section layout:fragment="content" class="tables">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <h3 class="h4">Jenis Tagihan - Bank</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                        <form class="form-horizontal"
+                              th:if="${pilihanBankJenisTagihan.iterator().hasNext()}"
+                              th:method="post"  th:action="@{/jenistagihan/bank}">
+                            <input type="hidden" name="id" th:value="${jenisTagihan.id}">
+                            <div class="row form-group">
+                                <label class="col-sm-3 form-control-label">Tambahkan Bank</label>
+                                <div class="col-sm-9">
+                                    <select name="bank" th:class="form-control">
+                                        <option th:each="bank : ${pilihanBankJenisTagihan}"
+                                                th:value="${bank.id}"
+                                                th:text="${bank.kode + ' - ' + bank.nama}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-9 offset-sm-3">
+                                    <input type="submit" value="Simpan" class="btn btn-primary">
+                                </div>
+                            </div>
+                        </form>
+                        </p>
+                        <table class="table table-striped table-hover" th:unless="${jenisTagihan.daftarBank.isEmpty()}">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="bank, rowStat : ${jenisTagihan.daftarBank}">
+                                <th scope="row" th:text="${rowStat.count}">1</th>
+                                <td th:text="${bank.kode}">011</td>
+                                <td th:text="${bank.nama}">BNI</td>
+                                <td>
+                                    <form th:method="post"  th:action="@{/jenistagihan/bank/hapus}" >
+                                        <input type="hidden" name="id" th:value="${jenisTagihan.id}">
+                                        <input type="hidden" name="bank" th:value="${bank.id}">
+                                        <input type="submit" value="hapus" class="btn btn-xs">
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

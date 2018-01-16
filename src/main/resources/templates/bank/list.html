@@ -24,7 +24,6 @@
                                 <th>Nama Bank</th>
                                 <th>No. Rekening</th>
                                 <th>Nama Rekening</th>
-                                <th>Status</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -34,7 +33,6 @@
                                 <td th:text="${bank.nama}">BNI</td>
                                 <td th:text="${bank.nomorRekening}">1234567890</td>
                                 <td th:text="${bank.namaRekening}">Yayasan Tazkia</td>
-                                <td th:text="*{bank.aktif}? 'Aktif' :'Tidak Aktif'">Aktif</td>
                             </tr>
                             </tbody>
                         </table>
