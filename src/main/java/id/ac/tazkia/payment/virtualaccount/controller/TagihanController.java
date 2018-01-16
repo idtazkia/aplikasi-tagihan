@@ -32,6 +32,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.springframework.data.web.PageableDefault;
 
 @Controller
 @RequestMapping("/tagihan")
@@ -47,7 +48,7 @@ public class TagihanController {
     @Autowired private DebiturDao debiturDao;
 
     @GetMapping("/list")
-    public ModelMap listTagihan(Pageable pageable) {
+    public ModelMap listTagihan(@PageableDefault(size = 10) Pageable pageable) {
         return new ModelMap("listTagihan", tagihanDao.findAll(pageable));
     }
 
