@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -32,7 +33,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.springframework.data.web.PageableDefault;
 
 @Controller
 @RequestMapping("/tagihan")
@@ -48,7 +48,7 @@ public class TagihanController {
     @Autowired private DebiturDao debiturDao;
 
     @GetMapping("/list")
-    public ModelMap listTagihan(@PageableDefault(size = 10) Pageable pageable) {
+    public ModelMap listTagihan(@PageableDefault(size = 10, sort = "nomor") Pageable pageable) {
         return new ModelMap("listTagihan", tagihanDao.findAll(pageable));
     }
 
@@ -78,8 +78,27 @@ public class TagihanController {
         if (errors.hasErrors()) {
             return "tagihan/form";
         }
-        tagihanService.createTagihan(tagihan);
+        tagihanService.saveTagihan(tagihan);
         status.setComplete();
+        return "redirect:list";
+    }
+
+    @GetMapping("/update")
+    public ModelMap displayUpdateForm(@RequestParam Tagihan tagihan) {
+        return new ModelMap("tagihan", tagihan);
+    }
+
+    @PostMapping("/update")
+    public String processUpdateForm(@RequestParam Tagihan tagihan, @RequestParam BigDecimal nilaiTagihan, @RequestParam Date tanggalJatuhTempo) {
+        if (tagihan == null) {
+            LOGGER.warn("Update tagihan null");
+            return "redirect:list";
+        }
+
+        tagihan.setNilaiTagihan(nilaiTagihan);
+        tagihan.setTanggalJatuhTempo(tanggalJatuhTempo);
+
+        tagihanService.saveTagihan(tagihan);
         return "redirect:list";
     }
 
@@ -161,7 +180,7 @@ public class TagihanController {
                 }
 
                 try {
-                    tagihanService.createTagihan(t);
+                    tagihanService.saveTagihan(t);
                 } catch (Exception ex) {
                     LOGGER.warn(ex.getMessage(), ex);
                     errors.add(new UploadError(baris, "Gagal simpan ke database", content));

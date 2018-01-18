@@ -41,7 +41,7 @@ public class KafkaListenerService {
             }
 
             if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
-                va.setVaStatus(VaStatus.AKTIF);
+                va.setVaStatus(VaStatus.NONAKTIF);
                 virtualAccountDao.save(va);
                 return;
             }

@@ -1,6 +1,5 @@
 package id.ac.tazkia.payment.virtualaccount.entity;
 
-import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.validator.constraints.NotEmpty;
 
