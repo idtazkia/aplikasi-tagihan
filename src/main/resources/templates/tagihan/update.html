@@ -20,7 +20,7 @@
                             <h3 class="h4">Update Tagihan</h3>
                         </div>
                         <div class="card-body">
-                            <form class="form-horizontal" th:method="post"  th:action="@{/tagihan/form}">
+                            <form class="form-horizontal" th:method="post"  th:action="@{/tagihan/update}" th:object="${updateTagihan}">
                                 <input type="hidden" name="tagihan" th:value="${tagihan.id}">
                                 <div class="row form-group">
                                     <label class="col-sm-3 form-control-label">Jenis Tagihan</label>
@@ -42,12 +42,15 @@
                                         <label class="form-control-label" th:text="${tagihan.nomor}">Debitur</label>
                                     </div>
                                 </div>
-                                <div class="row form-group">
+                                <div th:class="${#fields.hasErrors('nilaiTagihan')}? 'row form-group has-danger' : 'row form-group'">
                                     <label class="col-sm-3 form-control-label">Nilai Tagihan</label>
                                     <div class="col-sm-4">
                                         <input id="nilaiTagihan" type="text" placeholder="Nilai Tagihan"
                                                name="nilaiTagihan"
-                                               th:value="${tagihan.nilaiTagihan}" class="form-control">
+                                               th:field="*{nilaiTagihan}"
+                                               th:errorclass="form-control-feedback" th:class="form-control"
+                                        >
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('nilaiTagihan')}" th:errors="*{nilaiTagihan}">Example help text that remains unchanged.</small>
                                     </div>
                                 </div>
                                 <div class="row form-group">
@@ -56,12 +59,15 @@
                                         <label class="form-control-label" th:text="${tagihan.tanggalTagihan}">Debitur</label>
                                     </div>
                                 </div>
-                                <div class="row form-group">
+                                <div th:class="${#fields.hasErrors('tanggalJatuhTempo')}? 'row form-group has-danger' : 'row form-group'">
                                     <label class="col-sm-3 form-control-label">Tanggal Jatuh Tempo</label>
                                     <div class="col-sm-4">
                                         <input id="tanggalJatuhTempo" type="text" placeholder="yyyy-MM-dd"
                                                name="tanggalJatuhTempo"
-                                               th:value="${tagihan.tanggalJatuhTempo}" class="form-control">
+                                               th:field="*{tanggalJatuhTempo}"
+                                               th:errorclass="form-control-feedback" th:class="form-control"
+                                        >
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('tanggalJatuhTempo')}" th:errors="*{tanggalJatuhTempo}">Example help text that remains unchanged.</small>
                                     </div>
                                 </div>
                                 <div class="form-group row">
