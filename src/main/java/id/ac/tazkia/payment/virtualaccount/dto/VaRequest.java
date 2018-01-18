@@ -19,6 +19,6 @@ public class VaRequest {
     private String phone;
     private BigDecimal amount;
     private String expireDate;
-    private TipePembayaran accountType = TipePembayaran.CLOSED;
-    private VaRequestType requestType = VaRequestType.CREATE;
+    @Builder.Default private TipePembayaran accountType = TipePembayaran.CLOSED;
+    @Builder.Default private VaRequestType requestType = VaRequestType.CREATE;
 }
