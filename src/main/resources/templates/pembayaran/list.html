@@ -1,55 +1,95 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-if="http://www.w3.org/1999/xhtml"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       layout:decorate="~{layout}">
-<head>
-    <meta charset="UTF-8">
-    <title>Daftar Pembayaran</title>
-</head>
-<body>
-<section layout:fragment="content" class="tables">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-header d-flex align-items-center">
-                        <h3 class="h4">Daftar Pembayaran</h3>
-                    </div>
-                    <div class="card-body">
-                        <h4 th:unless="${listPembayaran.numberOfElements}">Tidak ada data pembayaran</h4>
-                        <table class="table table-striped table-hover" th:if="${listPembayaran.numberOfElements}">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Tanggal Pembayaran</th>
-                                <th>Nomor Tagihan</th>
-                                <th>Atas Nama</th>
-                                <th>Nilai Tagihan</th>
-                                <th>Nilai Pembayaran</th>
-                                <th>Bank</th>
-                                <th>Keterangan</th>
-                                <th>Status Tagihan</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="p, rowStat : ${listPembayaran}">
-                                <th scope="row" th:text="${rowStat.count}">1</th>
-                                <td th:text="${p.waktuTransaksi}">011</td>
-                                <td th:text="${p.tagihan.nomor}">011</td>
-                                <td th:text="${p.tagihan.debitur.nomorDebitur + ' - ' + p.tagihan.debitur.nama}">1234567890</td>
-                                <td th:text="${p.tagihan.nilaiTagihan}">Yayasan Tazkia</td>
-                                <td th:text="${p.jumlah}">Yayasan Tazkia</td>
-                                <td th:text="${p.bank.nama}">Yayasan Tazkia</td>
-                                <td th:text="${p.keterangan}">Yayasan Tazkia</td>
-                                <td th:text="${p.tagihan.statusPembayaran}">Yayasan Tazkia</td>
-                            </tr>
-                            </tbody>
-                        </table>
+    <head>
+        <meta charset="UTF-8">
+        <title>Data Pembayaran</title>
+    </head>
+    <body>
+        <section layout:fragment="content" class="tables">
+            <div id="daftarDebitur">
+                <div class="container-fluid">
+                    <p>
+                        <a th:href="@{/pembayaran/form}" class="btn btn-primary"><i class="fa fa-plus"></i> Input Pembayaran</a>
+                    </p>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-header d-flex align-items-center">
+                                    <h3 class="h4">Cari Data Pembayaran</h3>
+                                </div>
+                                <div class="card-body">
+                                    <form class="form-inline">
+                                        <div class="form-group" style="margin-top: 10px">
+                                            <div class="input-group-btn search-panel">
+                                                <select name="search_param" id="search_param" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                    <option value="" hidden="">Filter</option>
+                                                    <option value="">Tanggal</option>
+                                                    <option value="">Bank</option>
+                                                    <option value="">Nama Siswa</option>
+                                                    <option value="">Jenis Tagihan</option>
+                                                </select>
+                                            </div>     
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="searchSiswa" class="sr-only">Search</label>
+                                            <input type="text" name="search" placeholder="Nama Tagihan" class="mx-sm-3 form-control form-control" id="myInput">
+                                            <button data-style="expand-right" data-size="s" class="btn btn-info ladda-button"><span class="ladda-label" data-toggle="collapse" data-target="#demo"><i class="fa fa-search"></i> Cari</span></button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="card"><!-- v-if="sudahDicari" -->
+                                <div class="card-header d-flex align-items-center">
+                                    <h3 class="h4">Daftar Pembayaran</h3>
+                                </div>
+                                <div class="card-body">
+                                    <!--  <div v-if="sudahDicari && dataDebitur != null && dataDebitur.totalElements < 1">
+                                         {{ this.searchedKeyword }} tidak ditemukan
+                                     </div> -->
+                                    <table class="table table-striped table-hover"><!-- v-if="dataDebitur != null && dataDebitur.numberOfElements > 0" -->
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Waktu Transaksi</th>
+                                                <th>Jenis Pembayaran</th>
+                                                <th>Tagihan</th>
+                                                <th>Virtual Account</th>
+                                                <th>Jumlah</th>
+                                                <th>Referensi Bank</th>
+                                                <th>Keterangan</th>
+                                                <th>&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="pembayaran, rowStat : ${data.content}">
+                                                <th>1</th>
+                                                <td th:text="${pembayaran.waktuTransaksi}"></td>
+                                                <td th:text="${pembayaran.jenisPembayaran}"></td>
+                                                <td th:text="${pembayaran.tagihan}"></td>
+                                                <td th:text="${pembayaran.virtualAccount}"></td>
+                                                <td th:text="${pembayaran.jumlah}"></td>
+                                                <td th:text="${pembayaran.referensi}"></td>
+                                                <td th:text="${pembayaran.keterangan}"></td>
+                                                <td>
+                                                    <button data-style="expand-right" data-size="s" class="btn btn-info btn-sm ladda-button"><span class="ladda-label"><i class="fa fa-pencil"></i> edit</span></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-</body>
+            <script th:src="@{/js/aplikasi/debitur.js}"></script>
+        </section>
+    </body>
 </html>

@@ -11,77 +11,105 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.support.SessionStatus;
 import java.util.List;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.ui.Model;
 
-@Transactional @Controller
+@Transactional
+@Controller
 public class DebiturController {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DebiturController.class);
 
-    @Autowired private DebiturDao debiturDao;
-    @Autowired private TagihanDao tagihanDao;
+    @Autowired
+    private DebiturDao debiturDao;
+    @Autowired
+    private TagihanDao tagihanDao;
 
     @Autowired
     private Validator validator;
 
     @PreAuthorize("hasAuthority('VIEW_DEBITUR')")
-    @GetMapping("/api/client/debitur/") @ResponseBody
-    public Page<Debitur> findAll(Pageable page){
+    @GetMapping("/api/client/debitur/")
+    @ResponseBody
+    public Page<Debitur> findAll(Pageable page) {
         return debiturDao.findAll(page);
     }
 
     @PreAuthorize("hasAuthority('EDIT_DEBITUR')")
-    @PostMapping("/api/client/debitur/") @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody @Valid Debitur s){
+    @PostMapping("/api/client/debitur/")
+    public String create(@ModelAttribute @Valid Debitur s) {
         debiturDao.save(s);
+
+        return "redirect:/debitur/list";
     }
 
     @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")
-    @GetMapping("/api/client/debitur/{id}/tagihan") @ResponseBody
-    public Page<Tagihan> findTagihanOutstandingByDebitur(Debitur s, Pageable page){
+    @GetMapping("/api/client/debitur/{id}/tagihan")
+    @ResponseBody
+    public Page<Tagihan> findTagihanOutstandingByDebitur(Debitur s, Pageable page) {
         return tagihanDao.findByDebiturAndStatusPembayaranInOrderByUpdatedAtDesc(s,
                 Arrays.asList(StatusPembayaran.BELUM_DIBAYAR, StatusPembayaran.DIBAYAR_SEBAGIAN), page);
     }
 
     @PreAuthorize("hasAuthority('VIEW_DEBITUR')")
-    @GetMapping("/api/debitur/") @ResponseBody
-    public Page<Debitur> findAll(String search, Pageable page){
+    @GetMapping("/api/debitur/")
+    @ResponseBody
+    public Page<Debitur> findAll(String search, Pageable page) {
         return debiturDao.findByNomorDebiturOrNamaContainingIgnoreCase(search, search, page);
     }
 
     @PreAuthorize("hasAuthority('VIEW_DEBITUR')")
     @GetMapping("/debitur/list")
-    public void daftarDebitur(){ }
+    public String daftarDebitur(ModelMap mm, @RequestParam(value = "key", required = false) String key, 
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<Debitur> result;
+        
+        if (key != null) {
+            result = debiturDao.findByNomorDebiturContainingIgnoreCase(key, pageable);
+            mm.addAttribute("key", key);
+        } else {
+            result = debiturDao.findAll(pageable);
+        }
+        
+        mm.addAttribute("data", result);
+
+        return "debitur/list";
+    }
 
     @ModelAttribute("pageTitle")
-    public String pageTitle(){
+    public String pageTitle() {
         return "Data Debitur";
     }
 
     @PreAuthorize("hasAuthority('EDIT_DEBITUR')")
     @GetMapping("/debitur/form")
-    public ModelMap tampilkanForm(@RequestParam(value = "id", required = false) Debitur debitur){
-        if(debitur == null){
+    public ModelMap tampilkanForm(@RequestParam(value = "id", required = false) String id) {
+        Debitur debitur;
+
+        if (id == null) {
             debitur = new Debitur();
+        } else {
+            debitur = debiturDao.findOne(id);
         }
+
         return new ModelMap("debitur", debitur);
     }
 
@@ -97,16 +125,26 @@ public class DebiturController {
         return "redirect:list";
     }
 
+    @PreAuthorize("hasAuthority('EDIT_DEBITUR')")
+    @GetMapping("/debitur/delete{id}")
+    public String hapusData(@RequestParam(value = "id", required = false) String id) {
+        debiturDao.delete(id);
+
+        return "redirect:/debitur/list";
+
+    }
+
     @GetMapping("/debitur/upload/form")
-    public void displayFormUpload(){}
+    public void displayFormUpload() {
+    }
 
     @PostMapping("/debitur/upload/form")
     public String processFormUpload(@RequestParam(required = false) Boolean pakaiHeader,
-                              MultipartFile fileDebitur,
-                              RedirectAttributes redirectAttrs) {
-        LOGGER.debug("Pakai Header : {}",pakaiHeader);
-        LOGGER.debug("Nama File : {}",fileDebitur.getName());
-        LOGGER.debug("Ukuran File : {}",fileDebitur.getSize());
+            MultipartFile fileDebitur,
+            RedirectAttributes redirectAttrs) {
+        LOGGER.debug("Pakai Header : {}", pakaiHeader);
+        LOGGER.debug("Nama File : {}", fileDebitur.getName());
+        LOGGER.debug("Ukuran File : {}", fileDebitur.getSize());
 
         List<UploadError> errors = new ArrayList<>();
         Integer baris = 0;
@@ -115,13 +153,13 @@ public class DebiturController {
             BufferedReader reader = new BufferedReader(new InputStreamReader(fileDebitur.getInputStream()));
             String content;
 
-            if((pakaiHeader != null && pakaiHeader)){
+            if ((pakaiHeader != null && pakaiHeader)) {
                 content = reader.readLine();
             }
 
             while ((content = reader.readLine()) != null) {
                 baris++;
-                String[] data = content.split(",",-1);
+                String[] data = content.split(",", -1);
                 if (data.length != 4) {
                     errors.add(new UploadError(baris, "Format data salah", content));
                     continue;
@@ -157,7 +195,7 @@ public class DebiturController {
                 }
 
                 if (debiturDao.findByNomorDebitur(d.getNomorDebitur()) != null) {
-                    errors.add(new UploadError(baris, "Nomor debitur "+data[0]+" sudah digunakan", content));
+                    errors.add(new UploadError(baris, "Nomor debitur " + data[0] + " sudah digunakan", content));
                     continue;
                 }
 
@@ -169,7 +207,7 @@ public class DebiturController {
                     continue;
                 }
             }
-        } catch (Exception err){
+        } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
             errors.add(new UploadError(0, "Format file salah", ""));
         }
@@ -184,5 +222,7 @@ public class DebiturController {
     }
 
     @GetMapping("/debitur/upload/hasil")
-    public void hasilFormUpload(){}
+    public void hasilFormUpload() {
+    }
+
 }

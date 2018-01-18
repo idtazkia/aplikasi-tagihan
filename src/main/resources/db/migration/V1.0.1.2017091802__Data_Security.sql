@@ -3,7 +3,9 @@ INSERT INTO s_permission (id, permission_value, permission_label) VALUES
   ('editdebitur', 'EDIT_DEBITUR', 'Edit Debitur'),
   ('viewdebitur', 'VIEW_DEBITUR', 'View Debitur'),
   ('edittagihan', 'EDIT_TAGIHAN', 'Edit Tagihan'),
-  ('viewtagihan', 'VIEW_TAGIHAN', 'View Tagihan');
+  ('viewtagihan', 'VIEW_TAGIHAN', 'View Tagihan'),
+  ('viewpembayaran', 'VIEW_PEMBAYARAN', 'View Pembayaran'),
+  ('editpembayaran', 'EDIT_PEMBAYARAN', 'Edit Pembayaran');
 
 INSERT INTO s_role (id, description, name) VALUES
   ('superuser', 'SUPERUSER', 'Super User'),
@@ -24,6 +26,8 @@ INSERT INTO s_role_permission (id_role, id_permission) VALUES
   ('superuser', 'edittagihan'),
   ('superuser', 'viewdebitur'),
   ('superuser', 'editdebitur'),
+  ('superuser', 'viewpembayaran'),
+  ('superuser', 'editpembayaran'),
   ('superuser', 'configuresystem');
 
 INSERT INTO s_user (id, active, username, id_role) VALUES
