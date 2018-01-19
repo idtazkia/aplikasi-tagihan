@@ -91,3 +91,12 @@ CREATE TABLE bukti_pembayaran (
   FOREIGN KEY (id_pembayaran) REFERENCES pembayaran (id),
   UNIQUE (lokasi_file)
 );
+
+CREATE TABLE running_number (
+  id          VARCHAR(36),
+  pemakaian   VARCHAR(255) NOT NULL,
+  prefix      VARCHAR(255) NOT NULL,
+  last_number BIGINT       NOT NULL DEFAULT 0,
+  PRIMARY KEY (id),
+  UNIQUE (prefix)
+);

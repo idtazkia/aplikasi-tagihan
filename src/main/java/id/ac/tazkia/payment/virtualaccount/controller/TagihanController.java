@@ -3,6 +3,7 @@ package id.ac.tazkia.payment.virtualaccount.controller;
 import id.ac.tazkia.payment.virtualaccount.dao.DebiturDao;
 import id.ac.tazkia.payment.virtualaccount.dao.JenisTagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
+import id.ac.tazkia.payment.virtualaccount.dto.UpdateTagihan;
 import id.ac.tazkia.payment.virtualaccount.dto.UploadError;
 import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
@@ -13,7 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +35,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.springframework.data.web.PageableDefault;
 
 @Controller
 @RequestMapping("/tagihan")
@@ -48,7 +50,7 @@ public class TagihanController {
     @Autowired private DebiturDao debiturDao;
 
     @GetMapping("/list")
-    public ModelMap listTagihan(@PageableDefault(size = 10) Pageable pageable) {
+    public ModelMap listTagihan(@PageableDefault(size = 10, sort = "nomor") Pageable pageable) {
         return new ModelMap("listTagihan", tagihanDao.findAll(pageable));
     }
 
@@ -66,6 +68,7 @@ public class TagihanController {
     public ModelMap displayForm(@RequestParam(name = "id", required = false) Tagihan tagihan) {
         if (tagihan == null) {
             tagihan = new Tagihan();
+            tagihan.setNomor("--- otomatis ditentukan sistem ---");
         }
 
         return new ModelMap().addAttribute("tagihan", tagihan);
@@ -77,7 +80,41 @@ public class TagihanController {
         if (errors.hasErrors()) {
             return "tagihan/form";
         }
-        tagihanService.createTagihan(tagihan);
+        tagihanService.saveTagihan(tagihan);
+        status.setComplete();
+        return "redirect:list";
+    }
+
+    @GetMapping("/update")
+    public ModelMap displayUpdateForm(@RequestParam Tagihan tagihan) {
+        UpdateTagihan ut = new UpdateTagihan();
+        ut.setTanggalJatuhTempo(tagihan.getTanggalJatuhTempo());
+        ut.setNilaiTagihan(tagihan.getNilaiTagihan());
+
+        return new ModelMap()
+                .addAttribute("updateTagihan", ut)
+                .addAttribute("tagihan", tagihan);
+    }
+
+    @PostMapping("/update")
+    public String processUpdateForm(@RequestParam Tagihan tagihan, Model data,
+                                    @ModelAttribute @Valid UpdateTagihan updateTagihan,
+                                    BindingResult errors, SessionStatus status) {
+        if (tagihan == null) {
+            LOGGER.warn("Update tagihan null");
+            return "redirect:list";
+        }
+
+        if (errors.hasErrors()) {
+            data.addAttribute("updateTagihan", updateTagihan).addAttribute("tagihan", tagihan);
+            LOGGER.debug("Update tagihan datanya tidak valid {}", errors.getAllErrors());
+            return "/tagihan/update";
+        }
+
+        tagihan.setNilaiTagihan(updateTagihan.getNilaiTagihan());
+        tagihan.setTanggalJatuhTempo(updateTagihan.getTanggalJatuhTempo());
+
+        tagihanService.saveTagihan(tagihan);
         status.setComplete();
         return "redirect:list";
     }
@@ -160,7 +197,7 @@ public class TagihanController {
                 }
 
                 try {
-                    tagihanService.createTagihan(t);
+                    tagihanService.saveTagihan(t);
                 } catch (Exception ex) {
                     LOGGER.warn(ex.getMessage(), ex);
                     errors.add(new UploadError(baris, "Gagal simpan ke database", content));

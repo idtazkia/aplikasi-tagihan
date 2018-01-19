@@ -5,6 +5,7 @@ import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequestType;
 import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
+import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
 import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,21 +35,7 @@ public class KafkaSenderService {
         virtualAccountDao.findByVaStatus(VaStatus.BARU)
                 .forEach((va -> {
                     try {
-                        VaRequest vaRequest
-                                = VaRequest.builder()
-                                .accountType(va.getTagihan().getJenisTagihan().getTipePembayaran())
-                                .requestType(VaRequestType.CREATE)
-                                .accountNumber(VirtualAccountNumberGenerator.generateVirtualAccountNumber(va.getTagihan().getDebitur().getNomorDebitur(), va.getBank().getJumlahDigitVirtualAccount()))
-                                .amount(va.getTagihan().getNilaiTagihan())
-                                .description(va.getTagihan().getKeterangan())
-                                .email(va.getTagihan().getDebitur().getEmail())
-                                .phone(va.getTagihan().getDebitur().getNoHp())
-                                .expireDate(FORMATTER_ISO_DATE.format(va.getTagihan().getTanggalJatuhTempo()))
-                                .invoiceNumber(va.getTagihan().getNomor())
-                                .name(va.getTagihan().getDebitur().getNama())
-                                .bankId(va.getBank().getId())
-                                .build();
-
+                        VaRequest vaRequest = createRequest(va, VaRequestType.CREATE);
                         String json = objectMapper.writeValueAsString(vaRequest);
                         LOGGER.debug("VA Request BNI : {}", json);
                         kafkaTemplate.send(kafkaTopicBniVaRequest, json);
@@ -58,5 +45,44 @@ public class KafkaSenderService {
                         LOGGER.warn(err.getMessage(), err);
                     }
                 }));
+    }
+
+    @Scheduled(fixedDelay = 3000)
+    public void prosesVaUpdate() {
+        virtualAccountDao.findByVaStatus(VaStatus.UPDATE)
+                .forEach((va -> {
+                    try {
+                        VaRequest vaRequest = createRequest(va, VaRequestType.UPDATE);
+                        String json = objectMapper.writeValueAsString(vaRequest);
+                        LOGGER.debug("VA Request BNI : {}", json);
+                        kafkaTemplate.send(kafkaTopicBniVaRequest, json);
+                        va.setVaStatus(VaStatus.SEDANG_PROSES);
+                        virtualAccountDao.save(va);
+                    } catch (Exception err) {
+                        LOGGER.warn(err.getMessage(), err);
+                    }
+                }));
+    }
+
+    private VaRequest createRequest(VirtualAccount va, VaRequestType requestType) {
+        VaRequest vaRequest
+                = VaRequest.builder()
+                .accountType(va.getTagihan().getJenisTagihan().getTipePembayaran())
+                .requestType(requestType)
+                .accountNumber(VirtualAccountNumberGenerator
+                        .generateVirtualAccountNumber(
+                                va.getTagihan().getDebitur().getNomorDebitur()
+                                        + va.getTagihan().getJenisTagihan().getKode(),
+                                va.getBank().getJumlahDigitVirtualAccount()))
+                .amount(va.getTagihan().getNilaiTagihan())
+                .description(va.getTagihan().getKeterangan())
+                .email(va.getTagihan().getDebitur().getEmail())
+                .phone(va.getTagihan().getDebitur().getNoHp())
+                .expireDate(FORMATTER_ISO_DATE.format(va.getTagihan().getTanggalJatuhTempo()))
+                .invoiceNumber(va.getTagihan().getNomor())
+                .name(va.getTagihan().getDebitur().getNama())
+                .bankId(va.getBank().getId())
+                .build();
+        return vaRequest;
     }
 }

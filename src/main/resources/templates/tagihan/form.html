@@ -36,7 +36,7 @@
                                 </div>
 
                                 <div th:class="${#fields.hasErrors('debitur')}? 'row form-group has-danger' : 'row form-group'">
-                                    <label class="col-sm-3 form-control-label">Jenis Tagihan</label>
+                                    <label class="col-sm-3 form-control-label">Debitur</label>
                                     <div class="col-sm-9">
                                         <select name="debitur" th:class="form-control" th:field="*{debitur}">
                                             <option value="">... Pilih Debitur ...</option>
@@ -54,7 +54,7 @@
                                         <input id="nomor" type="text"
                                                name="nomor"
                                                placeholder="Nomor Tagihan"
-                                               th:field="*{nomor}" th:errorclass="form-control-feedback" th:class="form-control">
+                                               th:field="*{nomor}" th:errorclass="form-control-feedback" th:class="form-control" readonly>
                                         <small class="invalid-feedback" th:if="${#fields.hasErrors('nomor')}" th:errors="*{nomor}">Example help text that remains unchanged.</small>
                                     </div>
                                 </div>
