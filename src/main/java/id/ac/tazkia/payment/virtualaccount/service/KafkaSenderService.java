@@ -37,7 +37,7 @@ public class KafkaSenderService {
                     try {
                         VaRequest vaRequest = createRequest(va, VaRequestType.CREATE);
                         String json = objectMapper.writeValueAsString(vaRequest);
-                        LOGGER.debug("VA Request BNI : {}", json);
+                        LOGGER.debug("VA Request : {}", json);
                         kafkaTemplate.send(kafkaTopicBniVaRequest, json);
                         va.setVaStatus(VaStatus.SEDANG_PROSES);
                         virtualAccountDao.save(va);
@@ -54,7 +54,7 @@ public class KafkaSenderService {
                     try {
                         VaRequest vaRequest = createRequest(va, VaRequestType.UPDATE);
                         String json = objectMapper.writeValueAsString(vaRequest);
-                        LOGGER.debug("VA Request BNI : {}", json);
+                        LOGGER.debug("VA Request : {}", json);
                         kafkaTemplate.send(kafkaTopicBniVaRequest, json);
                         va.setVaStatus(VaStatus.SEDANG_PROSES);
                         virtualAccountDao.save(va);
