@@ -39,6 +39,7 @@ CREATE TABLE tagihan (
   tanggal_tagihan     DATE           NOT NULL,
   tanggal_jatuh_tempo DATE           NOT NULL,
   keterangan          VARCHAR(255),
+  status_tagihan      VARCHAR(255)   NOT NULL,
   status_pembayaran   VARCHAR(255)   NOT NULL,
   updated_at          TIMESTAMP      NOT NULL DEFAULT NOW(),
   PRIMARY KEY (id),

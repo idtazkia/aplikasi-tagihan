@@ -2,10 +2,7 @@ package id.ac.tazkia.payment.virtualaccount.service;
 
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
-import id.ac.tazkia.payment.virtualaccount.entity.Bank;
-import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
-import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
-import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
+import id.ac.tazkia.payment.virtualaccount.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +43,7 @@ public class TagihanService {
             }
         } else {
             for (VirtualAccount va : virtualAccountDao.findByTagihan(t)) {
-                va.setVaStatus(VaStatus.UPDATE);
+                va.setVaStatus(StatusTagihan.AKTIF.equals(t.getStatusTagihan()) ? VaStatus.UPDATE : VaStatus.DELETE);
                 virtualAccountDao.save(va);
             }
             tagihanDao.save(t);

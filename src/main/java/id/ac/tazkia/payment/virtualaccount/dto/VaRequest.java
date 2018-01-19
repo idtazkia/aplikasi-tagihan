@@ -2,6 +2,7 @@ package id.ac.tazkia.payment.virtualaccount.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import id.ac.tazkia.payment.virtualaccount.entity.TipePembayaran;
+import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -20,5 +21,5 @@ public class VaRequest {
     private BigDecimal amount;
     private String expireDate;
     @Builder.Default private TipePembayaran accountType = TipePembayaran.CLOSED;
-    @Builder.Default private VaRequestType requestType = VaRequestType.CREATE;
+    @Builder.Default private VaStatus requestType = VaStatus.CREATE;
 }

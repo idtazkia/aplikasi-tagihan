@@ -3,7 +3,6 @@ package id.ac.tazkia.payment.virtualaccount.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
-import id.ac.tazkia.payment.virtualaccount.dto.VaRequestType;
 import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
 import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
 import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
@@ -32,27 +31,24 @@ public class KafkaSenderService {
 
     @Scheduled(fixedDelay = 3000)
     public void prosesVaBaru() {
-        virtualAccountDao.findByVaStatus(VaStatus.BARU)
-                .forEach((va -> {
-                    try {
-                        VaRequest vaRequest = createRequest(va, VaRequestType.CREATE);
-                        String json = objectMapper.writeValueAsString(vaRequest);
-                        LOGGER.debug("VA Request : {}", json);
-                        kafkaTemplate.send(kafkaTopicBniVaRequest, json);
-                        va.setVaStatus(VaStatus.SEDANG_PROSES);
-                        virtualAccountDao.save(va);
-                    } catch (Exception err) {
-                        LOGGER.warn(err.getMessage(), err);
-                    }
-                }));
+        processVa(VaStatus.CREATE);
     }
 
     @Scheduled(fixedDelay = 3000)
     public void prosesVaUpdate() {
-        virtualAccountDao.findByVaStatus(VaStatus.UPDATE)
+        processVa(VaStatus.UPDATE);
+    }
+
+    @Scheduled(fixedDelay = 3000)
+    public void prosesVaDelete() {
+        processVa(VaStatus.DELETE);
+    }
+
+    private void processVa(VaStatus status) {
+        virtualAccountDao.findByVaStatus(status)
                 .forEach((va -> {
                     try {
-                        VaRequest vaRequest = createRequest(va, VaRequestType.UPDATE);
+                        VaRequest vaRequest = createRequest(va, status);
                         String json = objectMapper.writeValueAsString(vaRequest);
                         LOGGER.debug("VA Request : {}", json);
                         kafkaTemplate.send(kafkaTopicBniVaRequest, json);
@@ -64,7 +60,7 @@ public class KafkaSenderService {
                 }));
     }
 
-    private VaRequest createRequest(VirtualAccount va, VaRequestType requestType) {
+    private VaRequest createRequest(VirtualAccount va, VaStatus requestType) {
         VaRequest vaRequest
                 = VaRequest.builder()
                 .accountType(va.getTagihan().getJenisTagihan().getTipePembayaran())
