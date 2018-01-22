@@ -2,6 +2,7 @@ package id.ac.tazkia.payment.virtualaccount.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
+import id.ac.tazkia.payment.virtualaccount.dto.TagihanResponse;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
 import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
 import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
@@ -23,6 +24,7 @@ public class KafkaSenderService {
     private static final SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
 
     @Value("${kafka.topic.va.request}") private String kafkaTopicBniVaRequest;
+    @Value("${kafka.topic.tagihan.response}") private String kafkaTopicTagihanResponse;
 
     @Autowired private ObjectMapper objectMapper;
     @Autowired private KafkaTemplate<String, String> kafkaTemplate;
@@ -42,6 +44,14 @@ public class KafkaSenderService {
     @Scheduled(fixedDelay = 3000)
     public void prosesVaDelete() {
         processVa(VaStatus.DELETE);
+    }
+
+    public void sendTagihanResponse(TagihanResponse tagihanResponse) {
+        try {
+            kafkaTemplate.send(kafkaTopicTagihanResponse, objectMapper.writeValueAsString(tagihanResponse));
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+        }
     }
 
     private void processVa(VaStatus status) {

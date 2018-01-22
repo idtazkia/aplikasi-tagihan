@@ -7,6 +7,7 @@ import java.util.Date;
 
 @Data
 public class TagihanResponse {
+    private String status;
     private String debitur;
     private String jenisTagihan;
     private BigDecimal nilai;

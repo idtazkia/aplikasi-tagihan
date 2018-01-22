@@ -2,13 +2,11 @@ package id.ac.tazkia.payment.virtualaccount.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dao.*;
-import id.ac.tazkia.payment.virtualaccount.dto.TagihanRequest;
-import id.ac.tazkia.payment.virtualaccount.dto.VaPayment;
-import id.ac.tazkia.payment.virtualaccount.dto.VaRequestStatus;
-import id.ac.tazkia.payment.virtualaccount.dto.VaResponse;
+import id.ac.tazkia.payment.virtualaccount.dto.*;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -28,6 +26,7 @@ public class KafkaListenerService {
     @Autowired private DebiturDao debiturDao;
     @Autowired private JenisTagihanDao jenisTagihanDao;
     @Autowired private TagihanService tagihanService;
+    @Autowired private KafkaSenderService kafkaSenderService;
 
     @KafkaListener(topics = "${kafka.topic.tagihan.request}", group = "${spring.kafka.consumer.group-id}")
     public void handleTagihanRequest(String message) {
@@ -46,6 +45,9 @@ public class KafkaListenerService {
             JenisTagihan jt = jenisTagihanDao.findOne(request.getJenisTagihan());
             if (jt == null) {
                 LOGGER.warn("Jenis Tagihan dengan id {} tidak terdaftar", request.getJenisTagihan());
+                TagihanResponse response = new TagihanResponse();
+                response.setStatus("error : Jenis Tagihan dengan id "+request.getJenisTagihan()+" tidak terdaftar");
+                kafkaSenderService.sendTagihanResponse(response);
                 return;
             }
             t.setJenisTagihan(jt);
@@ -55,8 +57,18 @@ public class KafkaListenerService {
             t.setTanggalJatuhTempo(request.getTanggalJatuhTempo());
 
             tagihanService.saveTagihan(t);
+
+            TagihanResponse response = new TagihanResponse();
+            BeanUtils.copyProperties(request, response);
+            response.setNomorTagihan(t.getNomor());
+            response.setTanggalTagihan(t.getTanggalTagihan());
+            response.setStatus("sukses");
+            kafkaSenderService.sendTagihanResponse(response);
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
+            TagihanResponse response = new TagihanResponse();
+            response.setStatus("error : "+err.getMessage());
+            kafkaSenderService.sendTagihanResponse(response);
         }
     }
 
