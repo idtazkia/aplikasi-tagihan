@@ -3,10 +3,7 @@ package id.ac.tazkia.payment.virtualaccount.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
-import id.ac.tazkia.payment.virtualaccount.dto.NotifikasiPembayaranRequest;
-import id.ac.tazkia.payment.virtualaccount.dto.NotifikasiTagihanRequest;
-import id.ac.tazkia.payment.virtualaccount.dto.TagihanResponse;
-import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
+import id.ac.tazkia.payment.virtualaccount.dto.*;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
 import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
 import org.slf4j.Logger;
@@ -34,6 +31,7 @@ public class KafkaSenderService {
     @Value("${kafka.topic.va.request}") private String kafkaTopicVaRequest;
     @Value("${kafka.topic.debitur.response}") private String kafkaTopicDebiturResponse;
     @Value("${kafka.topic.tagihan.response}") private String kafkaTopicTagihanResponse;
+    @Value("${kafka.topic.tagihan.payment}") private String kafkaTopicPembayaranTagihan;
 
     @Value("${notifikasi.konfigurasi.tagihan}") private String konfigurasiTagihan;
     @Value("${notifikasi.konfigurasi.pembayaran}") private String konfigurasiPembayaran;
@@ -121,6 +119,7 @@ public class KafkaSenderService {
     }
 
     public void sendNotifikasiPembayaran(Pembayaran pembayaran) {
+        sendPembayaranTagihan(pembayaran);
         try {
             NotifikasiPembayaranRequest request = NotifikasiPembayaranRequest.builder()
                     .contactinfo(contactinfo)
@@ -128,6 +127,8 @@ public class KafkaSenderService {
                     .keterangan(pembayaran.getTagihan().getJenisTagihan().getNama())
                     .nomorTagihan(pembayaran.getTagihan().getNomor())
                     .nama(pembayaran.getTagihan().getDebitur().getNama())
+                    .noHp(pembayaran.getTagihan().getDebitur().getNoHp())
+                    .tanggalTagihan(FORMATTER_ISO_DATE.format(pembayaran.getTagihan().getTanggalTagihan()))
                     .nilaiPembayaran(pembayaran.getJumlah())
                     .nilaiTagihan(pembayaran.getTagihan().getNilaiTagihan())
                     .rekening(pembayaran.getBank().getNama())
@@ -158,6 +159,30 @@ public class KafkaSenderService {
     public void sendDebiturResponse(Map<String, Object> data) {
         try {
             kafkaTemplate.send(kafkaTopicDebiturResponse, objectMapper.writeValueAsString(data));
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+        }
+    }
+
+    public void sendPembayaranTagihan(Pembayaran p) {
+        PembayaranTagihan pt = PembayaranTagihan.builder()
+                .bank(p.getBank().getId())
+                .nomorTagihan(p.getTagihan().getNomor())
+                .nomorDebitur(p.getTagihan().getDebitur().getNomorDebitur())
+                .namaDebitur(p.getTagihan().getDebitur().getNama())
+                .keteranganTagihan(p.getTagihan().getKeterangan())
+                .statusTagihan(p.getTagihan().getStatusTagihan().toString())
+                .nilaiTagihan(p.getTagihan().getNilaiTagihan())
+                .nilaiPembayaran(p.getJumlah())
+                .nilaiAkumulasiPembayaran(p.getTagihan().getJumlahPembayaran())
+                .referensiPembayaran(p.getReferensi())
+                .waktuPembayaran(FORMATTER_ISO_DATE_TIME.format(p.getWaktuTransaksi()))
+                .tanggalTagihan(FORMATTER_ISO_DATE.format(p.getTagihan().getTanggalTagihan()))
+                .tanggalJatuhTempo(FORMATTER_ISO_DATE.format(p.getTagihan().getTanggalJatuhTempo()))
+                .build();
+
+        try {
+            kafkaTemplate.send(kafkaTopicPembayaranTagihan, objectMapper.writeValueAsString(pt));
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
         }
