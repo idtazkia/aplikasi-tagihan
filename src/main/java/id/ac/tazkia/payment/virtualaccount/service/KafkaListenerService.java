@@ -194,6 +194,8 @@ public class KafkaListenerService {
             tagihanDao.save(tagihan);
 
             LOGGER.info("Pembayaran melalui VA Bank {} Nomor {} telah diterima", bank.getNama(), payment.getAccountNumber());
+
+            kafkaSenderService.sendNotifikasiPembayaran(p);
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
         }

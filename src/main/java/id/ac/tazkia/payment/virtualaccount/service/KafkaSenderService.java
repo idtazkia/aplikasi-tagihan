@@ -3,13 +3,11 @@ package id.ac.tazkia.payment.virtualaccount.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
+import id.ac.tazkia.payment.virtualaccount.dto.NotifikasiPembayaranRequest;
 import id.ac.tazkia.payment.virtualaccount.dto.NotifikasiTagihanRequest;
 import id.ac.tazkia.payment.virtualaccount.dto.TagihanResponse;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
-import id.ac.tazkia.payment.virtualaccount.entity.StatusNotifikasi;
-import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
-import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
-import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
+import id.ac.tazkia.payment.virtualaccount.entity.*;
 import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +28,7 @@ import java.util.Map;
 public class KafkaSenderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSenderService.class);
     private static final SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat FORMATTER_ISO_DATE_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @Value("${kafka.topic.notification.request}") private String kafkaTopicNotificationRequest;
     @Value("${kafka.topic.va.request}") private String kafkaTopicVaRequest;
@@ -37,6 +36,7 @@ public class KafkaSenderService {
     @Value("${kafka.topic.tagihan.response}") private String kafkaTopicTagihanResponse;
 
     @Value("${notifikasi.konfigurasi.tagihan}") private String konfigurasiTagihan;
+    @Value("${notifikasi.konfigurasi.pembayaran}") private String konfigurasiPembayaran;
     @Value("${notifikasi.contactinfo}") private String contactinfo;
     @Value("${notifikasi.contactinfoFull}") private String contactinfoFull;
 
@@ -117,6 +117,33 @@ public class KafkaSenderService {
             } catch (Exception err) {
                 LOGGER.warn(err.getMessage(), err);
             }
+        }
+    }
+
+    public void sendNotifikasiPembayaran(Pembayaran pembayaran) {
+        try {
+            NotifikasiPembayaranRequest request = NotifikasiPembayaranRequest.builder()
+                    .contactinfo(contactinfo)
+                    .contactinfoFull(contactinfoFull)
+                    .keterangan(pembayaran.getTagihan().getJenisTagihan().getNama())
+                    .nomorTagihan(pembayaran.getTagihan().getNomor())
+                    .nama(pembayaran.getTagihan().getDebitur().getNama())
+                    .nilaiPembayaran(pembayaran.getJumlah())
+                    .nilaiTagihan(pembayaran.getTagihan().getNilaiTagihan())
+                    .rekening(pembayaran.getBank().getNama())
+                    .waktu(FORMATTER_ISO_DATE_TIME.format(pembayaran.getWaktuTransaksi()))
+                    .referensi(pembayaran.getReferensi())
+                    .build();
+
+            Map<String, Object> notifikasi = new LinkedHashMap<>();
+            notifikasi.put("email", pembayaran.getTagihan().getDebitur().getEmail());
+            notifikasi.put("mobile", pembayaran.getTagihan().getDebitur().getNoHp());
+            notifikasi.put("konfigurasi", konfigurasiPembayaran);
+
+            notifikasi.put("data", request);
+            kafkaTemplate.send(kafkaTopicNotificationRequest, objectMapper.writeValueAsString(notifikasi));
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
         }
     }
 
