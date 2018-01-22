@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 public class PaymentVirtualAccountApplicationTests {
 
     @Autowired private ObjectMapper objectMapper;
+    @Autowired private PasswordEncoder passwordEncoder;
 
     @Test
 	public void checkConfig() {
@@ -26,5 +28,11 @@ public class PaymentVirtualAccountApplicationTests {
         VaPayment payment = new VaPayment();
         payment.setPaymentTime(LocalDateTime.now());
         System.out.println(objectMapper.writeValueAsString(payment));
+    }
+
+    @Test
+    public void testGeneratePassword() {
+        String hashed = passwordEncoder.encode("test123");
+        System.out.println("Hashed : "+hashed);
     }
 }
