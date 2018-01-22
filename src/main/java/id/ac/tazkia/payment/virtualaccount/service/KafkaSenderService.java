@@ -98,7 +98,7 @@ public class KafkaSenderService {
 
                 NotifikasiTagihanRequest requestData = NotifikasiTagihanRequest.builder()
                         .jumlah(tagihan.getNilaiTagihan())
-                        .keterangan(tagihan.getKeterangan())
+                        .keterangan(tagihan.getJenisTagihan().getNama())
                         .nama(tagihan.getDebitur().getNama())
                         .nomorTagihan(tagihan.getNomor())
                         .rekening(rekening.toString())
