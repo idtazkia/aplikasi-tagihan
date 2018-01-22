@@ -58,4 +58,7 @@ public class Tagihan {
 
     @NotNull @Enumerated(EnumType.STRING)
     private StatusTagihan statusTagihan = StatusTagihan.AKTIF;
+
+    @NotNull @Enumerated(EnumType.STRING)
+    private StatusNotifikasi statusNotifikasi = StatusNotifikasi.BELUM_TERKIRIM;
 }

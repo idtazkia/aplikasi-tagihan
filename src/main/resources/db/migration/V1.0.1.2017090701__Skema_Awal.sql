@@ -41,6 +41,7 @@ CREATE TABLE tagihan (
   keterangan          VARCHAR(255),
   status_tagihan      VARCHAR(255)   NOT NULL,
   status_pembayaran   VARCHAR(255)   NOT NULL,
+  status_notifikasi   VARCHAR(255)   NOT NULL,
   updated_at          TIMESTAMP      NOT NULL DEFAULT NOW(),
   PRIMARY KEY (id),
   UNIQUE (nomor),
