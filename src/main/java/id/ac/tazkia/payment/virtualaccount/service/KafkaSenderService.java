@@ -23,7 +23,7 @@ public class KafkaSenderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSenderService.class);
     private static final SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
 
-    @Value("${kafka.topic.va.request}") private String kafkaTopicBniVaRequest;
+    @Value("${kafka.topic.va.request}") private String kafkaTopicVaRequest;
     @Value("${kafka.topic.tagihan.response}") private String kafkaTopicTagihanResponse;
 
     @Autowired private ObjectMapper objectMapper;
@@ -61,7 +61,7 @@ public class KafkaSenderService {
                         VaRequest vaRequest = createRequest(va, status);
                         String json = objectMapper.writeValueAsString(vaRequest);
                         LOGGER.debug("VA Request : {}", json);
-                        kafkaTemplate.send(kafkaTopicBniVaRequest, json);
+                        kafkaTemplate.send(kafkaTopicVaRequest, json);
                         va.setVaStatus(VaStatus.SEDANG_PROSES);
                         virtualAccountDao.save(va);
                     } catch (Exception err) {
