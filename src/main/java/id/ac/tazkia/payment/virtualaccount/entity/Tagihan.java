@@ -55,4 +55,7 @@ public class Tagihan {
 
     @NotNull @Enumerated(EnumType.STRING)
     private StatusPembayaran statusPembayaran = StatusPembayaran.BELUM_DIBAYAR;
+
+    @NotNull @Enumerated(EnumType.STRING)
+    private StatusTagihan statusTagihan = StatusTagihan.AKTIF;
 }

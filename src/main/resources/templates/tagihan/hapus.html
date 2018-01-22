@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:v-on="http://www.w3.org/1999/xhtml"
+      xmlns:v-if="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Hapus Tagihan</title>
+</head>
+<body>
+
+<section layout:fragment="content" class="tables">
+    <div id="updateTagihan">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-10">
+                    <div class="card">
+                        <div class="card-header d-flex align-items-center">
+                            <h3 class="h4">Hapus Tagihan</h3>
+                        </div>
+                        <div class="card-body">
+                            <form class="form-horizontal" th:method="post"  th:action="@{/tagihan/hapus}">
+                                <input type="hidden" name="tagihan" th:value="${tagihan.id}">
+                                <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Jenis Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <label class="form-control-label" th:text="${tagihan.jenisTagihan.kode + ' - ' + tagihan.jenisTagihan.nama}">Debitur</label>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Debitur</label>
+                                    <div class="col-sm-9">
+                                        <label class="form-control-label" th:text="${tagihan.debitur.nomorDebitur + ' - ' + tagihan.debitur.nama}">Debitur</label>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Nomor Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <label class="form-control-label" th:text="${tagihan.nomor}">Debitur</label>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Nilai Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <label class="form-control-label" th:text="${tagihan.nilaiTagihan}">Debitur</label>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Tanggal Tagihan</label>
+                                    <div class="col-sm-9">
+                                        <label class="form-control-label" th:text="${tagihan.tanggalTagihan}">Debitur</label>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Tanggal Jatuh Tempo</label>
+                                    <div class="col-sm-9">
+                                        <label class="form-control-label" th:text="${tagihan.tanggalJatuhTempo}">Debitur</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-9 offset-sm-3">
+                                        <input type="submit" value="Hapus" class="btn btn-primary">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

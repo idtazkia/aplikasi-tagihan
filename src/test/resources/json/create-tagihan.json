@@ -1,14 +1,1 @@
-{
-  "jenisTagihan" : { "id" : "pmb2017"},
-  "debitur" : {
-    "nomorDebitur" : "1234567890",
-    "nama" : "Tester Student 001"
-  },
-  "nomor" : "20180101123",
-  "nilaiTagihan" : 123000.12,
-  "jumlahPembayaran" : 0,
-  "tanggalTagihan" : "2017-12-31",
-  "tanggalJatuhTempo" : "2018-12-31",
-  "keterangan" : "Pendaftaran atas nama Tester Student 001",
-  "statusPembayaran" : "BELUM_DIBAYAR"
-}
+{"jenisTagihan" : "pmb2017", "debitur" :  "123", "nilaiTagihan" : 123000.12, "tanggalJatuhTempo" : "2018-12-31", "keterangan" : "Pendaftaran atas nama Tester Student 001"}

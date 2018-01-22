@@ -1,6 +1,0 @@
-[
-{  "accountNumber" : "98800116001000000000", "invoiceNumber" : "201801123101",  "name" : "Debitur 001",  "description" : "Tagihan Pendaftaran 001",  "email" : "deb1@contoh.com","phone" : "081234556789",  "amount" : 500001.12,  "expireDate" : "2018-03-01",  "accountType" : "CLOSED",  "requestType" : "CREATE",  "requestStatus" : "SUCCESS"},
-{  "accountNumber" : "98800116002000000000",  "invoiceNumber" : "201801123201",  "name" : "Debitur 002",  "description" : "Tagihan Pendaftaran 002",  "amount" : 500002.12,  "expireDate" : "2018-03-02",  "accountType" : "CLOSED",  "requestType" : "CREATE"},
-{  "accountNumber" : "98800116003000000000",  "invoiceNumber" : "201801123301",  "name" : "Debitur 003",  "description" : "Tagihan Pendaftaran 003",  "phone" : "08111111111",  "amount" : 500003.12,  "expireDate" : "2018-03-03",  "accountType" : "CLOSED",  "requestType" : "CREATE"},
-{  "accountNumber" : "98800116005000000000",  "invoiceNumber" : "201801123501",  "name" : "Debitur 005",  "description" : "Tagihan Pendaftaran 005",  "amount" : 500005.12,  "expireDate" : "2018-03-05",  "accountType" : "CLOSED",  "requestType" : "CREATE"}
-]

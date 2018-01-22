@@ -1,8 +1,9 @@
 package id.ac.tazkia.payment.virtualaccount.entity;
 
 public enum VaStatus {
-    BARU,
+    CREATE,
     UPDATE,
+    DELETE,
     SEDANG_PROSES,
     AKTIF,
     NONAKTIF

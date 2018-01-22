@@ -1,32 +1,117 @@
 package id.ac.tazkia.payment.virtualaccount.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
-import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
-import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
-import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
-import id.ac.tazkia.payment.virtualaccount.dto.VaPayment;
-import id.ac.tazkia.payment.virtualaccount.dto.VaRequestStatus;
-import id.ac.tazkia.payment.virtualaccount.dto.VaResponse;
+import id.ac.tazkia.payment.virtualaccount.dao.*;
+import id.ac.tazkia.payment.virtualaccount.dto.*;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Validator;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service @Transactional
 public class KafkaListenerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaListenerService.class);
 
     @Autowired private ObjectMapper objectMapper;
+    @Autowired private Validator validator;
+
     @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private BankDao bankDao;
     @Autowired private TagihanDao tagihanDao;
     @Autowired private PembayaranDao pembayaranDao;
+    @Autowired private DebiturDao debiturDao;
+    @Autowired private JenisTagihanDao jenisTagihanDao;
+    @Autowired private TagihanService tagihanService;
+    @Autowired private KafkaSenderService kafkaSenderService;
+
+    @KafkaListener(topics = "${kafka.topic.debitur.request}", group = "${spring.kafka.consumer.group-id}")
+    public void handleDebiturRequest(String message) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        try {
+            LOGGER.debug("Terima message : {}", message);
+            Debitur d = objectMapper.readValue(message, Debitur.class);
+            BeanPropertyBindingResult binder = new BeanPropertyBindingResult(d, "debitur");
+            validator.validate(d, binder);
+
+            if (binder.hasErrors()) {
+                LOGGER.warn("Gagal mendaftarkan debitur {}", binder.getAllErrors());
+                response.put("sukses", false);
+                response.put("data", binder.getAllErrors());
+                kafkaSenderService.sendDebiturResponse(response);
+                return;
+            }
+
+            if (debiturDao.findByNomorDebitur(d.getNomorDebitur()) != null) {
+                response.put("sukses", false);
+                response.put("data", "Nomor debitur " + d.getNomorDebitur() + " sudah ada");
+                kafkaSenderService.sendDebiturResponse(response);
+                return;
+            }
+
+            debiturDao.save(d);
+            response.put("sukses", true);
+            kafkaSenderService.sendDebiturResponse(response);
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+            response.put("sukses", false);
+            response.put("data", err.getMessage());
+            kafkaSenderService.sendDebiturResponse(response);
+        }
+    }
+
+    @KafkaListener(topics = "${kafka.topic.tagihan.request}", group = "${spring.kafka.consumer.group-id}")
+    public void handleTagihanRequest(String message) {
+        try {
+            LOGGER.debug("Terima message : {}", message);
+            TagihanRequest request = objectMapper.readValue(message, TagihanRequest.class);
+            Tagihan t = new Tagihan();
+
+            Debitur d = debiturDao.findByNomorDebitur(request.getDebitur());
+            if (d == null) {
+                LOGGER.warn("Debitur dengan nomor {} tidak terdaftar", request.getDebitur());
+                return;
+            }
+            t.setDebitur(d);
+
+            JenisTagihan jt = jenisTagihanDao.findOne(request.getJenisTagihan());
+            if (jt == null) {
+                LOGGER.warn("Jenis Tagihan dengan id {} tidak terdaftar", request.getJenisTagihan());
+                TagihanResponse response = new TagihanResponse();
+                response.setStatus("error : Jenis Tagihan dengan id "+request.getJenisTagihan()+" tidak terdaftar");
+                kafkaSenderService.sendTagihanResponse(response);
+                return;
+            }
+            t.setJenisTagihan(jt);
+
+            t.setNilaiTagihan(request.getNilaiTagihan());
+            t.setKeterangan(request.getKeterangan());
+            t.setTanggalJatuhTempo(request.getTanggalJatuhTempo());
+
+            tagihanService.saveTagihan(t);
+
+            TagihanResponse response = new TagihanResponse();
+            BeanUtils.copyProperties(request, response);
+            response.setNomorTagihan(t.getNomor());
+            response.setTanggalTagihan(t.getTanggalTagihan());
+            response.setStatus("sukses");
+            kafkaSenderService.sendTagihanResponse(response);
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+            TagihanResponse response = new TagihanResponse();
+            response.setStatus("error : "+err.getMessage());
+            kafkaSenderService.sendTagihanResponse(response);
+        }
+    }
 
     @KafkaListener(topics = "${kafka.topic.va.response}", group = "${spring.kafka.consumer.group-id}")
     public void handleVaResponse(String message) {

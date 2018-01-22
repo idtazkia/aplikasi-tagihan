@@ -30,6 +30,6 @@ public class VirtualAccount {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private VaStatus vaStatus = VaStatus.BARU;
+    private VaStatus vaStatus = VaStatus.CREATE;
 
 }

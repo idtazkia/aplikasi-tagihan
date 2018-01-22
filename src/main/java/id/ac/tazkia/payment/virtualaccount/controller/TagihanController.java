@@ -7,6 +7,7 @@ import id.ac.tazkia.payment.virtualaccount.dto.UpdateTagihan;
 import id.ac.tazkia.payment.virtualaccount.dto.UploadError;
 import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
+import id.ac.tazkia.payment.virtualaccount.entity.StatusTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import id.ac.tazkia.payment.virtualaccount.service.TagihanService;
 import org.slf4j.Logger;
@@ -51,7 +52,7 @@ public class TagihanController {
 
     @GetMapping("/list")
     public ModelMap listTagihan(@PageableDefault(size = 10, sort = "nomor") Pageable pageable) {
-        return new ModelMap("listTagihan", tagihanDao.findAll(pageable));
+        return new ModelMap("listTagihan", tagihanDao.findAllByStatusTagihan(StatusTagihan.AKTIF,pageable));
     }
 
     @ModelAttribute("listJenisTagihan")
@@ -116,6 +117,24 @@ public class TagihanController {
 
         tagihanService.saveTagihan(tagihan);
         status.setComplete();
+        return "redirect:list";
+    }
+
+    @GetMapping("/hapus")
+    public ModelMap displayHapusForm(@RequestParam Tagihan tagihan) {
+
+        return new ModelMap()
+                .addAttribute("tagihan", tagihan);
+    }
+
+    @PostMapping("/hapus")
+    public String processHapusForm(@RequestParam Tagihan tagihan) {
+        if (tagihan == null) {
+            LOGGER.warn("Update tagihan null");
+            return "redirect:list";
+        }
+        tagihan.setStatusTagihan(StatusTagihan.NONAKTIF);
+        tagihanService.saveTagihan(tagihan);
         return "redirect:list";
     }
 

@@ -47,7 +47,15 @@
                                                 <div class="content">
                                                     <h5 th:text="${tagihan.debitur.nomorDebitur + ' - ' + tagihan.debitur.nama}">Frank Williams</h5><span th:text="${'Total Tagihan : Rp.'+tagihan.nilaiTagihan +''+ ' | ' + ' Total Pembayaran : Rp.'+ tagihan.jumlahPembayaran}">Posted a new blog </span>
                                                     <div class="full-date"><small>Tanggal Jatuh Tempo : </small><small th:text="${tagihan.tanggalJatuhTempo}">Today 5:60 pm - 12.06.2014</small></div>
-                                                    <div class="CTAs"><a href="#" class="btn btn-xs btn-secondary"><i class="fa fa-pencil"> </i>edit</a><a href="#" class="btn btn-xs btn-secondary"><i class="fa fa-user"> </i>virtual account</a><a href="#" class="btn btn-xs btn-secondary"><i class="fa fa-history"> </i>riwayat pembayaran</a></div>
+                                                    <div class="CTAs">
+
+                                                        <a th:href="@{/tagihan/update(tagihan=${tagihan.id})}" class="btn btn-xs btn-secondary"><i class="fa fa-pencil"> </i>edit</a>
+
+                                                        <a th:href="@{/va/list(tagihan=${tagihan.id})}" class="btn btn-xs btn-secondary"><i class="fa fa-user"> </i>virtual account</a>
+
+                                                        <a th:href="@{/pembayaran/list(tagihan=${tagihan.id})}" class="btn btn-xs btn-secondary"><i class="fa fa-history"> </i>riwayat pembayaran</a>
+
+                                                        <a th:href="@{/tagihan/hapus(tagihan=${tagihan.id})}" class="btn btn-xs btn-danger"><i class="fa fa-trash"> </i>hapus</a></div>
                                                 </div>
                                             </div>
                                             <div class="date text-right"><small>Tanggal Tagihan : </small><small th:text="${tagihan.tanggalTagihan}">5min ago</small></div>
@@ -80,6 +88,6 @@
                     </div>
                 </div>
             </div>
-        </section>
-    </body>
+</section>
+</body>
 </html>

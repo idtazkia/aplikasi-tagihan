@@ -2,8 +2,8 @@ package id.ac.tazkia.payment.virtualaccount;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
-import id.ac.tazkia.payment.virtualaccount.dto.VaRequestType;
 import id.ac.tazkia.payment.virtualaccount.entity.TipePembayaran;
+import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
 import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
 import org.junit.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,7 +36,7 @@ public class StringFormattingTests {
         VaRequest vaRequest
                 = VaRequest.builder()
                 .accountType(TipePembayaran.CLOSED)
-                .requestType(VaRequestType.CREATE)
+                .requestType(VaStatus.CREATE)
                 .accountNumber("123")
                 .amount(BigDecimal.TEN)
                 .description("Test VA")

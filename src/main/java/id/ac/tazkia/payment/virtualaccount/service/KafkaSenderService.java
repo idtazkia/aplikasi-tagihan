@@ -2,8 +2,8 @@ package id.ac.tazkia.payment.virtualaccount.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
+import id.ac.tazkia.payment.virtualaccount.dto.TagihanResponse;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequest;
-import id.ac.tazkia.payment.virtualaccount.dto.VaRequestType;
 import id.ac.tazkia.payment.virtualaccount.entity.VaStatus;
 import id.ac.tazkia.payment.virtualaccount.entity.VirtualAccount;
 import id.ac.tazkia.payment.virtualaccount.helper.VirtualAccountNumberGenerator;
@@ -17,13 +17,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 @Service @Transactional
 public class KafkaSenderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSenderService.class);
     private static final SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
 
-    @Value("${kafka.topic.va.request}") private String kafkaTopicBniVaRequest;
+    @Value("${kafka.topic.va.request}") private String kafkaTopicVaRequest;
+    @Value("${kafka.topic.debitur.response}") private String kafkaTopicDebiturResponse;
+    @Value("${kafka.topic.tagihan.response}") private String kafkaTopicTagihanResponse;
 
     @Autowired private ObjectMapper objectMapper;
     @Autowired private KafkaTemplate<String, String> kafkaTemplate;
@@ -32,30 +35,43 @@ public class KafkaSenderService {
 
     @Scheduled(fixedDelay = 3000)
     public void prosesVaBaru() {
-        virtualAccountDao.findByVaStatus(VaStatus.BARU)
-                .forEach((va -> {
-                    try {
-                        VaRequest vaRequest = createRequest(va, VaRequestType.CREATE);
-                        String json = objectMapper.writeValueAsString(vaRequest);
-                        LOGGER.debug("VA Request BNI : {}", json);
-                        kafkaTemplate.send(kafkaTopicBniVaRequest, json);
-                        va.setVaStatus(VaStatus.SEDANG_PROSES);
-                        virtualAccountDao.save(va);
-                    } catch (Exception err) {
-                        LOGGER.warn(err.getMessage(), err);
-                    }
-                }));
+        processVa(VaStatus.CREATE);
     }
 
     @Scheduled(fixedDelay = 3000)
     public void prosesVaUpdate() {
-        virtualAccountDao.findByVaStatus(VaStatus.UPDATE)
+        processVa(VaStatus.UPDATE);
+    }
+
+    @Scheduled(fixedDelay = 3000)
+    public void prosesVaDelete() {
+        processVa(VaStatus.DELETE);
+    }
+
+    public void sendTagihanResponse(TagihanResponse tagihanResponse) {
+        try {
+            kafkaTemplate.send(kafkaTopicTagihanResponse, objectMapper.writeValueAsString(tagihanResponse));
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+        }
+    }
+
+    public void sendDebiturResponse(Map<String, Object> data) {
+        try {
+            kafkaTemplate.send(kafkaTopicDebiturResponse, objectMapper.writeValueAsString(data));
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+        }
+    }
+
+    private void processVa(VaStatus status) {
+        virtualAccountDao.findByVaStatus(status)
                 .forEach((va -> {
                     try {
-                        VaRequest vaRequest = createRequest(va, VaRequestType.UPDATE);
+                        VaRequest vaRequest = createRequest(va, status);
                         String json = objectMapper.writeValueAsString(vaRequest);
-                        LOGGER.debug("VA Request BNI : {}", json);
-                        kafkaTemplate.send(kafkaTopicBniVaRequest, json);
+                        LOGGER.debug("VA Request : {}", json);
+                        kafkaTemplate.send(kafkaTopicVaRequest, json);
                         va.setVaStatus(VaStatus.SEDANG_PROSES);
                         virtualAccountDao.save(va);
                     } catch (Exception err) {
@@ -64,7 +80,7 @@ public class KafkaSenderService {
                 }));
     }
 
-    private VaRequest createRequest(VirtualAccount va, VaRequestType requestType) {
+    private VaRequest createRequest(VirtualAccount va, VaStatus requestType) {
         VaRequest vaRequest
                 = VaRequest.builder()
                 .accountType(va.getTagihan().getJenisTagihan().getTipePembayaran())
