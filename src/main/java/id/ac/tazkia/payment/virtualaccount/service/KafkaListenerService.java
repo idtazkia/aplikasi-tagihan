@@ -60,6 +60,7 @@ public class KafkaListenerService {
 
             debiturDao.save(d);
             response.put("sukses", true);
+            response.put("nomorDebitur", d.getNomorDebitur());
             kafkaSenderService.sendDebiturResponse(response);
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
