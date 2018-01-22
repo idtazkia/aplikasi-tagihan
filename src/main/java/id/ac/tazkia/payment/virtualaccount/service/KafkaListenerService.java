@@ -71,14 +71,22 @@ public class KafkaListenerService {
 
     @KafkaListener(topics = "${kafka.topic.tagihan.request}", group = "${spring.kafka.consumer.group-id}")
     public void handleTagihanRequest(String message) {
+        TagihanResponse response = new TagihanResponse();
         try {
             LOGGER.debug("Terima message : {}", message);
             TagihanRequest request = objectMapper.readValue(message, TagihanRequest.class);
+
+            response.setSukses(true);
+            BeanUtils.copyProperties(request, response);
+
             Tagihan t = new Tagihan();
 
             Debitur d = debiturDao.findByNomorDebitur(request.getDebitur());
             if (d == null) {
                 LOGGER.warn("Debitur dengan nomor {} tidak terdaftar", request.getDebitur());
+                response.setSukses(false);
+                response.setError("Debitur dengan nomor "+request.getDebitur()+" tidak terdaftar");
+                kafkaSenderService.sendTagihanResponse(response);
                 return;
             }
             t.setDebitur(d);
@@ -86,8 +94,8 @@ public class KafkaListenerService {
             JenisTagihan jt = jenisTagihanDao.findOne(request.getJenisTagihan());
             if (jt == null) {
                 LOGGER.warn("Jenis Tagihan dengan id {} tidak terdaftar", request.getJenisTagihan());
-                TagihanResponse response = new TagihanResponse();
-                response.setStatus("error : Jenis Tagihan dengan id "+request.getJenisTagihan()+" tidak terdaftar");
+                response.setSukses(false);
+                response.setError("Jenis Tagihan dengan id "+request.getJenisTagihan()+" tidak terdaftar");
                 kafkaSenderService.sendTagihanResponse(response);
                 return;
             }
@@ -99,16 +107,13 @@ public class KafkaListenerService {
 
             tagihanService.saveTagihan(t);
 
-            TagihanResponse response = new TagihanResponse();
-            BeanUtils.copyProperties(request, response);
             response.setNomorTagihan(t.getNomor());
             response.setTanggalTagihan(t.getTanggalTagihan());
-            response.setStatus("sukses");
             kafkaSenderService.sendTagihanResponse(response);
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
-            TagihanResponse response = new TagihanResponse();
-            response.setStatus("error : "+err.getMessage());
+            response.setSukses(false);
+            response.setError(err.getMessage());
             kafkaSenderService.sendTagihanResponse(response);
         }
     }
