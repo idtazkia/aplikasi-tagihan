@@ -100,6 +100,8 @@ public class KafkaSenderService {
                         .jumlah(tagihan.getNilaiTagihan())
                         .keterangan(tagihan.getJenisTagihan().getNama())
                         .nama(tagihan.getDebitur().getNama())
+                        .email(tagihan.getDebitur().getEmail())
+                        .noHp(tagihan.getDebitur().getNoHp())
                         .nomorTagihan(tagihan.getNomor())
                         .rekening(rekening.toString())
                         .rekeningFull(rekeningFull.toString())

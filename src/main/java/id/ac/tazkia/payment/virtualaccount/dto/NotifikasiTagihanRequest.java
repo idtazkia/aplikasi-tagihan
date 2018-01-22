@@ -11,6 +11,8 @@ public class NotifikasiTagihanRequest {
     private String nomorTagihan;
     private String tanggalTagihan;
     private String nama;
+    private String email;
+    private String noHp;
     private BigDecimal jumlah;
     private String rekening;
     private String rekeningFull;
