@@ -11,14 +11,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.Validator;
 
 import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Service @Transactional
 public class KafkaListenerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaListenerService.class);
 
     @Autowired private ObjectMapper objectMapper;
+    @Autowired private Validator validator;
+
     @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private BankDao bankDao;
     @Autowired private TagihanDao tagihanDao;
@@ -27,6 +33,41 @@ public class KafkaListenerService {
     @Autowired private JenisTagihanDao jenisTagihanDao;
     @Autowired private TagihanService tagihanService;
     @Autowired private KafkaSenderService kafkaSenderService;
+
+    @KafkaListener(topics = "${kafka.topic.debitur.request}", group = "${spring.kafka.consumer.group-id}")
+    public void handleDebiturRequest(String message) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        try {
+            LOGGER.debug("Terima message : {}", message);
+            Debitur d = objectMapper.readValue(message, Debitur.class);
+            BeanPropertyBindingResult binder = new BeanPropertyBindingResult(d, "debitur");
+            validator.validate(d, binder);
+
+            if (binder.hasErrors()) {
+                LOGGER.warn("Gagal mendaftarkan debitur {}", binder.getAllErrors());
+                response.put("sukses", false);
+                response.put("data", binder.getAllErrors());
+                kafkaSenderService.sendDebiturResponse(response);
+                return;
+            }
+
+            if (debiturDao.findByNomorDebitur(d.getNomorDebitur()) != null) {
+                response.put("sukses", false);
+                response.put("data", "Nomor debitur " + d.getNomorDebitur() + " sudah ada");
+                kafkaSenderService.sendDebiturResponse(response);
+                return;
+            }
+
+            debiturDao.save(d);
+            response.put("sukses", true);
+            kafkaSenderService.sendDebiturResponse(response);
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+            response.put("sukses", false);
+            response.put("data", err.getMessage());
+            kafkaSenderService.sendDebiturResponse(response);
+        }
+    }
 
     @KafkaListener(topics = "${kafka.topic.tagihan.request}", group = "${spring.kafka.consumer.group-id}")
     public void handleTagihanRequest(String message) {

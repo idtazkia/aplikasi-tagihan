@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 @Service @Transactional
 public class KafkaSenderService {
@@ -24,6 +25,7 @@ public class KafkaSenderService {
     private static final SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
 
     @Value("${kafka.topic.va.request}") private String kafkaTopicVaRequest;
+    @Value("${kafka.topic.debitur.response}") private String kafkaTopicDebiturResponse;
     @Value("${kafka.topic.tagihan.response}") private String kafkaTopicTagihanResponse;
 
     @Autowired private ObjectMapper objectMapper;
@@ -49,6 +51,14 @@ public class KafkaSenderService {
     public void sendTagihanResponse(TagihanResponse tagihanResponse) {
         try {
             kafkaTemplate.send(kafkaTopicTagihanResponse, objectMapper.writeValueAsString(tagihanResponse));
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+        }
+    }
+
+    public void sendDebiturResponse(Map<String, Object> data) {
+        try {
+            kafkaTemplate.send(kafkaTopicDebiturResponse, objectMapper.writeValueAsString(data));
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
         }
