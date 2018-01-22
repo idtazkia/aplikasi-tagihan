@@ -1,11 +1,8 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
 import id.ac.tazkia.payment.virtualaccount.dao.DebiturDao;
-import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dto.UploadError;
 import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
-import id.ac.tazkia.payment.virtualaccount.entity.StatusPembayaran;
-import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +26,6 @@ import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Transactional
@@ -40,34 +36,9 @@ public class DebiturController {
 
     @Autowired
     private DebiturDao debiturDao;
-    @Autowired
-    private TagihanDao tagihanDao;
 
     @Autowired
     private Validator validator;
-
-    @PreAuthorize("hasAuthority('VIEW_DEBITUR')")
-    @GetMapping("/api/client/debitur/")
-    @ResponseBody
-    public Page<Debitur> findAll(Pageable page) {
-        return debiturDao.findAll(page);
-    }
-
-    @PreAuthorize("hasAuthority('EDIT_DEBITUR')")
-    @PostMapping("/api/client/debitur/")
-    public String create(@ModelAttribute @Valid Debitur s) {
-        debiturDao.save(s);
-
-        return "redirect:/debitur/list";
-    }
-
-    @PreAuthorize("hasAuthority('VIEW_TAGIHAN')")
-    @GetMapping("/api/client/debitur/{id}/tagihan")
-    @ResponseBody
-    public Page<Tagihan> findTagihanOutstandingByDebitur(Debitur s, Pageable page) {
-        return tagihanDao.findByDebiturAndStatusPembayaranInOrderByUpdatedAtDesc(s,
-                Arrays.asList(StatusPembayaran.BELUM_DIBAYAR, StatusPembayaran.DIBAYAR_SEBAGIAN), page);
-    }
 
     @PreAuthorize("hasAuthority('VIEW_DEBITUR')")
     @GetMapping("/api/debitur/")
