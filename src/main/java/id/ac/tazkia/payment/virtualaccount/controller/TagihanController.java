@@ -9,6 +9,7 @@ import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.StatusTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
+import id.ac.tazkia.payment.virtualaccount.service.KafkaSenderService;
 import id.ac.tazkia.payment.virtualaccount.service.TagihanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,7 @@ public class TagihanController {
     private TagihanDao tagihanDao;
     @Autowired
     private TagihanService tagihanService;
+    @Autowired private KafkaSenderService kafkaSenderService;
     @Autowired
     private JenisTagihanDao jenisTagihanDao;
     @Autowired private DebiturDao debiturDao;
@@ -136,6 +138,22 @@ public class TagihanController {
         }
         tagihan.setStatusTagihan(StatusTagihan.NONAKTIF);
         tagihanService.saveTagihan(tagihan);
+        return "redirect:list";
+    }
+
+    @GetMapping("/notifikasi")
+    public ModelMap displayNotifikasiForm(@RequestParam Tagihan tagihan) {
+        return new ModelMap()
+                .addAttribute("tagihan", tagihan);
+    }
+
+    @PostMapping("/notifikasi")
+    public String processNotifikasiForm(@RequestParam Tagihan tagihan) {
+        if (tagihan == null) {
+            LOGGER.warn("Notifikasi tagihan null");
+            return "redirect:list";
+        }
+        kafkaSenderService.sendNotifikasiTagihan(tagihan);
         return "redirect:list";
     }
 

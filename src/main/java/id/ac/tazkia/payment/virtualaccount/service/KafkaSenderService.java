@@ -60,7 +60,7 @@ public class KafkaSenderService {
     }
 
     @Scheduled(fixedDelay = 3000)
-    public void sendNotifikasiTagihan() {
+    public void prosesNotifikasiTagihan() {
         for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM)) {
             // tunggu aktivasi VA dulu selama 1 menit
             if (LocalDateTime.now().isBefore(
@@ -68,53 +68,57 @@ public class KafkaSenderService {
                             .toLocalDateTime().plusMinutes(1))) {
                 continue;
             }
-            try {
-                String email = tagihan.getDebitur().getEmail();
-                String hp = tagihan.getDebitur().getNoHp();
+            sendNotifikasiTagihan(tagihan);
+        }
+    }
 
-                Map<String, Object> notifikasi = new LinkedHashMap<>();
-                notifikasi.put("email", email);
-                notifikasi.put("mobile", hp);
-                notifikasi.put("konfigurasi", konfigurasiTagihan);
+    public void sendNotifikasiTagihan(Tagihan tagihan) {
+        try {
+            String email = tagihan.getDebitur().getEmail();
+            String hp = tagihan.getDebitur().getNoHp();
+
+            Map<String, Object> notifikasi = new LinkedHashMap<>();
+            notifikasi.put("email", email);
+            notifikasi.put("mobile", hp);
+            notifikasi.put("konfigurasi", konfigurasiTagihan);
 
 
-                StringBuilder rekening = new StringBuilder("");
-                StringBuilder rekeningFull = new StringBuilder("<ul>");
+            StringBuilder rekening = new StringBuilder("");
+            StringBuilder rekeningFull = new StringBuilder("<ul>");
 
-                for (VirtualAccount va : virtualAccountDao.findByTagihan(tagihan)) {
-                    if (!VaStatus.AKTIF.equals(va.getVaStatus())) {
-                        continue;
-                    }
-                    if (rekening.length() > 0) {
-                        rekening.append("/");
-                    }
-                    rekening.append(va.getBank().getNama() + " " + va.getNomor());
-                    rekeningFull.append("<li>" + va.getBank().getNama() + " " + va.getNomor() + "</li>");
+            for (VirtualAccount va : virtualAccountDao.findByTagihan(tagihan)) {
+                if (!VaStatus.AKTIF.equals(va.getVaStatus())) {
+                    continue;
                 }
-                rekeningFull.append("</ul>");
-
-
-                NotifikasiTagihanRequest requestData = NotifikasiTagihanRequest.builder()
-                        .jumlah(tagihan.getNilaiTagihan())
-                        .keterangan(tagihan.getJenisTagihan().getNama())
-                        .nama(tagihan.getDebitur().getNama())
-                        .email(tagihan.getDebitur().getEmail())
-                        .noHp(tagihan.getDebitur().getNoHp())
-                        .nomorTagihan(tagihan.getNomor())
-                        .rekening(rekening.toString())
-                        .rekeningFull(rekeningFull.toString())
-                        .tanggalTagihan(FORMATTER_ISO_DATE.format(tagihan.getTanggalTagihan()))
-                        .contactinfo(contactinfo)
-                        .contactinfoFull(contactinfoFull)
-                        .build();
-
-                notifikasi.put("data", requestData);
-                kafkaTemplate.send(kafkaTopicNotificationRequest, objectMapper.writeValueAsString(notifikasi));
-                tagihan.setStatusNotifikasi(StatusNotifikasi.SUDAH_TERKIRIM);
-                tagihanDao.save(tagihan);
-            } catch (Exception err) {
-                LOGGER.warn(err.getMessage(), err);
+                if (rekening.length() > 0) {
+                    rekening.append("/");
+                }
+                rekening.append(va.getBank().getNama() + " " + va.getNomor());
+                rekeningFull.append("<li>" + va.getBank().getNama() + " " + va.getNomor() + "</li>");
             }
+            rekeningFull.append("</ul>");
+
+
+            NotifikasiTagihanRequest requestData = NotifikasiTagihanRequest.builder()
+                    .jumlah(tagihan.getNilaiTagihan())
+                    .keterangan(tagihan.getJenisTagihan().getNama())
+                    .nama(tagihan.getDebitur().getNama())
+                    .email(tagihan.getDebitur().getEmail())
+                    .noHp(tagihan.getDebitur().getNoHp())
+                    .nomorTagihan(tagihan.getNomor())
+                    .rekening(rekening.toString())
+                    .rekeningFull(rekeningFull.toString())
+                    .tanggalTagihan(FORMATTER_ISO_DATE.format(tagihan.getTanggalTagihan()))
+                    .contactinfo(contactinfo)
+                    .contactinfoFull(contactinfoFull)
+                    .build();
+
+            notifikasi.put("data", requestData);
+            kafkaTemplate.send(kafkaTopicNotificationRequest, objectMapper.writeValueAsString(notifikasi));
+            tagihan.setStatusNotifikasi(StatusNotifikasi.SUDAH_TERKIRIM);
+            tagihanDao.save(tagihan);
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
         }
     }
 
