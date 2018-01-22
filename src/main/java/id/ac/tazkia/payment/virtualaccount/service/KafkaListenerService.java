@@ -1,10 +1,8 @@
 package id.ac.tazkia.payment.virtualaccount.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import id.ac.tazkia.payment.virtualaccount.dao.BankDao;
-import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
-import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
-import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
+import id.ac.tazkia.payment.virtualaccount.dao.*;
+import id.ac.tazkia.payment.virtualaccount.dto.TagihanRequest;
 import id.ac.tazkia.payment.virtualaccount.dto.VaPayment;
 import id.ac.tazkia.payment.virtualaccount.dto.VaRequestStatus;
 import id.ac.tazkia.payment.virtualaccount.dto.VaResponse;
@@ -27,6 +25,40 @@ public class KafkaListenerService {
     @Autowired private BankDao bankDao;
     @Autowired private TagihanDao tagihanDao;
     @Autowired private PembayaranDao pembayaranDao;
+    @Autowired private DebiturDao debiturDao;
+    @Autowired private JenisTagihanDao jenisTagihanDao;
+    @Autowired private TagihanService tagihanService;
+
+    @KafkaListener(topics = "${kafka.topic.tagihan.request}", group = "${spring.kafka.consumer.group-id}")
+    public void handleTagihanRequest(String message) {
+        try {
+            LOGGER.debug("Terima message : {}", message);
+            TagihanRequest request = objectMapper.readValue(message, TagihanRequest.class);
+            Tagihan t = new Tagihan();
+
+            Debitur d = debiturDao.findByNomorDebitur(request.getDebitur());
+            if (d == null) {
+                LOGGER.warn("Debitur dengan nomor {} tidak terdaftar", request.getDebitur());
+                return;
+            }
+            t.setDebitur(d);
+
+            JenisTagihan jt = jenisTagihanDao.findOne(request.getJenisTagihan());
+            if (jt == null) {
+                LOGGER.warn("Jenis Tagihan dengan id {} tidak terdaftar", request.getJenisTagihan());
+                return;
+            }
+            t.setJenisTagihan(jt);
+
+            t.setNilaiTagihan(request.getNilaiTagihan());
+            t.setKeterangan(request.getKeterangan());
+            t.setTanggalJatuhTempo(request.getTanggalJatuhTempo());
+
+            tagihanService.saveTagihan(t);
+        } catch (Exception err) {
+            LOGGER.warn(err.getMessage(), err);
+        }
+    }
 
     @KafkaListener(topics = "${kafka.topic.va.response}", group = "${spring.kafka.consumer.group-id}")
     public void handleVaResponse(String message) {
