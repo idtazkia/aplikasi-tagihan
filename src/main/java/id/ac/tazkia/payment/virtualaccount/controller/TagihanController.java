@@ -70,6 +70,7 @@ public class TagihanController {
         if (tagihan == null) {
             tagihan = new Tagihan();
             tagihan.setNomor("--- otomatis ditentukan sistem ---");
+            tagihan.setTanggalJatuhTempo(Date.from(LocalDate.now().plusMonths(6).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         }
 
         return new ModelMap().addAttribute("tagihan", tagihan);
