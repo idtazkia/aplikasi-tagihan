@@ -64,10 +64,10 @@ public class KafkaSenderService {
     @Scheduled(fixedDelay = 3000)
     public void sendNotifikasiTagihan() {
         for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM)) {
-            // tunggu aktivasi VA dulu selama 5 menit
+            // tunggu aktivasi VA dulu selama 1 menit
             if (LocalDateTime.now().isBefore(
                     tagihan.getUpdatedAt().toInstant().atZone(ZoneId.systemDefault())
-                            .toLocalDateTime().plusMinutes(5))) {
+                            .toLocalDateTime().plusMinutes(1))) {
                 continue;
             }
             try {
