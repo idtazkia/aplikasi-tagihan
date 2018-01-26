@@ -13,6 +13,7 @@ before_script:
   - eval $(ssh-agent -s)
   - ssh-add <(echo "$SSH_PRIVATE_KEY")
   - mkdir -p ~/.ssh
+  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
   - '[[ -f /.dockerenv ]] && ssh-keyscan -H "$SSH_HOSTNAME_TESTING" > ~/.ssh/known_hosts'
   - '[[ -f /.dockerenv ]] && ssh-keyscan -H "$SSH_HOSTNAME_PRODUCTION" > ~/.ssh/known_hosts'
 
