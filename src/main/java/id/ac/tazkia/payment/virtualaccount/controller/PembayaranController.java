@@ -2,6 +2,7 @@ package id.ac.tazkia.payment.virtualaccount.controller;
 
 import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
 import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
+import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,9 +37,9 @@ public class PembayaranController {
 
     @PreAuthorize("hasAuthority('VIEW_PEMBAYARAN')")
     @GetMapping("/list")
-    public ModelMap findAllHtml(Pageable pageable) {
+    public ModelMap findAllHtml(@RequestParam Tagihan tagihan, Pageable pageable) {
         return new ModelMap()
-                .addAttribute("data", pembayaranDao.findAll(pageable));
+                .addAttribute("data", pembayaranDao.findByTagihanOrderByWaktuTransaksi(tagihan, pageable));
     }
 
     @ModelAttribute("pageTitle")
