@@ -54,7 +54,7 @@
                                             <div class="CTAs">
                                                 <a th:href="@{/tagihan/update(tagihan=${tagihan.id})}" class="btn btn-xs btn-secondary"><i class="fa fa-pencil"> </i>edit</a>
                                                 <a th:href="@{/va/list(tagihan=${tagihan.id})}" class="btn btn-xs btn-secondary"><i class="fa fa-user"> </i>virtual account</a>
-                                                <a th:href="@{/va/list(tagihan=${tagihan.id})}" class="btn btn-xs btn-secondary"><i class="fa fa-envelope"> </i>kirim notifikasi</a>
+                                                <a th:href="@{/tagihan/notifikasi(tagihan=${tagihan.id})}" class="btn btn-xs btn-secondary"><i class="fa fa-envelope"> </i>kirim notifikasi</a>
                                                 <a th:href="@{/pembayaran/list(tagihan=${tagihan.id})}" class="btn btn-xs btn-secondary"><i class="fa fa-history"> </i>riwayat pembayaran</a>
                                                 <a th:href="@{/tagihan/hapus(tagihan=${tagihan.id})}" class="btn btn-xs btn-danger"><i class="fa fa-trash"> </i>hapus</a></div>
                                         </div>
