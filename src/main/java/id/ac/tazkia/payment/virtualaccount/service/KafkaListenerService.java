@@ -175,6 +175,7 @@ public class KafkaListenerService {
                 tagihan.setStatusPembayaran(StatusPembayaran.DIBAYAR_SEBAGIAN);
             } else {
                 tagihan.setStatusPembayaran(StatusPembayaran.LUNAS);
+                tagihan.setStatusTagihan(StatusTagihan.NONAKTIF);
                 VirtualAccount va = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
                 va.setVaStatus(VaStatus.NONAKTIF);
                 virtualAccountDao.save(va);
