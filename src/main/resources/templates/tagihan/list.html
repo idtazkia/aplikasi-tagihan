@@ -45,7 +45,7 @@
                                 <div class="feed d-flex justify-content-between">
                                     <div class="feed-body d-flex justify-content-between"><a name="${tagihan.id}" class="feed-profile"><i class="fa fa-user fa-3x"></i></a>
                                         <div class="content">
-                                            <h5 th:text="${tagihan.debitur.nomorDebitur + ' - ' + tagihan.debitur.nama}">Frank Williams</h5><span th:text="${'Total Tagihan : Rp.'+tagihan.nilaiTagihan +''+ ' | ' + ' Total Pembayaran : Rp.'+ tagihan.jumlahPembayaran}">Posted a new blog </span>
+                                            <h5 th:text="${tagihan.jenisTagihan.nama + ' > ' + tagihan.debitur.nomorDebitur + ' - ' + tagihan.debitur.nama}">Frank Williams</h5><span th:text="${'Total Tagihan : Rp.'+tagihan.nilaiTagihan +''+ ' | ' + ' Total Pembayaran : Rp.'+ tagihan.jumlahPembayaran}">Posted a new blog </span>
                                             <div class="full-date"><small>Tanggal Jatuh Tempo : </small><small th:text="${tagihan.tanggalJatuhTempo}">Today 5:60 pm - 12.06.2014</small></div>
                                             <div class="full-date">
                                                 <small>Status Tagihan : </small><small th:text="${tagihan.statusTagihan}">Today 5:60 pm - 12.06.2014</small> |
