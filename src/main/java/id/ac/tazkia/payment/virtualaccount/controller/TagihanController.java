@@ -222,14 +222,14 @@ public class TagihanController {
                 t.setKeterangan(data[1]);
 
                 try {
-                    t.setNilaiTagihan(new BigDecimal(data[3]));
+                    t.setNilaiTagihan(new BigDecimal(data[2]));
                 } catch (NumberFormatException ex) {
                     errors.add(new UploadError(baris, "Format nilai tagihan salah", content));
                     continue;
                 }
 
                 try {
-                    Date tanggalJatuhTempo = Date.from(LocalDate.parse(data[4], DateTimeFormatter.ISO_LOCAL_DATE)
+                    Date tanggalJatuhTempo = Date.from(LocalDate.parse(data[3], DateTimeFormatter.ISO_LOCAL_DATE)
                             .atStartOfDay(ZoneId.systemDefault()).toInstant());
                     t.setTanggalJatuhTempo(tanggalJatuhTempo);
                 } catch (DateTimeParseException ex) {
