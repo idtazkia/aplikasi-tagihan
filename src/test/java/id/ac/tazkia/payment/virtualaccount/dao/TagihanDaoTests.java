@@ -41,9 +41,10 @@ public class TagihanDaoTests {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date mulai = formatter.parse("2018-01-01");
         Date sampai = formatter.parse("2018-02-01");
-        List<RekapTagihan> rekapTagihanList = tagihanDao.rekapTagihan(mulai, sampai, StatusTagihan.AKTIF);
+        List<RekapTagihan> rekapTagihanList = tagihanDao.rekapTagihan(mulai, sampai);
         for (RekapTagihan rekap : rekapTagihanList) {
             System.out.println("Jenis Tagihan : "+rekap.getJenisTagihan().getNama());
+            System.out.println("Status Tagihan : "+rekap.getStatusTagihan());
             System.out.println("Jumlah Tagihan : "+rekap.getJumlahTagihan());
             System.out.println("Nilai Tagihan : "+rekap.getNilaiTagihan());
             System.out.println("Nilai Pembayaran : "+rekap.getNilaiPembayaran());

@@ -1,7 +1,10 @@
 package id.ac.tazkia.payment.virtualaccount.dao;
 
 import id.ac.tazkia.payment.virtualaccount.dto.RekapTagihan;
-import id.ac.tazkia.payment.virtualaccount.entity.*;
+import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
+import id.ac.tazkia.payment.virtualaccount.entity.StatusNotifikasi;
+import id.ac.tazkia.payment.virtualaccount.entity.StatusTagihan;
+import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -28,11 +31,10 @@ public interface TagihanDao extends PagingAndSortingRepository<Tagihan, String> 
     Long jumlahTagihanByJenisTagihanAndStatusTagihan(@Param("jenisTagihan") JenisTagihan jenisTagihan,
                                                     @Param("statusTagihan") StatusTagihan statusTagihan);
 
-    @Query("select new id.ac.tazkia.payment.virtualaccount.dto.RekapTagihan(t.jenisTagihan, count(t), sum(t.nilaiTagihan), sum(t.jumlahPembayaran)) " +
-            "from Tagihan t where t.statusTagihan = :statusTagihan " +
-            "and t.tanggalTagihan >= :mulai and t.tanggalTagihan <= :sampai " +
-            "group by t.jenisTagihan")
+    @Query("select new id.ac.tazkia.payment.virtualaccount.dto.RekapTagihan(t.jenisTagihan, t.statusTagihan, count(t), sum(t.nilaiTagihan), sum(t.jumlahPembayaran)) " +
+            "from Tagihan t " +
+            "where t.tanggalTagihan >= :mulai and t.tanggalTagihan <= :sampai " +
+            "group by t.jenisTagihan, t.statusTagihan")
     List<RekapTagihan> rekapTagihan(@Param("mulai") Date mulai,
-                                    @Param("sampai") Date sampai,
-                                    @Param("statusTagihan") StatusTagihan statusTagihan);
+                                    @Param("sampai") Date sampai);
 }

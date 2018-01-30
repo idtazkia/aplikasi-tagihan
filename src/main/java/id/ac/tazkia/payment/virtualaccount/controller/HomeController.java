@@ -1,9 +1,9 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
+import id.ac.tazkia.payment.virtualaccount.dto.LaporanTagihan;
 import id.ac.tazkia.payment.virtualaccount.dto.RekapTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.StatusTagihan;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -16,8 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class HomeController {
@@ -35,16 +34,45 @@ public class HomeController {
     public ModelMap home(){
         List<RekapTagihan> rekap = tagihanDao
                 .rekapTagihan(Date.from(LocalDate.parse(TANGGAL_LIVE, DateTimeFormatter.BASIC_ISO_DATE).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                        Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                        StatusTagihan.AKTIF);
+                        Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
+        Map<String, LaporanTagihan> daftarLaporanTagihan = new LinkedHashMap<>();
+
         for (RekapTagihan r : rekap) {
+            LaporanTagihan laporanTagihan = daftarLaporanTagihan.get(r.getJenisTagihan().getId());
+            if (laporanTagihan == null) {
+                laporanTagihan = new LaporanTagihan();
+                laporanTagihan.setJenisTagihan(r.getJenisTagihan());
+                daftarLaporanTagihan.put(r.getJenisTagihan().getId(), laporanTagihan);
+            }
+
+            if (StatusTagihan.AKTIF.equals(r.getStatusTagihan())) {
+                laporanTagihan.setJumlahTagihanBelumLunas(
+                        laporanTagihan.getJumlahTagihanBelumLunas()
+                                + r.getJumlahTagihan());
+            }
+
+            if (StatusTagihan.NONAKTIF.equals(r.getStatusTagihan())) {
+                laporanTagihan.setJumlahTagihanLunas(
+                        laporanTagihan.getJumlahTagihanLunas()
+                                + r.getJumlahTagihan());
+            }
+
+            laporanTagihan.setNilaiTagihan(
+                    laporanTagihan.getNilaiTagihan()
+                            .add(r.getNilaiTagihan()));
+
+            laporanTagihan.setNilaiPembayaran(
+                    laporanTagihan.getNilaiPembayaran()
+                            .add(r.getNilaiPembayaran()));
+
             System.out.println("Jenis Tagihan : "+r.getJenisTagihan().getNama());
             System.out.println("Jumlah Tagihan : "+r.getJumlahTagihan());
             System.out.println("Nilai Tagihan : "+r.getNilaiTagihan());
             System.out.println("Nilai Pembayaran : "+r.getNilaiPembayaran());
         }
         return new ModelMap()
-                .addAttribute("rekapTagihanList", rekap)
+                .addAttribute("daftarLaporanTagihan", new ArrayList<>(daftarLaporanTagihan.values()))
                 .addAttribute("pageTitle", "Dashboard");
     }
 

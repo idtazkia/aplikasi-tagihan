@@ -11,7 +11,7 @@
     <!-- Dashboard Counts Section-->
     <section class="projects no-padding-top">
         <div class="container-fluid">
-            <div class="project" th:each="rekap : ${rekapTagihanList}">
+            <div class="project" th:each="laporan : ${daftarLaporanTagihan}">
                 <div class="row bg-white has-shadow">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
                         <div class="project-title d-flex align-items-center">
@@ -19,17 +19,18 @@
                                 <img th:src="@{/img/project-3.jpg}" alt="..." class="img-fluid">
                             </div>
                             <div class="text">
-                                <h3 class="h4" th:text="${rekap.jenisTagihan.nama}">Project Title</h3>
-                                <small th:text="${'Jumlah tagihan : '+rekap.jumlahTagihan}">Lorem Ipsum Dolor</small>
+                                <h3 class="h4" th:text="${laporan.jenisTagihan.nama}">Project Title</h3>
+                                <small th:text="${'Jumlah tagihan outstanding : '+laporan.jumlahTagihanBelumLunas}">Lorem Ipsum Dolor</small><br>
+                                <small th:text="${'Jumlah tagihan lunas : '+laporan.jumlahTagihanLunas}">Lorem Ipsum Dolor</small>
                             </div>
                         </div>
                         <div class="project-date">
-                            <span class="hidden-sm-down" th:text="${'Nilai Tagihan : '+rekap.nilaiTagihan}">Today at 4:24 AM</span>
+                            <span class="hidden-sm-down" th:text="${'Nilai Tagihan : '+laporan.nilaiTagihan}">Today at 4:24 AM</span>
                         </div>
                     </div>
                     <div class="right-col col-lg-6 d-flex align-items-center">
                         <div class="time"><i class="fa fa-clock-o"></i>
-                            <span th:text="${'Nilai Pembayaran : '+rekap.nilaiPembayaran}">12:00 PM</span>
+                            <span th:text="${'Nilai Pembayaran : '+laporan.nilaiPembayaran}">12:00 PM</span>
                         </div>
                     </div>
                 </div>
