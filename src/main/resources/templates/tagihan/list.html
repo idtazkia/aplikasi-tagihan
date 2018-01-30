@@ -32,7 +32,19 @@
                     <div class="card-close">
                         <div class="dropdown">
                             <button type="button" id="closeCard7" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                            <div aria-labelledby="closeCard7" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                            <div aria-labelledby="closeCard7"
+                                 class="dropdown-menu dropdown-menu-right has-shadow">
+                                <a th:href="@{/tagihan/list}"
+                                   class="dropdown-item edit">
+                                    <i class="fa fa-reorder"></i>
+                                    <span>Semua Jenis Tagihan</span>
+                                </a>
+                                <a th:href="@{/tagihan/list(jenis=${jenis.id})}"
+                                   class="dropdown-item edit" th:each="jenis : ${listJenisTagihan}">
+                                    <i class="fa fa-reorder"></i>
+                                    <span th:text="${jenis.nama}"></span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-header">
