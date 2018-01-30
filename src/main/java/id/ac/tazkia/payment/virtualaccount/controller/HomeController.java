@@ -1,5 +1,10 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
+import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
+import id.ac.tazkia.payment.virtualaccount.dto.RekapTagihan;
+import id.ac.tazkia.payment.virtualaccount.entity.StatusTagihan;
+import org.apache.tomcat.jni.Local;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Controller;
@@ -8,9 +13,15 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 public class HomeController {
+    private static final String TANGGAL_LIVE = "20180101";
 
     @Value("classpath:sample/tagihan.csv")
     private Resource contohFileTagihan;
@@ -18,9 +29,23 @@ public class HomeController {
     @Value("classpath:sample/debitur.csv")
     private Resource contohFileDebitur;
 
+    @Autowired private TagihanDao tagihanDao;
+
     @GetMapping("/home")
     public ModelMap home(){
-        return new ModelMap().addAttribute("pageTitle", "Dashboard");
+        List<RekapTagihan> rekap = tagihanDao
+                .rekapTagihan(Date.from(LocalDate.parse(TANGGAL_LIVE, DateTimeFormatter.BASIC_ISO_DATE).atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                        Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                        StatusTagihan.AKTIF);
+        for (RekapTagihan r : rekap) {
+            System.out.println("Jenis Tagihan : "+r.getJenisTagihan().getNama());
+            System.out.println("Jumlah Tagihan : "+r.getJumlahTagihan());
+            System.out.println("Nilai Tagihan : "+r.getNilaiTagihan());
+            System.out.println("Nilai Pembayaran : "+r.getNilaiPembayaran());
+        }
+        return new ModelMap()
+                .addAttribute("rekapTagihanList", rekap)
+                .addAttribute("pageTitle", "Dashboard");
     }
 
     @GetMapping("/contoh/tagihan")

@@ -9,108 +9,33 @@
 <body>
 <section layout:fragment="content">
     <!-- Dashboard Counts Section-->
-    <section class="dashboard-counts no-padding-bottom" style="margin-top: -50px">
+    <section class="projects no-padding-top">
         <div class="container-fluid">
-            <div class="card-header">
-                  <h4>Jumlah Tagihan</h4>
-            </div>
-            <div class="row bg-white has-shadow">
-                <!-- Item -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="item d-flex align-items-center">
-                        <div class="icon bg-violet"><i class="icon-user"></i></div>
-                        <div class="title"><span>Uang<br />Asrama</span>
-                            <div class="progress">
-                                <div role="progressbar" style="width: 25%; height: 4px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-violet"></div>
+            <div class="project" th:each="rekap : ${rekapTagihanList}">
+                <div class="row bg-white has-shadow">
+                    <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
+                        <div class="project-title d-flex align-items-center">
+                            <div class="image has-shadow">
+                                <img th:src="@{/img/project-3.jpg}" alt="..." class="img-fluid">
+                            </div>
+                            <div class="text">
+                                <h3 class="h4" th:text="${rekap.jenisTagihan.nama}">Project Title</h3>
+                                <small th:text="${'Jumlah tagihan : '+rekap.jumlahTagihan}">Lorem Ipsum Dolor</small>
                             </div>
                         </div>
-                        <div class="number"><strong>25</strong></div>
-                    </div>
-                </div>
-                <!-- Item -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="item d-flex align-items-center">
-                        <div class="icon bg-red"><i class="icon-padnote"></i></div>
-                        <div class="title"><span>Daftar<br />Ulang</span>
-                            <div class="progress">
-                                <div role="progressbar" style="width: 25%; height: 4px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-red"></div>
-                            </div>
-                        </div>
-                        <div class="number"><strong>70</strong></div>
-                    </div>
-                </div>
-                <!-- Item -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="item d-flex align-items-center">
-                        <div class="icon bg-green"><i class="icon-bill"></i></div>
-                        <div class="title"><span>Uang<br />SPP</span>
-                            <div class="progress">
-                                <div role="progressbar" style="width: 25%; height: 4px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-green"></div>
-                            </div>
-                        </div>
-                        <div class="number"><strong>44</strong></div>
-                    </div>
-                </div>
-                <!-- Item -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="item d-flex align-items-center">
-                        <div class="icon bg-orange"><i class="icon-check"></i></div>
-                        <div class="title"><span>Uang<br />Gedung</span>
-                            <div class="progress">
-                                <div role="progressbar" style="width: 25%; height: 4px;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-orange"></div>
-                            </div>
-                        </div>
-                        <div class="number"><strong>35</strong></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-
-    <section class="dashboard-counts no-padding-bottom" style="margin-top: -25px">
-        <div class="container-fluid">
-            <div class="card-header">
-                  <h4>Nilai Tagihan</h4>
-            </div>
-            <div class="row bg-white has-shadow">
-                <!-- Item -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="item d-flex align-items-center">
-                        <div class="icon bg-violet"><i class="icon-user"></i></div>
-                        <div class="title"><span><font size="3">Uang Asrama</font><br /> <b>Rp.1000.000</b> </span>
+                        <div class="project-date">
+                            <span class="hidden-sm-down" th:text="${'Nilai Tagihan : '+rekap.nilaiTagihan}">Today at 4:24 AM</span>
                         </div>
                     </div>
-                </div>
-                <!-- Item -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="item d-flex align-items-center">
-                        <div class="icon bg-red"><i class="icon-padnote"></i></div>
-                        <div class="title"><span><font size="3">Daftar Ulang</font> <br /> <b>Rp.500.000</b></span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Item -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="item d-flex align-items-center">
-                        <div class="icon bg-green"><i class="icon-bill"></i></div>
-                        <div class="title"><span><font size="3">Uang SPP </font><br /> <b>Rp.300.000</b></span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Item -->
-                <div class="col-xl-3 col-sm-6">
-                    <div class="item d-flex align-items-center">
-                        <div class="icon bg-orange"><i class="icon-check"></i></div>
-                        <div class="title"><span><font size="3">Uang Gedung </font><br /> <b>Rp.10.000.000</b></span>
+                    <div class="right-col col-lg-6 d-flex align-items-center">
+                        <div class="time"><i class="fa fa-clock-o"></i>
+                            <span th:text="${'Nilai Pembayaran : '+rekap.nilaiPembayaran}">12:00 PM</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-
 </section>
 
 </body>
