@@ -65,11 +65,6 @@ public class HomeController {
             laporanTagihan.setNilaiPembayaran(
                     laporanTagihan.getNilaiPembayaran()
                             .add(r.getNilaiPembayaran()));
-
-            System.out.println("Jenis Tagihan : "+r.getJenisTagihan().getNama());
-            System.out.println("Jumlah Tagihan : "+r.getJumlahTagihan());
-            System.out.println("Nilai Tagihan : "+r.getNilaiTagihan());
-            System.out.println("Nilai Pembayaran : "+r.getNilaiPembayaran());
         }
         return new ModelMap()
                 .addAttribute("daftarLaporanTagihan", new ArrayList<>(daftarLaporanTagihan.values()))

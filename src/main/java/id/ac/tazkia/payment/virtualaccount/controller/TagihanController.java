@@ -53,8 +53,16 @@ public class TagihanController {
     @Autowired private DebiturDao debiturDao;
 
     @GetMapping("/list")
-    public ModelMap listTagihan(@PageableDefault(size = 10, sort = "nomor") Pageable pageable) {
-        return new ModelMap("listTagihan", tagihanDao.findAllByStatusTagihan(StatusTagihan.AKTIF,pageable));
+    public ModelMap listTagihan(@RequestParam("jenis") JenisTagihan jenisTagihan, @PageableDefault(size = 10, sort = "nomor") Pageable pageable) {
+        if (jenisTagihan == null) {
+            return new ModelMap("listTagihan", tagihanDao.findAllByStatusTagihan(StatusTagihan.AKTIF, pageable));
+        } else {
+            return new ModelMap()
+                    .addAttribute("jenisTagihan", jenisTagihan)
+                    .addAttribute("listTagihan", tagihanDao
+                            .findByJenisTagihanAndStatusTagihan(
+                                    jenisTagihan, StatusTagihan.AKTIF, pageable));
+        }
     }
 
     @ModelAttribute("listJenisTagihan")

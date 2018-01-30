@@ -17,6 +17,7 @@ import java.util.List;
 
 public interface TagihanDao extends PagingAndSortingRepository<Tagihan, String> {
     Tagihan findByNomor(String nomor);
+    Page<Tagihan> findByJenisTagihanAndStatusTagihan(JenisTagihan jenisTagihan, StatusTagihan status, Pageable pageable);
     Page<Tagihan> findAllByStatusTagihan(StatusTagihan status, Pageable pageable);
     Iterable<Tagihan> findByStatusNotifikasi(StatusNotifikasi statusNotifikasi);
     @Query(

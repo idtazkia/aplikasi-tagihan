@@ -37,9 +37,15 @@
                     </div>
                     <div class="card-header">
                         <h3 class="h4">Daftar Tagihan</h3>
+                        <span th:if="${jenisTagihan}" th:text="${jenisTagihan.nama}">Jenis Tagihan</span>
                     </div>
                     <div class="card-body no-padding">
                         <!--Start Item-->
+
+                        <div th:unless="${listTagihan.numberOfElements}" class="item">
+                            Tidak ada tagihan yang aktif
+                        </div>
+
                         <div th:if="${listTagihan.numberOfElements}">
                             <div class="item" th:each="tagihan, rowStat : ${listTagihan}">
                                 <div class="feed d-flex justify-content-between">
@@ -66,7 +72,7 @@
                         <!-- End Item -->
 
                         <!--Start Pagination -->
-                        <div class="card-footer">
+                        <div th:if="${listTagihan.numberOfElements}" class="card-footer">
                             <center>
                                 <div class="dataTables_paginate paging_simple_numbers" id="datatable1_paginate">
                                     <ul class="pagination" sd:pagination="full">
