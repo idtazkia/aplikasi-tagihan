@@ -194,7 +194,7 @@ public class TagihanController {
             while ((content = reader.readLine()) != null) {
                 baris++;
                 String[] data = content.split(",");
-                if (data.length != 5) {
+                if (data.length != 4) {
                     errors.add(new UploadError(baris, "Format data salah", content));
                     continue;
                 }
@@ -204,14 +204,14 @@ public class TagihanController {
                 t.setTanggalTagihan(new Date());
                 t.setNomor(data[0]);
 
-                Debitur d = debiturDao.findByNomorDebitur(data[1]);
+                Debitur d = debiturDao.findByNomorDebitur(data[0]);
                 if (d == null) {
                     errors.add(new UploadError(baris, "Debitur "+data[1]+" tidak terdaftar", content));
                     continue;
                 }
 
                 t.setDebitur(d);
-                t.setKeterangan(data[2]);
+                t.setKeterangan(data[1]);
 
                 try {
                     t.setNilaiTagihan(new BigDecimal(data[3]));
@@ -226,11 +226,6 @@ public class TagihanController {
                     t.setTanggalJatuhTempo(tanggalJatuhTempo);
                 } catch (DateTimeParseException ex) {
                     errors.add(new UploadError(baris, "Format tanggal salah", content));
-                    continue;
-                }
-
-                if (tagihanDao.findByNomor(data[0]) != null) {
-                    errors.add(new UploadError(baris, "Nomor tagihan "+data[0]+" sudah digunakan", content));
                     continue;
                 }
 
