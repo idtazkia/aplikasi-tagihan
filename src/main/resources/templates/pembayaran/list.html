@@ -20,8 +20,13 @@
                                 <div class="card-header">
                                     <h3 class="h4">Daftar Pembayaran</h3>
                                 </div>
+
                                 <div class="card-body no-padding">
                                     <!-- Start Item-->
+                                    <div class="item" th:if="${data == null || data.numberOfElements == null || data.numberOfElements < 1}">
+                                        Tidak ada data pembayaran
+                                    </div>
+                                    <div th:if="${data != null && data.hasContent()}">
                                     <div class="item" th:each="pembayaran, rowStat : ${data.content}">
                                         <div class="feed d-flex justify-content-between">
                                             <div class="feed-body d-flex justify-content-between"><a href="#" class="feed-profile"><i class="fa fa-user fa-3x"></i></a>
@@ -36,6 +41,7 @@
                                             </div>
                                             <div class="date text-right"><small th:text="${pembayaran.waktuTransaksi}">5min ago</small></div>
                                         </div>
+                                    </div>
                                     </div>
                                     <!-- End Item -->
                                 </div>

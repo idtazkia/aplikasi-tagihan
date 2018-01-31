@@ -1,0 +1,1 @@
+update tagihan set status_tagihan = 'NONAKTIF' where status_pembayaran = 'LUNAS';

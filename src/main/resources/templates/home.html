@@ -13,8 +13,6 @@
         <div class="container-fluid" id="laporanTagihan">
 
             <div class="project" th:each="laporan : ${daftarLaporanTagihan}">
-                <a th:href="@{/tagihan/list(jenis=${laporan.jenisTagihan.id})}"
-                   style="display:block; text-decoration: none">
                 <div class="row bg-white has-shadow">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
                         <div class="project-title d-flex align-items-center">
@@ -28,16 +26,19 @@
                             </div>
                         </div>
                         <div class="project-date">
+                            <a th:href="@{/tagihan/list(jenis=${laporan.jenisTagihan.id})}">
                             <span class="hidden-sm-down" th:text="${'Nilai Tagihan : '+laporan.nilaiTagihan}">Today at 4:24 AM</span>
+                            </a>
                         </div>
                     </div>
                     <div class="right-col col-lg-6 d-flex align-items-center">
                         <div class="time"><i class="fa fa-clock-o"></i>
+                            <a th:href="@{/pembayaran/list(jenis=${laporan.jenisTagihan.id})}">
                             <span th:text="${'Nilai Pembayaran : '+laporan.nilaiPembayaran}">12:00 PM</span>
+                            </a>
                         </div>
                     </div>
                 </div>
-                </a>
             </div>
         </div>
     </section>
