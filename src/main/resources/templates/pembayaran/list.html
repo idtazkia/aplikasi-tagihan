@@ -17,8 +17,27 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="daily-feeds card">
+                                <div class="card-close">
+                                    <div class="dropdown">
+                                        <button type="button" id="closeCard7" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                                        <div aria-labelledby="closeCard7"
+                                             class="dropdown-menu dropdown-menu-right has-shadow">
+                                            <a th:href="@{/pembayaran/list}"
+                                               class="dropdown-item edit">
+                                                <i class="fa fa-reorder"></i>
+                                                <span>Semua Jenis Tagihan</span>
+                                            </a>
+                                            <a th:href="@{/pembayaran/list(jenis=${jenis.id})}"
+                                               class="dropdown-item edit" th:each="jenis : ${listJenisTagihan}">
+                                                <i class="fa fa-reorder"></i>
+                                                <span th:text="${jenis.nama}"></span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="card-header">
                                     <h3 class="h4">Daftar Pembayaran</h3>
+                                    <span th:if="${jenisTagihan}" th:text="${jenisTagihan.nama}">Jenis Tagihan</span>
                                 </div>
 
                                 <div class="card-body no-padding">

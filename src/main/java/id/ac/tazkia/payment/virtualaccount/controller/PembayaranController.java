@@ -1,5 +1,6 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
+import id.ac.tazkia.payment.virtualaccount.dao.JenisTagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
@@ -7,6 +8,8 @@ import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -22,8 +25,13 @@ import java.util.Date;
 @RequestMapping("/pembayaran")
 public class PembayaranController {
 
-    @Autowired
-    private PembayaranDao pembayaranDao;
+    @Autowired private PembayaranDao pembayaranDao;
+    @Autowired private JenisTagihanDao jenisTagihanDao;
+
+    @ModelAttribute("listJenisTagihan")
+    public Iterable<JenisTagihan> daftarJenisTagihan() {
+        return jenisTagihanDao.findAll(new Sort(Sort.Direction.ASC, "kode"));
+    }
 
     @PreAuthorize("hasAuthority('EDIT_PEMBAYARAN')")
     @GetMapping("/form")
@@ -46,7 +54,7 @@ public class PembayaranController {
                                 @RequestParam(required = false) Tagihan tagihan,
                                 @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date mulai,
                                 @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date sampai,
-                                Pageable pageable) {
+                                @PageableDefault(sort = "waktuTransaksi", direction = Sort.Direction.DESC) Pageable pageable) {
 
         if(tagihan != null) {
             return new ModelMap()
@@ -57,8 +65,8 @@ public class PembayaranController {
                     Page<Pembayaran> hasil = pembayaranDao
                             .findByJenisTagihanAndWaktuTransaksi(jenis, mulai, sampai, pageable);
                     return new ModelMap()
-                            .addAttribute("data",
-                                    hasil);
+                            .addAttribute("jenisTagihan", jenis)
+                            .addAttribute("data", hasil);
                 } else {
                     return new ModelMap()
                             .addAttribute("data",
@@ -67,12 +75,14 @@ public class PembayaranController {
                 }
             } else {
                 if (jenis != null) {
-                    return new ModelMap("data", pembayaranDao.findByTagihanJenisTagihan(jenis, pageable));
+                    return new ModelMap()
+                            .addAttribute("jenisTagihan", jenis)
+                            .addAttribute("data", pembayaranDao.findByTagihanJenisTagihan(jenis, pageable));
                 }
             }
         }
 
-        return new ModelMap();
+        return new ModelMap().addAttribute("data", pembayaranDao.findAll(pageable));
     }
 
     @ModelAttribute("pageTitle")
