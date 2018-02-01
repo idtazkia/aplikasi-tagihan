@@ -5,13 +5,25 @@
 
 <head>
     <title>Dashboard</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" th:src="@{/js/aplikasi/grafik.js}"></script>
 </head>
 <body>
 <section layout:fragment="content">
-    <!-- Dashboard Counts Section-->
-    <section class="projects no-padding-top">
-        <div class="container-fluid" id="laporanTagihan">
 
+    <section class="dashboard-counts no-padding-top">
+        <div class="container-fluid" id="grafikTagihan">
+            <div class="row bg-white has-shadow">
+                <h3>Pembayaran Tagihan</h3>
+            </div>
+            <div id="chart_div" class="row bg-white has-shadow">
+            </div>
+        </div>
+    </section>
+
+    <!-- Dashboard Counts Section-->
+    <section class="projects">
+        <div class="container-fluid" id="laporanTagihan">
             <div class="project" th:each="laporan : ${daftarLaporanTagihan}">
                 <div class="row bg-white has-shadow">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
@@ -43,7 +55,6 @@
         </div>
     </section>
 </section>
-
 </body>
 
 </html>

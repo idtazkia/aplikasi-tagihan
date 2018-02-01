@@ -2,6 +2,7 @@ package id.ac.tazkia.payment.virtualaccount.controller;
 
 import id.ac.tazkia.payment.virtualaccount.dao.JenisTagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.PembayaranDao;
+import id.ac.tazkia.payment.virtualaccount.dto.RekapPembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
@@ -14,12 +15,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Controller
 @RequestMapping("/pembayaran")
@@ -88,5 +91,30 @@ public class PembayaranController {
     @ModelAttribute("pageTitle")
     public String pageTitle() {
         return "Data Pembayaran";
+    }
+
+    @GetMapping("/rekap")
+    @ResponseBody
+    public List<RekapPembayaran> rekapPembayaranBulanan() {
+        LocalDate sekarang = LocalDate.now();
+        Date mulai = Date.from(sekarang.minusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date sampai = Date.from(sekarang.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        Map<String, RekapPembayaran> hasil = new LinkedHashMap<>();
+
+        for(LocalDate date = sekarang.minusMonths(1); date.isBefore(sekarang); date = date.plusDays(1)) {
+            RekapPembayaran rekap = new RekapPembayaran(
+                    new java.sql.Date(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime()),
+                    BigDecimal.ZERO, 0L);
+            hasil.put(date.format(DateTimeFormatter.BASIC_ISO_DATE), rekap);
+        }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
+        for (RekapPembayaran r : pembayaranDao.rekapPembayaran(mulai, sampai)) {
+            r.setJumlah(r.getJumlah());
+            hasil.put(formatter.format(r.getTanggal()), r);
+        }
+
+        return new ArrayList<>(hasil.values());
     }
 }
