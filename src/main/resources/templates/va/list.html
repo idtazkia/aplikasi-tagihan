@@ -26,6 +26,7 @@
                                 <th>Atas Nama</th>
                                 <th>Nilai</th>
                                 <th>Status</th>
+                                <th>&nbsp;</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -36,6 +37,13 @@
                                 <td th:text="${p.tagihan.debitur.nama}">1234567890</td>
                                 <td th:text="${p.tagihan.nilaiTagihan}">Yayasan Tazkia</td>
                                 <td th:text="${p.vaStatus}">Yayasan Tazkia</td>
+                                <td>
+                                    <form th:unless="${p.vaStatus.name() == 'AKTIF' || p.vaStatus.name() == 'NONAKTIF'}"
+                                          th:action="@{/va/retry}" method="post">
+                                        <input type="hidden" name="id" th:value="${p.id}">
+                                        <input type="submit" class="btn btn-xs" value="Coba Lagi">
+                                    </form>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
