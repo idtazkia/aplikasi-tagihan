@@ -4,6 +4,7 @@ import id.ac.tazkia.payment.virtualaccount.dao.RunningNumberDao;
 import id.ac.tazkia.payment.virtualaccount.entity.RunningNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ public class RunningNumberService {
         return getNumber(RunningNumber.PEMAKAIAN_DEFAULT, prefix);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Long getNumber(String pemakaian, String prefix) {
         RunningNumber rn = runningNumberDao.findByPemakaianAndPrefix(pemakaian, prefix);
         if(rn == null){
