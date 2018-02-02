@@ -6,5 +6,6 @@ public enum VaStatus {
     DELETE,
     SEDANG_PROSES,
     AKTIF,
-    NONAKTIF
+    NONAKTIF,
+    ERROR
 }
