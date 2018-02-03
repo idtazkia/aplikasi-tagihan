@@ -76,7 +76,7 @@ public class TagihanController {
 
     @ModelAttribute("listJenisTagihan")
     public Iterable<JenisTagihan> daftarJenisTagihan() {
-        return jenisTagihanDao.findAll(new Sort(Sort.Direction.ASC, "kode"));
+        return jenisTagihanDao.findByAktifOrderByKode(true);
     }
 
     @ModelAttribute("listDebitur")

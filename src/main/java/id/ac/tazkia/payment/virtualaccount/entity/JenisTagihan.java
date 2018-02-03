@@ -24,6 +24,9 @@ public class JenisTagihan {
     @NotNull @Enumerated(EnumType.STRING)
     private TipePembayaran tipePembayaran;
 
+    @NotNull
+    private Boolean aktif = Boolean.FALSE;
+
     @ManyToMany
     @JoinTable(
             name = "jenis_tagihan_bank",

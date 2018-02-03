@@ -26,6 +26,7 @@
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Jenis Pembayaran</th>
+                                <th>Status</th>
                                 <th>&nbsp;</th>
                             </tr>
                             </thead>
@@ -35,6 +36,7 @@
                                 <td th:text="${jt.kode}">011</td>
                                 <td th:text="${jt.nama}">BNI</td>
                                 <td th:text="${jt.tipePembayaran.label}">1234567890</td>
+                                <td th:text="${jt.aktif ? 'Aktif' : 'Tidak Aktif'}">1234567890</td>
                                 <td>
                                     <a th:href="@{/jenistagihan/form(id=${jt.id})}" class="btn btn-xs">edit</a>
                                     <a th:href="@{/jenistagihan/bank(id=${jt.id})}" class="btn btn-xs">bank</a>
