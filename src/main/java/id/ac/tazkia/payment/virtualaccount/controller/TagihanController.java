@@ -60,14 +60,15 @@ public class TagihanController {
             return new ModelMap()
                     .addAttribute("jenisTagihan", jenisTagihan)
                     .addAttribute("listTagihan", tagihanDao
-                            .findByJenisTagihanAndStatusTagihan(
+                            .findByJenisTagihanAndStatusTagihanOrderByTanggalTagihan(
                                     jenisTagihan, StatusTagihan.AKTIF, pageable));
         }
 
         if (debitur != null) {
             return new ModelMap()
                     .addAttribute("listTagihan", tagihanDao
-                            .findByDebiturAndStatusTagihan(debitur, StatusTagihan.AKTIF, pageable));
+                            .findByDebiturAndStatusTagihanOrderByTanggalTagihan(
+                                    debitur, StatusTagihan.AKTIF, pageable));
         }
 
         return new ModelMap("listTagihan", tagihanDao.findAllByStatusTagihan(StatusTagihan.AKTIF, pageable));
