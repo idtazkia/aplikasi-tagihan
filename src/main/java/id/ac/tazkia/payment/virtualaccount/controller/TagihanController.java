@@ -54,6 +54,7 @@ public class TagihanController {
 
     @GetMapping("/list")
     public ModelMap listTagihan(@RequestParam(value = "jenis", required = false) JenisTagihan jenisTagihan,
+                                @RequestParam(value = "debitur", required = false) Debitur debitur,
                                 @PageableDefault(size = 10, sort = "nomor") Pageable pageable) {
         if (jenisTagihan != null) {
             return new ModelMap()
@@ -62,6 +63,13 @@ public class TagihanController {
                             .findByJenisTagihanAndStatusTagihan(
                                     jenisTagihan, StatusTagihan.AKTIF, pageable));
         }
+
+        if (debitur != null) {
+            return new ModelMap()
+                    .addAttribute("listTagihan", tagihanDao
+                            .findByDebiturAndStatusTagihan(debitur, StatusTagihan.AKTIF, pageable));
+        }
+
         return new ModelMap("listTagihan", tagihanDao.findAllByStatusTagihan(StatusTagihan.AKTIF, pageable));
     }
 

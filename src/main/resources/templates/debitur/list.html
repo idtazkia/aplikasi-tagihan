@@ -73,12 +73,15 @@
                                                         <td><span th:text="${debitur.nama}"></span></td>
                                                         <td><span th:text="${debitur.email}"></span></td>
                                                         <td><span th:text="${debitur.noHp}"></span></td>
-                                                        <td sec:authorizse="hasAuthority('EDIT_DEBITUR')">
+                                                        <td>
+                                                            <a th:href="@{/tagihan/list(debitur=${debitur.id})}">
+                                                                <button class="btn btn-info btn-sm ladda-button"><i class="fa fa-pencil"></i> tagihan</button>
+                                                            </a>
                                                             <a th:href="@{/debitur/form(id=${debitur.id})}">
                                                                 <button class="btn btn-info btn-sm ladda-button"><i class="fa fa-pencil"></i> edit</button>
                                                             </a>
                                                             <a th:href="@{/debitur/delete(id=${debitur.id})}">
-                                                                <button class="btn btn-danger btn-sm ladda-button"><i class="fa fa-trash"></i> Delete</button>
+                                                                <button class="btn btn-danger btn-sm ladda-button"><i class="fa fa-trash"></i> hapus</button>
                                                             </a>
                                                         </td>
                                                     </tr> 

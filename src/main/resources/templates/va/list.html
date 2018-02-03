@@ -41,7 +41,7 @@
                                     <form th:unless="${p.vaStatus.name() == 'AKTIF' || p.vaStatus.name() == 'NONAKTIF'}"
                                           th:action="@{/va/retry}" method="post">
                                         <input type="hidden" name="id" th:value="${p.id}">
-                                        <input type="submit" class="btn btn-xs" value="Coba Lagi">
+                                        <button type="submit" class="btn btn-info btn-sm ladda-button"><i class="fa fa-refresh"></i> coba lagi</button>
                                     </form>
                                 </td>
                             </tr>
