@@ -85,12 +85,16 @@ public class TagihanController {
     }
 
     @GetMapping("/form")
-    public ModelMap displayForm(@RequestParam(name = "id", required = false) Tagihan tagihan) {
+    public ModelMap displayForm(
+            @RequestParam Debitur debitur,
+            @RequestParam(name = "id", required = false) Tagihan tagihan) {
         if (tagihan == null) {
             tagihan = new Tagihan();
             tagihan.setNomor("--- otomatis ditentukan sistem ---");
             tagihan.setTanggalJatuhTempo(Date.from(LocalDate.now().plusMonths(6).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         }
+
+        tagihan.setDebitur(debitur);
 
         return new ModelMap().addAttribute("tagihan", tagihan);
 
