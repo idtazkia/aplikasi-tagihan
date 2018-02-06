@@ -39,14 +39,14 @@
                         </div>
                         <div class="project-date">
                             <a th:href="@{/tagihan/list(jenis=${laporan.jenisTagihan.id})}">
-                            <span class="hidden-sm-down" th:text="${'Nilai Tagihan : '+laporan.nilaiTagihan}">Today at 4:24 AM</span>
+                            <span class="hidden-sm-down" th:text="${'Nilai Tagihan : '+#numbers.formatDecimal(laporan.nilaiTagihan,1,'POINT',2,'COMMA')}">Today at 4:24 AM</span>
                             </a>
                         </div>
                     </div>
                     <div class="right-col col-lg-6 d-flex align-items-center">
                         <div class="time"><i class="fa fa-clock-o"></i>
                             <a th:href="@{/pembayaran/list(jenis=${laporan.jenisTagihan.id})}">
-                            <span th:text="${'Nilai Pembayaran : '+laporan.nilaiPembayaran}">12:00 PM</span>
+                            <span th:text="${'Nilai Pembayaran : '+#numbers.formatDecimal(laporan.nilaiPembayaran,1,'POINT',2,'COMMA')}">12:00 PM</span>
                             </a>
                         </div>
                     </div>

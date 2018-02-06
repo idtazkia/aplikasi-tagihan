@@ -59,7 +59,7 @@
                                 <div class="row form-group">
                                     <label class="col-sm-3 form-control-label">Nilai Tagihan</label>
                                     <div class="col-sm-9">
-                                        <label class="form-control-label" th:text="${tagihan.nilaiTagihan}">Debitur</label>
+                                        <label class="form-control-label" th:text="${#numbers.formatDecimal(tagihan.nilaiTagihan,1,'POINT',2,'COMMA')}">Debitur</label>
                                     </div>
                                 </div>
                                 <div class="row form-group">
