@@ -55,7 +55,7 @@ public class TagihanController {
     @GetMapping("/list")
     public ModelMap listTagihan(@RequestParam(value = "jenis", required = false) JenisTagihan jenisTagihan,
                                 @RequestParam(value = "debitur", required = false) Debitur debitur,
-                                @PageableDefault(size = 10, sort = "nomor") Pageable pageable) {
+                                @PageableDefault(size = 10, sort = "nomor", direction = Sort.Direction.DESC) Pageable pageable) {
         if (jenisTagihan != null) {
             return new ModelMap()
                     .addAttribute("jenisTagihan", jenisTagihan)
