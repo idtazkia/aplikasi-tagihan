@@ -88,7 +88,7 @@ public class DebiturController {
     @PostMapping("/debitur/form")
     public String prosesForm(@ModelAttribute @Valid Debitur debitur, BindingResult errors, SessionStatus status) {
         if (errors.hasErrors()) {
-            return "/debitur/form";
+            return "debitur/form";
         }
 
         debiturDao.save(debitur);
