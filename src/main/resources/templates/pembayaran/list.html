@@ -52,7 +52,10 @@
                                                 <div class="content">
                                                     <h5 th:text="${pembayaran.tagihan.nomor +' | '+ pembayaran.tagihan.debitur.nama}">Frank Williams</h5>
                                                     <span th:text="${'Rp. '+pembayaran.jumlah}">Posted a new blog </span>
-                                                    <div class="full-date"><small th:text="${pembayaran.jenisPembayaran + ' | ' + pembayaran.bank.nama}">Today 5:60 pm - 12.06.2014</small></div>
+                                                    <div class="full-date">
+                                                        <small th:text="${pembayaran.jenisPembayaran + ' | ' + pembayaran.bank.nama}">Today 5:60 pm - 12.06.2014</small>
+                                                        <small th:if="${pembayaran.virtualAccount}" th:text="${' | ' + pembayaran.virtualAccount.nomor}">Nomor VA</small>
+                                                    </div>
                                                     <div class="full-date">
                                                         <small>Referensi : </small><small th:text="${pembayaran.referensi}">Today 5:60 pm - 12.06.2014</small>
                                                     </div>

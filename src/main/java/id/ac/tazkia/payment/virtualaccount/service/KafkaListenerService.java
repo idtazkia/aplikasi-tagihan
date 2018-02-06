@@ -166,6 +166,12 @@ public class KafkaListenerService {
                 return;
             }
 
+            VirtualAccount va = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
+            if (va == null) {
+                LOGGER.warn("Virtual account untuk nomor tagihan {} tidak terdaftar", tagihan.getNomor());
+                return;
+            }
+
             BigDecimal akumulasiPembayaran = tagihan.getJumlahPembayaran().add(payment.getAmount());
             if(akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) > 0){
                 LOGGER.warn("Nilai pembayaran [{}] lebih besar daripada nilai tagihan [{}] nomor [{}]",
@@ -176,7 +182,6 @@ public class KafkaListenerService {
             } else {
                 tagihan.setStatusPembayaran(StatusPembayaran.LUNAS);
                 tagihan.setStatusTagihan(StatusTagihan.NONAKTIF);
-                VirtualAccount va = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
                 va.setVaStatus(VaStatus.NONAKTIF);
                 virtualAccountDao.save(va);
             }
@@ -186,6 +191,7 @@ public class KafkaListenerService {
             p.setBank(bank);
             p.setTagihan(tagihan);
             p.setJenisPembayaran(JenisPembayaran.VIRTUAL_ACCOUNT);
+            p.setVirtualAccount(va);
             p.setJumlah(payment.getAmount());
             p.setReferensi(payment.getReference());
             p.setKeterangan("Pembayaran melalui VA Bank "+bank.getNama()+" Nomor "+payment.getAccountNumber());
