@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface DebiturDao extends PagingAndSortingRepository<Debitur, String> {
-    public Debitur findByNomorDebitur(String nomor);
-    public Page<Debitur> findByNomorDebiturOrNamaContainingIgnoreCase(String nomor, String nama, Pageable page);
-    public Page<Debitur> findByNomorDebiturContainingIgnoreCase(String nomor, Pageable page);
+    Debitur findByNomorDebitur(String nomor);
+    Page<Debitur> findByNomorDebiturOrNamaContainingIgnoreCase(String nomor, String nama, Pageable page);
 }

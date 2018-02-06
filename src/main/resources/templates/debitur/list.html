@@ -30,17 +30,10 @@
                                         <div class="card-body">
                                             <form class="form-inline" th:action="@{/debitur/list}" method="get">
                                                 <div class="form-group">
-                                                    <label for="search" class="sr-only">Search</label>
-                                                    <input type="text" 
+                                                    <input id="search" type="text"
                                                            name="key" 
-                                                           placeholder="Nomor Debitur" 
-                                                           class="mx-sm-3 form-control" 
-                                                           th:if="${key == null}">
-                                                    <input type="text" 
-                                                           name="key" 
-                                                           placeholder="Nomor Debitur" 
-                                                           class="mx-sm-3 form-control form-control" 
-                                                           th:if="${key != null}"
+                                                           placeholder="Nomor atau Nama"
+                                                           class="mx-sm-4 form-control form-control"
                                                            th:value="${key}">
                                                     <button class="btn btn-info" type="submit"><i class="fa fa-search"></i> Search</button>
                                                 </div>
@@ -109,7 +102,6 @@
                                 </div>
                             </div>
                         </div>
-                        <script th:src="@{/js/aplikasi/debitur.js}"></script>
                      </section>
                    </body>
                 </html>

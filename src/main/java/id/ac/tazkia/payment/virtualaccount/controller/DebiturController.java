@@ -54,7 +54,7 @@ public class DebiturController {
         Page<Debitur> result;
         
         if (key != null) {
-            result = debiturDao.findByNomorDebiturContainingIgnoreCase(key, pageable);
+            result = debiturDao.findByNomorDebiturOrNamaContainingIgnoreCase(key,key, pageable);
             mm.addAttribute("key", key);
         } else {
             result = debiturDao.findAll(pageable);
