@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,8 @@ public class KafkaSenderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSenderService.class);
     private static final SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat FORMATTER_ISO_DATE_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    private static final Integer NOTIFICATION_BATCH_SIZE = 50;
 
     @Value("${kafka.topic.notification.request}") private String kafkaTopicNotificationRequest;
     @Value("${kafka.topic.va.request}") private String kafkaTopicVaRequest;
@@ -62,7 +65,8 @@ public class KafkaSenderService {
 
     @Scheduled(fixedDelay = 10000)
     public void prosesNotifikasiTagihan() {
-        for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM)) {
+        for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM,
+                new PageRequest(0, NOTIFICATION_BATCH_SIZE)).getContent()) {
             // tunggu aktivasi VA dulu selama 60 menit
             if (LocalDateTime.now().isBefore(
                     tagihan.getUpdatedAt().toInstant().atZone(ZoneId.systemDefault())

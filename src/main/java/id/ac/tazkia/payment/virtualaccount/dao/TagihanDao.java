@@ -17,7 +17,7 @@ public interface TagihanDao extends PagingAndSortingRepository<Tagihan, String> 
     Page<Tagihan> findByJenisTagihanAndStatusTagihanOrderByTanggalTagihan(JenisTagihan jenisTagihan, StatusTagihan status, Pageable pageable);
     Page<Tagihan> findByDebiturAndStatusTagihanOrderByTanggalTagihan(Debitur debitur, StatusTagihan status, Pageable pageable);
     Page<Tagihan> findAllByStatusTagihan(StatusTagihan status, Pageable pageable);
-    Iterable<Tagihan> findByStatusNotifikasi(StatusNotifikasi statusNotifikasi);
+    Page<Tagihan> findByStatusNotifikasi(StatusNotifikasi statusNotifikasi, Pageable page);
     @Query(
             "select sum(t.nilaiTagihan) from Tagihan t where t.jenisTagihan = :jenisTagihan and t.statusTagihan = :statusTagihan"
     )
