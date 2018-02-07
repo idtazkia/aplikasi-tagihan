@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -44,28 +45,28 @@ public class KafkaSenderService {
     @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private TagihanDao tagihanDao;
 
-    @Scheduled(fixedDelay = 3000)
+    @Scheduled(fixedDelay = 1000)
     public void prosesVaBaru() {
         processVa(VaStatus.CREATE);
     }
 
-    @Scheduled(fixedDelay = 3000)
+    @Scheduled(fixedDelay = 1000)
     public void prosesVaUpdate() {
         processVa(VaStatus.UPDATE);
     }
 
-    @Scheduled(fixedDelay = 3000)
+    @Scheduled(fixedDelay = 1000)
     public void prosesVaDelete() {
         processVa(VaStatus.DELETE);
     }
 
-    @Scheduled(fixedDelay = 3000)
+    @Scheduled(fixedDelay = 10000)
     public void prosesNotifikasiTagihan() {
         for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM)) {
-            // tunggu aktivasi VA dulu selama 1 menit
+            // tunggu aktivasi VA dulu selama 60 menit
             if (LocalDateTime.now().isBefore(
                     tagihan.getUpdatedAt().toInstant().atZone(ZoneId.systemDefault())
-                            .toLocalDateTime().plusMinutes(1))) {
+                            .toLocalDateTime().plusMinutes(60))) {
                 continue;
             }
             sendNotifikasiTagihan(tagihan);
@@ -193,19 +194,20 @@ public class KafkaSenderService {
     }
 
     private void processVa(VaStatus status) {
-        virtualAccountDao.findByVaStatus(status)
-                .forEach((va -> {
-                    try {
-                        VaRequest vaRequest = createRequest(va, status);
-                        String json = objectMapper.writeValueAsString(vaRequest);
-                        LOGGER.debug("VA Request : {}", json);
-                        kafkaTemplate.send(kafkaTopicVaRequest, json);
-                        va.setVaStatus(VaStatus.SEDANG_PROSES);
-                        virtualAccountDao.save(va);
-                    } catch (Exception err) {
-                        LOGGER.warn(err.getMessage(), err);
-                    }
-                }));
+        Iterator<VirtualAccount> daftarVa = virtualAccountDao.findByVaStatus(status).iterator();
+        if (daftarVa.hasNext()) {
+            VirtualAccount va = daftarVa.next();
+            try {
+                VaRequest vaRequest = createRequest(va, status);
+                String json = objectMapper.writeValueAsString(vaRequest);
+                LOGGER.debug("VA Request : {}", json);
+                kafkaTemplate.send(kafkaTopicVaRequest, json);
+                va.setVaStatus(VaStatus.SEDANG_PROSES);
+                virtualAccountDao.save(va);
+            } catch (Exception err) {
+                LOGGER.warn(err.getMessage(), err);
+            }
+        }
     }
 
     private VaRequest createRequest(VirtualAccount va, VaStatus requestType) {
