@@ -69,6 +69,12 @@ public class KafkaSenderService {
                             .toLocalDateTime().plusMinutes(60))) {
                 continue;
             }
+
+            // tidak ada VA, tidak usah kirim notifikasi
+            if (!virtualAccountDao.findByTagihan(tagihan).iterator().hasNext()) {
+                continue;
+            }
+
             sendNotifikasiTagihan(tagihan);
         }
     }
