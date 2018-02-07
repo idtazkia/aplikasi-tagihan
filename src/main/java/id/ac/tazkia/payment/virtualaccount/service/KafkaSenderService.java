@@ -71,7 +71,17 @@ public class KafkaSenderService {
             }
 
             // tidak ada VA, tidak usah kirim notifikasi
-            if (!virtualAccountDao.findByTagihan(tagihan).iterator().hasNext()) {
+            Iterator<VirtualAccount> daftarVa = virtualAccountDao.findByTagihan(tagihan).iterator();
+            Boolean adaVaAktif = false;
+            while (daftarVa.hasNext()) {
+                VirtualAccount va = daftarVa.next();
+                if (VaStatus.AKTIF.equals(va.getVaStatus())) {
+                    adaVaAktif = true;
+                    break;
+                }
+            }
+
+            if (!adaVaAktif) {
                 continue;
             }
 
