@@ -44,7 +44,7 @@ public class TagihanDaoTests {
         List<RekapTagihan> rekapTagihanList = tagihanDao.rekapTagihan(mulai, sampai);
         for (RekapTagihan rekap : rekapTagihanList) {
             System.out.println("Jenis Tagihan : "+rekap.getJenisTagihan().getNama());
-            System.out.println("Status Tagihan : "+rekap.getStatusTagihan());
+            System.out.println("Status Pembayaran : "+rekap.getStatusPembayaran());
             System.out.println("Jumlah Tagihan : "+rekap.getJumlahTagihan());
             System.out.println("Nilai Tagihan : "+rekap.getNilaiTagihan());
             System.out.println("Nilai Pembayaran : "+rekap.getNilaiPembayaran());
