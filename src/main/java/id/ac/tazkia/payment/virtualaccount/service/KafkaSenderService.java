@@ -37,6 +37,8 @@ public class KafkaSenderService {
     @Value("${kafka.topic.tagihan.response}") private String kafkaTopicTagihanResponse;
     @Value("${kafka.topic.tagihan.payment}") private String kafkaTopicPembayaranTagihan;
 
+    @Value("${notifikasi.delay.menit}") private Integer delayNotifikasi;
+
     @Value("${notifikasi.konfigurasi.tagihan}") private String konfigurasiTagihan;
     @Value("${notifikasi.konfigurasi.pembayaran}") private String konfigurasiPembayaran;
     @Value("${notifikasi.contactinfo}") private String contactinfo;
@@ -63,14 +65,14 @@ public class KafkaSenderService {
         processVa(VaStatus.DELETE);
     }
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 60 * 1000)
     public void prosesNotifikasiTagihan() {
         for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM,
                 new PageRequest(0, NOTIFICATION_BATCH_SIZE)).getContent()) {
             // tunggu aktivasi VA dulu selama 60 menit
             if (LocalDateTime.now().isBefore(
                     tagihan.getUpdatedAt().toInstant().atZone(ZoneId.systemDefault())
-                            .toLocalDateTime().plusMinutes(60))) {
+                            .toLocalDateTime().plusMinutes(delayNotifikasi))) {
                 continue;
             }
 
