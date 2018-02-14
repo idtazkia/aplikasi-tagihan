@@ -35,7 +35,7 @@
                                 <td th:text="${p.bank.kode +' - '+ p.bank.nama}">011</td>
                                 <td th:text="${p.nomor}">011</td>
                                 <td th:text="${p.tagihan.debitur.nama}">1234567890</td>
-                                <td th:text="${#numbers.formatDecimal(p.tagihan.nilaiTagihan,1,'POINT',2,'COMMA')}">Yayasan Tazkia</td>
+                                <td th:text="${#numbers.formatDecimal(p.tagihan.nilaiTagihanEfektif,1,'POINT',2,'COMMA')}">Yayasan Tazkia</td>
                                 <td th:text="${p.vaStatus}">Yayasan Tazkia</td>
                                 <td>
                                     <form th:unless="${p.vaStatus.name() == 'AKTIF' || p.vaStatus.name() == 'NONAKTIF'}"

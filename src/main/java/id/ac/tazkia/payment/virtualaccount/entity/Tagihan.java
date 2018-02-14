@@ -61,4 +61,8 @@ public class Tagihan {
 
     @NotNull @Enumerated(EnumType.STRING)
     private StatusNotifikasi statusNotifikasi = StatusNotifikasi.BELUM_TERKIRIM;
+
+    public BigDecimal getNilaiTagihanEfektif() {
+        return nilaiTagihan.subtract(jumlahPembayaran);
+    }
 }
