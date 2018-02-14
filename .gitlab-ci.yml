@@ -38,8 +38,8 @@ deploy-to-testing:
   only:
     - tags
   script:
-  - scp target/*.jar root@$SSH_HOSTNAME_TESTING:/var/lib/aplikasi-tagihan/
-  - ssh root@$SSH_HOSTNAME_TESTING /var/lib/aplikasi-tagihan/deploy.sh $CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
+  - scp target/*.jar root@$SSH_HOSTNAME_TESTING:/var/lib/$CI_PROJECT_NAME/
+  - ssh root@$SSH_HOSTNAME_TESTING /var/lib/$CI_PROJECT_NAME/deploy.sh $CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
 
 deploy-to-production:
   image: debian:latest
@@ -47,5 +47,5 @@ deploy-to-production:
   only:
     - /-RELEASE$/
   script:
-  - scp target/*.jar root@$SSH_HOSTNAME_PRODUCTION:/var/lib/aplikasi-tagihan/
-  - ssh root@$SSH_HOSTNAME_PRODUCTION /var/lib/aplikasi-tagihan/deploy.sh $CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
+  - scp target/*.jar root@$SSH_HOSTNAME_PRODUCTION:/var/lib/$CI_PROJECT_NAME/
+  - ssh root@$SSH_HOSTNAME_PRODUCTION /var/lib/$CI_PROJECT_NAME/deploy.sh $CI_PROJECT_NAME-$CI_COMMIT_TAG.jar
