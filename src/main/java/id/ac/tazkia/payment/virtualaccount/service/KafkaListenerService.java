@@ -16,6 +16,7 @@ import org.springframework.validation.Validator;
 
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service @Transactional
@@ -125,15 +126,31 @@ public class KafkaListenerService {
             LOGGER.debug("Terima message : {}", message);
             VaResponse vaResponse = objectMapper.readValue(message, VaResponse.class);
 
-            VirtualAccount va = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.SEDANG_PROSES, vaResponse.getInvoiceNumber());
+            List<VirtualAccount> daftarVa = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.SEDANG_PROSES, vaResponse.getInvoiceNumber());
+            if (daftarVa == null || daftarVa.isEmpty()) {
+                LOGGER.warn("VA untuk tagihan dengan nomor {} tidak ditemukan", vaResponse.getInvoiceNumber());
+                return;
+            }
+
+            VirtualAccount va = null;
+            for (VirtualAccount v : daftarVa) {
+                if (vaResponse.getBankId().equals(v.getBank().getId())) {
+                    va = v;
+                    break;
+                }
+            }
+
             if (va == null) {
-                LOGGER.warn("Tagihan dengan nomor {} tidak ditemukan", vaResponse.getInvoiceNumber());
+                LOGGER.warn("VA untuk tagihan dengan nomor {} dan bank {} tidak ditemukan",
+                        vaResponse.getInvoiceNumber(),
+                        vaResponse.getBankId()
+                );
                 return;
             }
 
             if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
                 va.setVaStatus(VaStatus.ERROR);
-                virtualAccountDao.save(va);
+                virtualAccountDao.save(daftarVa);
                 return;
             }
 
@@ -166,9 +183,24 @@ public class KafkaListenerService {
                 return;
             }
 
-            VirtualAccount va = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
-            if (va == null) {
+            List<VirtualAccount> daftarVa = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
+            if (daftarVa == null || daftarVa.isEmpty()) {
                 LOGGER.warn("Virtual account untuk nomor tagihan {} tidak terdaftar", tagihan.getNomor());
+                return;
+            }
+
+            // tentukan VA yang digunakan untuk membayar
+            VirtualAccount vaPembayaran = null;
+            for (VirtualAccount va : daftarVa) {
+                if (bank.getId().equalsIgnoreCase(va.getBank().getId())) {
+                    vaPembayaran = va;
+                    break;
+                }
+            }
+
+            if (vaPembayaran == null) {
+                LOGGER.warn("Virtual account untuk nomor tagihan {} dan bank {} tidak terdaftar",
+                        tagihan.getNomor(), bank.getNama());
                 return;
             }
 
@@ -182,8 +214,10 @@ public class KafkaListenerService {
             } else {
                 tagihan.setStatusPembayaran(StatusPembayaran.LUNAS);
                 tagihan.setStatusTagihan(StatusTagihan.NONAKTIF);
-                va.setVaStatus(VaStatus.NONAKTIF);
-                virtualAccountDao.save(va);
+                for (VirtualAccount va : daftarVa) {
+                    va.setVaStatus(VaStatus.NONAKTIF);
+                    virtualAccountDao.save(va);
+                }
             }
             tagihan.setJumlahPembayaran(akumulasiPembayaran);
 
@@ -191,7 +225,7 @@ public class KafkaListenerService {
             p.setBank(bank);
             p.setTagihan(tagihan);
             p.setJenisPembayaran(JenisPembayaran.VIRTUAL_ACCOUNT);
-            p.setVirtualAccount(va);
+            p.setVirtualAccount(vaPembayaran);
             p.setJumlah(payment.getAmount());
             p.setReferensi(payment.getReference());
             p.setKeterangan("Pembayaran melalui VA Bank "+bank.getNama()+" Nomor "+payment.getAccountNumber());

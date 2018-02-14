@@ -13,4 +13,5 @@ public class VaResponse {
     private String invoiceNumber;
     private String name;
     private BigDecimal amount;
+    private String bankId;
 }
