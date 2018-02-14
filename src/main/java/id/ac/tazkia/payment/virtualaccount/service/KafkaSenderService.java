@@ -242,7 +242,7 @@ public class KafkaSenderService {
                                 va.getTagihan().getDebitur().getNomorDebitur()
                                         + va.getTagihan().getJenisTagihan().getKode(),
                                 va.getBank().getJumlahDigitVirtualAccount()))
-                .amount(va.getTagihan().getNilaiTagihan())
+                .amount(va.getTagihan().getNilaiTagihan().subtract(va.getTagihan().getJumlahPembayaran()))
                 .description(va.getTagihan().getKeterangan())
                 .email(va.getTagihan().getDebitur().getEmail())
                 .phone(va.getTagihan().getDebitur().getNoHp())
