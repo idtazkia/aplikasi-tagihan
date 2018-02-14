@@ -195,20 +195,6 @@ public class KafkaListenerService {
                 return;
             }
 
-            // tentukan VA yang digunakan untuk membayar
-            VirtualAccount vaPembayaran = null;
-            for (VirtualAccount va : daftarVa) {
-                if (bank.getId().equalsIgnoreCase(va.getBank().getId())) {
-                    vaPembayaran = va;
-                }
-            }
-
-            if (vaPembayaran == null) {
-                LOGGER.warn("Virtual account untuk nomor tagihan {} dan bank {} tidak terdaftar",
-                        tagihan.getNomor(), bank.getNama());
-                return;
-            }
-
             BigDecimal akumulasiPembayaran = tagihan.getJumlahPembayaran().add(payment.getAmount());
             if(akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) > 0){
                 LOGGER.warn("Nilai pembayaran [{}] lebih besar daripada nilai tagihan [{}] nomor [{}]",
@@ -222,10 +208,24 @@ public class KafkaListenerService {
             }
             tagihan.setJumlahPembayaran(akumulasiPembayaran);
 
+            // update VA
+            VirtualAccount vaPembayaran = null;
             for (VirtualAccount va : daftarVa) {
-                va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
-                        ? VaStatus.DELETE : VaStatus.UPDATE);
+                if (bank.getId().equalsIgnoreCase(va.getBank().getId())) {
+                    vaPembayaran = va;
+                    va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
+                            ? VaStatus.NONAKTIF : VaStatus.UPDATE);
+                } else {
+                    va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
+                            ? VaStatus.DELETE : VaStatus.UPDATE);
+                }
                 virtualAccountDao.save(va);
+            }
+
+            if (vaPembayaran == null) {
+                LOGGER.warn("Virtual account untuk nomor tagihan {} dan bank {} tidak terdaftar",
+                        tagihan.getNomor(), bank.getNama());
+                return;
             }
 
             Pembayaran p = new Pembayaran();
