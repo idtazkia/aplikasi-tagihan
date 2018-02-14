@@ -154,6 +154,12 @@ public class KafkaListenerService {
                 return;
             }
 
+            if (VaStatus.DELETE.equals(vaResponse.getRequestType())) {
+                va.setVaStatus(VaStatus.NONAKTIF);
+                virtualAccountDao.save(va);
+                return;
+            }
+
             va.setNomor(vaResponse.getAccountNumber());
             va.setVaStatus(VaStatus.AKTIF);
             virtualAccountDao.save(va);
@@ -185,7 +191,7 @@ public class KafkaListenerService {
 
             List<VirtualAccount> daftarVa = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
             if (daftarVa == null || daftarVa.isEmpty()) {
-                LOGGER.warn("Virtual account untuk nomor tagihan {} tidak terdaftar", tagihan.getNomor());
+                LOGGER.warn("Nomor tagihan {} tidak memiliki VA", tagihan.getNomor());
                 return;
             }
 
@@ -194,7 +200,6 @@ public class KafkaListenerService {
             for (VirtualAccount va : daftarVa) {
                 if (bank.getId().equalsIgnoreCase(va.getBank().getId())) {
                     vaPembayaran = va;
-                    break;
                 }
             }
 
@@ -214,12 +219,14 @@ public class KafkaListenerService {
             } else {
                 tagihan.setStatusPembayaran(StatusPembayaran.LUNAS);
                 tagihan.setStatusTagihan(StatusTagihan.NONAKTIF);
-                for (VirtualAccount va : daftarVa) {
-                    va.setVaStatus(VaStatus.NONAKTIF);
-                    virtualAccountDao.save(va);
-                }
             }
             tagihan.setJumlahPembayaran(akumulasiPembayaran);
+
+            for (VirtualAccount va : daftarVa) {
+                va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
+                        ? VaStatus.DELETE : VaStatus.UPDATE);
+                virtualAccountDao.save(va);
+            }
 
             Pembayaran p = new Pembayaran();
             p.setBank(bank);
