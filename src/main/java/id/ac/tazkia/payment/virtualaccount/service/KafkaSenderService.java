@@ -44,10 +44,10 @@ public class KafkaSenderService {
     @Value("${notifikasi.konfigurasi.pembayaran}") private String konfigurasiPembayaran;
     @Value("${notifikasi.contactinfo}") private String contactinfo;
     @Value("${notifikasi.contactinfoFull}") private String contactinfoFull;
-    @Value("${notifikasi.notifikasi.email.finance}") private String financeEmail;
-    @Value("${notifikasi.notifikasi.email.finance.send}") private Boolean sendFinanceEmail;
-    @Value("${notifikasi.notifikasi.email.it}") private String itEmail;
-    @Value("${notifikasi.notifikasi.email.it.send}") private Boolean sendItEmail;
+    @Value("${notifikasi.email.finance}") private String financeEmail;
+    @Value("${notifikasi.email.finance.send}") private Boolean sendFinanceEmail;
+    @Value("${notifikasi.email.it}") private String itEmail;
+    @Value("${notifikasi.email.it.send}") private Boolean sendItEmail;
 
     @Autowired private ObjectMapper objectMapper;
     @Autowired private KafkaTemplate<String, String> kafkaTemplate;
