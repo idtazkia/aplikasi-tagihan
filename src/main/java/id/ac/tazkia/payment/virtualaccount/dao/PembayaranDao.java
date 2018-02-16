@@ -1,6 +1,7 @@
 package id.ac.tazkia.payment.virtualaccount.dao;
 
 import id.ac.tazkia.payment.virtualaccount.dto.RekapPembayaran;
+import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public interface PembayaranDao extends PagingAndSortingRepository<Pembayaran, String> {
     Page<Pembayaran> findByTagihanOrderByWaktuTransaksi(Tagihan tagihan, Pageable pageable);
+    Page<Pembayaran> findByTagihanDebiturOrderByWaktuTransaksi(Debitur debitur, Pageable pageable);
 
     @Query("select p from Pembayaran  p where p.tagihan.jenisTagihan = :jenis " +
             "and p.waktuTransaksi >= :mulai and p.waktuTransaksi <= :sampai " +

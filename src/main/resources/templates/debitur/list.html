@@ -70,8 +70,13 @@
                                                                 <a th:href="@{/tagihan/form(debitur=${debitur.id})}">
                                                                     <button class="btn btn-success btn-sm ladda-button"><i class="fa fa-plus"></i> buat tagihan</button>
                                                                 </a>
+                                                            </p>
+                                                            <p>
                                                             <a th:href="@{/tagihan/list(debitur=${debitur.id})}">
-                                                                <button class="btn btn-info btn-sm ladda-button"><i class="fa fa-folder-open"></i> lihat tagihan</button>
+                                                                <button class="btn btn-info btn-sm ladda-button"><i class="fa fa-folder-open"></i> tagihan</button>
+                                                            </a>
+                                                            <a th:href="@{/pembayaran/list(debitur=${debitur.id})}">
+                                                                <button class="btn btn-info btn-sm ladda-button"><i class="fa fa-folder-open"></i> pembayaran</button>
                                                             </a>
                                                             </p><p>
                                                             <a th:href="@{/debitur/form(id=${debitur.id})}">
