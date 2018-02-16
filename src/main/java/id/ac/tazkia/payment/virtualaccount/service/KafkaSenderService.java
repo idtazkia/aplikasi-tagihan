@@ -259,8 +259,8 @@ public class KafkaSenderService {
                 .requestType(requestType)
                 .accountNumber(VirtualAccountNumberGenerator
                         .generateVirtualAccountNumber(
-                                va.getTagihan().getDebitur().getNomorDebitur()
-                                        + va.getTagihan().getJenisTagihan().getKode(),
+                                va.getTagihan().getJenisTagihan().getKode()+
+                                va.getTagihan().getDebitur().getNomorDebitur(),
                                 va.getBank().getJumlahDigitVirtualAccount()))
                 .amount(va.getTagihan().getNilaiTagihan().subtract(va.getTagihan().getJumlahPembayaran()))
                 .description(va.getTagihan().getKeterangan())
