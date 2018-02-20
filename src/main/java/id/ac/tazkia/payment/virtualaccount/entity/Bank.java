@@ -26,4 +26,6 @@ public class Bank {
     private String namaRekening;
     @NotNull @Min(0)
     private Integer jumlahDigitVirtualAccount = 0;
+    @NotNull @Min(0)
+    private Integer jumlahDigitPrefix = 0;
 }

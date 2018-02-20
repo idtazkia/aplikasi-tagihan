@@ -31,6 +31,12 @@ public class StringFormattingTests {
     }
 
     @Test
+    public void testNoVa() {
+        System.out.println("8311201801016801".substring(4));
+        System.out.println("900900151939721".substring(7));
+    }
+
+    @Test
     public void testVaRequest() throws Exception {
         SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
         VaRequest vaRequest

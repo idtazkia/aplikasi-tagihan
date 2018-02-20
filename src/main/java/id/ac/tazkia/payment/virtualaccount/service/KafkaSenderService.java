@@ -257,11 +257,6 @@ public class KafkaSenderService {
                 = VaRequest.builder()
                 .accountType(va.getTagihan().getJenisTagihan().getTipePembayaran())
                 .requestType(requestType)
-                .accountNumber(VirtualAccountNumberGenerator
-                        .generateVirtualAccountNumber(
-                                va.getTagihan().getJenisTagihan().getKode()+
-                                va.getTagihan().getDebitur().getNomorDebitur(),
-                                va.getBank().getJumlahDigitVirtualAccount()))
                 .amount(va.getTagihan().getNilaiTagihan().subtract(va.getTagihan().getJumlahPembayaran()))
                 .description(va.getTagihan().getKeterangan())
                 .email(va.getTagihan().getDebitur().getEmail())
@@ -271,6 +266,17 @@ public class KafkaSenderService {
                 .name(va.getTagihan().getDebitur().getNama())
                 .bankId(va.getBank().getId())
                 .build();
+
+        if (VaStatus.CREATE.equals(requestType)) {
+            vaRequest.setAccountNumber(VirtualAccountNumberGenerator
+                    .generateVirtualAccountNumber(
+                            va.getTagihan().getJenisTagihan().getKode()+
+                                    va.getTagihan().getDebitur().getNomorDebitur(),
+                            va.getBank().getJumlahDigitVirtualAccount()));
+        } else {
+            vaRequest.setAccountNumber(va.getNomor().substring(va.getBank().getJumlahDigitPrefix()));
+        }
+
         return vaRequest;
     }
 }

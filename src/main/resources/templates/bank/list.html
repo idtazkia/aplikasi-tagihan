@@ -24,6 +24,8 @@
                                 <th>Nama Bank</th>
                                 <th>No. Rekening</th>
                                 <th>Nama Rekening</th>
+                                <th>Jumlah Digit VA</th>
+                                <th>Jumlah Digit Prefix</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -31,8 +33,8 @@
                                 <th scope="row" th:text="${rowStat.count}">1</th>
                                 <td th:text="${bank.kode}">011</td>
                                 <td th:text="${bank.nama}">BNI</td>
-                                <td th:text="${bank.nomorRekening}">1234567890</td>
-                                <td th:text="${bank.namaRekening}">Yayasan Tazkia</td>
+                                <td th:text="${bank.jumlahDigitVirtualAccount}">1234567890</td>
+                                <td th:text="${bank.jumlahDigitPrefix}">Yayasan Tazkia</td>
                             </tr>
                             </tbody>
                         </table>
