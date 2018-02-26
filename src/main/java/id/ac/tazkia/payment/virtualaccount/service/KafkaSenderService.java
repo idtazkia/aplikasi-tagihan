@@ -214,6 +214,7 @@ public class KafkaSenderService {
     public void sendPembayaranTagihan(Pembayaran p) {
         PembayaranTagihan pt = PembayaranTagihan.builder()
                 .bank(p.getBank().getId())
+                .jenisTagihan(p.getTagihan().getJenisTagihan().getKode())
                 .nomorTagihan(p.getTagihan().getNomor())
                 .nomorDebitur(p.getTagihan().getDebitur().getNomorDebitur())
                 .namaDebitur(p.getTagihan().getDebitur().getNama())
