@@ -43,4 +43,6 @@ public interface PembayaranDao extends PagingAndSortingRepository<Pembayaran, St
             "order by cast(p.waktuTransaksi as date) ")
     List<RekapPembayaran> rekapPembayaran(@Param("mulai") Date mulai,
                                           @Param("sampai") Date sampai);
+
+    Iterable<Pembayaran> findByTagihanJenisTagihanAndWaktuTransaksiBetweenOrderByWaktuTransaksi(JenisTagihan jenis, Date mulai, Date sampai);
 }

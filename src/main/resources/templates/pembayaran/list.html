@@ -13,7 +13,54 @@
         <section layout:fragment="content" class="tables">
             <div id="daftarPembayaran">
                 <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="daily-feeds card">
+                                <div class="card-header">
+                                    <h3 class="h4">Rekap Pembayaran</h3>
 
+                                </div>
+                                <div class="card-body">
+                                    <form th:action="@{/pembayaran/csv}" method="get">
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 form-control-label">Jenis Tagihan</label>
+                                            <div class="col-sm-6">
+                                                <select name="jenis" class="form-control">
+                                                    <option th:each="jenis : ${listJenisTagihan}"
+                                                            th:value="${jenis.id}" th:text="${jenis.nama}">Jenis Tagihan</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 form-control-label">Mulai Tanggal</label>
+                                            <div class="col-sm-4">
+                                                <input id="mulai" type="text"
+                                                       name="mulai"
+                                                       placeholder="yyyy-MM-dd"
+                                                       class="form-control form-control"
+                                                       th:value="${awalBulan}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-sm-3 form-control-label">Sampai Tanggal</label>
+                                            <div class="col-sm-4">
+                                                <input id="sampai" type="text"
+                                                       name="sampai"
+                                                       placeholder="yyyy-MM-dd"
+                                                       class="form-control form-control"
+                                                       th:value="${akhirBulan}">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-6 offset-sm-3">
+                                                <button class="btn btn-info" type="submit"><i class="fa fa-search"></i> Download CSV</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="daily-feeds card">
@@ -93,5 +140,18 @@
                 </div>
             </div>
         </section>
+        <th:block layout:fragment="script">
+        <script>
+            var today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+            $('#mulai').datepicker({
+                format: 'yyyy-mm-dd',
+                uiLibrary: 'bootstrap4'
+            });
+            $('#sampai').datepicker({
+                format: 'yyyy-mm-dd',
+                uiLibrary: 'bootstrap4'
+            });
+        </script>
+        </th:block>
     </body>
 </html>
