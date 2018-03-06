@@ -47,7 +47,7 @@ public class PembayaranController {
         Pembayaran p;
 
         if (id != null) {
-            p = pembayaranDao.findOne(id);
+            p = pembayaranDao.findById(id).get();
         } else {
             p = new Pembayaran();
         }

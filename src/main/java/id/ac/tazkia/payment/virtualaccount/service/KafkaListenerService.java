@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service @Transactional
 public class KafkaListenerService {
@@ -35,7 +36,7 @@ public class KafkaListenerService {
     @Autowired private TagihanService tagihanService;
     @Autowired private KafkaSenderService kafkaSenderService;
 
-    @KafkaListener(topics = "${kafka.topic.debitur.request}", group = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${kafka.topic.debitur.request}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleDebiturRequest(String message) {
         Map<String, Object> response = new LinkedHashMap<>();
         try {
@@ -71,7 +72,7 @@ public class KafkaListenerService {
         }
     }
 
-    @KafkaListener(topics = "${kafka.topic.tagihan.request}", group = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${kafka.topic.tagihan.request}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleTagihanRequest(String message) {
         TagihanResponse response = new TagihanResponse();
         try {
@@ -93,15 +94,15 @@ public class KafkaListenerService {
             }
             t.setDebitur(d);
 
-            JenisTagihan jt = jenisTagihanDao.findOne(request.getJenisTagihan());
-            if (jt == null) {
+            Optional<JenisTagihan> jt = jenisTagihanDao.findById(request.getJenisTagihan());
+            if (!jt.isPresent()) {
                 LOGGER.warn("Jenis Tagihan dengan id {} tidak terdaftar", request.getJenisTagihan());
                 response.setSukses(false);
                 response.setError("Jenis Tagihan dengan id "+request.getJenisTagihan()+" tidak terdaftar");
                 kafkaSenderService.sendTagihanResponse(response);
                 return;
             }
-            t.setJenisTagihan(jt);
+            t.setJenisTagihan(jt.get());
 
             t.setNilaiTagihan(request.getNilaiTagihan());
             t.setKeterangan(request.getKeterangan());
@@ -120,7 +121,7 @@ public class KafkaListenerService {
         }
     }
 
-    @KafkaListener(topics = "${kafka.topic.va.response}", group = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${kafka.topic.va.response}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleVaResponse(String message) {
         try {
             LOGGER.debug("Terima message : {}", message);
@@ -150,7 +151,7 @@ public class KafkaListenerService {
 
             if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
                 va.setVaStatus(VaStatus.ERROR);
-                virtualAccountDao.save(daftarVa);
+                virtualAccountDao.save(va);
                 return;
             }
 
@@ -168,13 +169,13 @@ public class KafkaListenerService {
         }
     }
 
-    @KafkaListener(topics = "${kafka.topic.va.payment}", group = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "${kafka.topic.va.payment}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleVaPayment(String message) {
         try {
             LOGGER.debug("Terima message : {}", message);
             VaPayment payment = objectMapper.readValue(message, VaPayment.class);
-            Bank bank = bankDao.findOne(payment.getBankId());
-            if (bank == null) {
+            Optional<Bank> bank = bankDao.findById(payment.getBankId());
+            if (!bank.isPresent()) {
                 LOGGER.warn("Bank dengan ID {} tidak terdaftar", payment.getBankId());
                 return;
             }
@@ -211,7 +212,7 @@ public class KafkaListenerService {
             // update VA
             VirtualAccount vaPembayaran = null;
             for (VirtualAccount va : daftarVa) {
-                if (bank.getId().equalsIgnoreCase(va.getBank().getId())) {
+                if (bank.get().getId().equalsIgnoreCase(va.getBank().getId())) {
                     vaPembayaran = va;
                     va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
                             ? VaStatus.NONAKTIF : VaStatus.UPDATE);
@@ -224,24 +225,24 @@ public class KafkaListenerService {
 
             if (vaPembayaran == null) {
                 LOGGER.warn("Virtual account untuk nomor tagihan {} dan bank {} tidak terdaftar",
-                        tagihan.getNomor(), bank.getNama());
+                        tagihan.getNomor(), bank.get().getNama());
                 return;
             }
 
             Pembayaran p = new Pembayaran();
-            p.setBank(bank);
+            p.setBank(bank.get());
             p.setTagihan(tagihan);
             p.setJenisPembayaran(JenisPembayaran.VIRTUAL_ACCOUNT);
             p.setVirtualAccount(vaPembayaran);
             p.setJumlah(payment.getAmount());
             p.setReferensi(payment.getReference());
-            p.setKeterangan("Pembayaran melalui VA Bank "+bank.getNama()+" Nomor "+payment.getAccountNumber());
+            p.setKeterangan("Pembayaran melalui VA Bank "+bank.get().getNama()+" Nomor "+payment.getAccountNumber());
             p.setWaktuTransaksi(java.sql.Timestamp.valueOf(payment.getPaymentTime()));
             pembayaranDao.save(p);
 
             tagihanDao.save(tagihan);
 
-            LOGGER.info("Pembayaran melalui VA Bank {} Nomor {} telah diterima", bank.getNama(), payment.getAccountNumber());
+            LOGGER.info("Pembayaran melalui VA Bank {} Nomor {} telah diterima", bank.get().getNama(), payment.getAccountNumber());
 
             kafkaSenderService.sendNotifikasiPembayaran(p);
         } catch (Exception err) {

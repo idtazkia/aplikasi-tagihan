@@ -78,7 +78,7 @@ public class DebiturController {
         if (id == null) {
             debitur = new Debitur();
         } else {
-            debitur = debiturDao.findOne(id);
+            debitur = debiturDao.findById(id).get();
         }
 
         return new ModelMap("debitur", debitur);
@@ -99,7 +99,7 @@ public class DebiturController {
     @PreAuthorize("hasAuthority('EDIT_DEBITUR')")
     @GetMapping("/debitur/delete{id}")
     public String hapusData(@RequestParam(value = "id", required = false) String id) {
-        debiturDao.delete(id);
+        debiturDao.deleteById(id);
 
         return "redirect:/debitur/list";
 

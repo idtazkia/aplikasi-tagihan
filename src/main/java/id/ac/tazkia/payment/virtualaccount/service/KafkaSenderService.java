@@ -73,7 +73,7 @@ public class KafkaSenderService {
     @Scheduled(fixedDelay = 60 * 1000)
     public void prosesNotifikasiTagihan() {
         for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM,
-                new PageRequest(0, NOTIFICATION_BATCH_SIZE)).getContent()) {
+                PageRequest.of(0, NOTIFICATION_BATCH_SIZE)).getContent()) {
             // tunggu aktivasi VA dulu selama 60 menit
             if (LocalDateTime.now().isBefore(
                     tagihan.getUpdatedAt().toInstant().atZone(ZoneId.systemDefault())

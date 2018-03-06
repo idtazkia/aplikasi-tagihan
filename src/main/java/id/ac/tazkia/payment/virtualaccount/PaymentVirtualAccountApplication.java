@@ -1,6 +1,7 @@
 package id.ac.tazkia.payment.virtualaccount;
 
 import id.ac.tazkia.payment.virtualaccount.service.RunningNumberService;
+import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,28 +19,33 @@ import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 @EnableKafka
 public class PaymentVirtualAccountApplication implements CommandLineRunner {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(PaymentVirtualAccountApplication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentVirtualAccountApplication.class);
 
-	@Autowired
-	private RunningNumberService runningNumberService;
+    @Autowired
+    private RunningNumberService runningNumberService;
 
-	@Override
-	public void run(String... args) throws Exception {
-		LOGGER.debug("Inisialisasi Running Number");
-		runningNumberService.getNumber();
-	}
+    @Override
+    public void run(String... args) throws Exception {
+        LOGGER.debug("Inisialisasi Running Number");
+        runningNumberService.getNumber();
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(PaymentVirtualAccountApplication.class, args);
-	}
-        
-        @Bean
-        public SpringSecurityDialect springSecurityDialect(){
-            return new SpringSecurityDialect();
-        }
-        
-        @Bean
-        public SpringDataDialect springDataDialect(){
-            return new SpringDataDialect();
-        }
+    public static void main(String[] args) {
+        SpringApplication.run(PaymentVirtualAccountApplication.class, args);
+    }
+
+    @Bean
+    public SpringSecurityDialect springSecurityDialect() {
+        return new SpringSecurityDialect();
+    }
+
+    @Bean
+    public SpringDataDialect springDataDialect() {
+        return new SpringDataDialect();
+    }
+
+    @Bean
+    public LayoutDialect layoutDialect() {
+        return new LayoutDialect();
+    }
 }
