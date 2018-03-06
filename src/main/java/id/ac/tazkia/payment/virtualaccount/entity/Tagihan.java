@@ -6,7 +6,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -38,7 +37,7 @@ public class Tagihan {
     private BigDecimal jumlahPembayaran = BigDecimal.ZERO;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull @Future
+    @NotNull
     @Temporal(TemporalType.DATE)
     private Date tanggalJatuhTempo;
 
