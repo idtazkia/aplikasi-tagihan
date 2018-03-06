@@ -25,6 +25,7 @@
         <thymeleaf.version>3.0.8.RELEASE</thymeleaf.version>
         <thymeleaf-extras-springsecurity4.version>3.0.2.RELEASE</thymeleaf-extras-springsecurity4.version>
         <thymeleaf-layout-dialect.version>2.1.1</thymeleaf-layout-dialect.version>
+        <flyway.version>4.2.0</flyway.version>
         <revision>1.4.0-RELEASE</revision>
     </properties>
 
