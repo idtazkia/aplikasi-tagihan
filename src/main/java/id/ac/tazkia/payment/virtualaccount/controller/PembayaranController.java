@@ -159,7 +159,7 @@ public class PembayaranController {
 
 
         Iterable<Pembayaran> dataPembayaran = pembayaranDao
-                .findByTagihanJenisTagihanAndWaktuTransaksiBetweenOrderByWaktuTransaksi(jenis,mulai, sampai);
+                .findByTagihanJenisTagihanAndWaktuTransaksiBetweenOrderByWaktuTransaksi(jenis,mulai.atStartOfDay(), sampai.plusDays(1).atStartOfDay());
 
         Integer baris = 0;
         BigDecimal total = BigDecimal.ZERO;

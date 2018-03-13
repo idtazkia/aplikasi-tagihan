@@ -45,5 +45,5 @@ public interface PembayaranDao extends PagingAndSortingRepository<Pembayaran, St
     List<RekapPembayaran> rekapPembayaran(@Param("mulai") LocalDateTime mulai,
                                           @Param("sampai") LocalDateTime sampai);
 
-    Iterable<Pembayaran> findByTagihanJenisTagihanAndWaktuTransaksiBetweenOrderByWaktuTransaksi(JenisTagihan jenis, LocalDate mulai, LocalDate sampai);
+    Iterable<Pembayaran> findByTagihanJenisTagihanAndWaktuTransaksiBetweenOrderByWaktuTransaksi(JenisTagihan jenis, LocalDateTime mulai, LocalDateTime sampai);
 }
