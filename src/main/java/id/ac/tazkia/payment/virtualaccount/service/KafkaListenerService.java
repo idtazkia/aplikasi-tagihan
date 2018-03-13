@@ -237,7 +237,7 @@ public class KafkaListenerService {
             p.setJumlah(payment.getAmount());
             p.setReferensi(payment.getReference());
             p.setKeterangan("Pembayaran melalui VA Bank "+bank.get().getNama()+" Nomor "+payment.getAccountNumber());
-            p.setWaktuTransaksi(java.sql.Timestamp.valueOf(payment.getPaymentTime()));
+            p.setWaktuTransaksi(payment.getPaymentTime());
             pembayaranDao.save(p);
 
             tagihanDao.save(tagihan);

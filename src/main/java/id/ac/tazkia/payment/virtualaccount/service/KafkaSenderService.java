@@ -76,8 +76,7 @@ public class KafkaSenderService {
                 PageRequest.of(0, NOTIFICATION_BATCH_SIZE)).getContent()) {
             // tunggu aktivasi VA dulu selama 60 menit
             if (LocalDateTime.now().isBefore(
-                    tagihan.getUpdatedAt().toInstant().atZone(ZoneId.systemDefault())
-                            .toLocalDateTime().plusMinutes(delayNotifikasi))) {
+                    tagihan.getUpdatedAt().plusMinutes(delayNotifikasi))) {
                 continue;
             }
 

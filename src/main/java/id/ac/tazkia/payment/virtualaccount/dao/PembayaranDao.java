@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface PembayaranDao extends PagingAndSortingRepository<Pembayaran, String> {
@@ -23,16 +23,16 @@ public interface PembayaranDao extends PagingAndSortingRepository<Pembayaran, St
             "order by p.waktuTransaksi desc")
     Page<Pembayaran> findByJenisTagihanAndWaktuTransaksi(
             @Param("jenis")JenisTagihan jenis,
-            @Param("mulai")Date mulai,
-            @Param("sampai")Date sampai,
+            @Param("mulai")LocalDate mulai,
+            @Param("sampai")LocalDate sampai,
             Pageable page
     );
 
     @Query("select p from Pembayaran  p where " +
             "p.waktuTransaksi >= :mulai and p.waktuTransaksi <= :sampai " +
             "order by p.waktuTransaksi desc")
-    Page<Pembayaran> findByWaktuTransaksi(@Param("mulai")Date mulai,
-                                          @Param("sampai")Date sampai,
+    Page<Pembayaran> findByWaktuTransaksi(@Param("mulai")LocalDate mulai,
+                                          @Param("sampai")LocalDate sampai,
                                           Pageable pageable);
 
     Page<Pembayaran> findByTagihanJenisTagihan(JenisTagihan jenisTagihan, Pageable pageable);
@@ -41,8 +41,8 @@ public interface PembayaranDao extends PagingAndSortingRepository<Pembayaran, St
             "from Pembayaran p where p.waktuTransaksi >= :mulai and p.waktuTransaksi <= :sampai " +
             "group by cast(p.waktuTransaksi as date) "+
             "order by cast(p.waktuTransaksi as date) ")
-    List<RekapPembayaran> rekapPembayaran(@Param("mulai") Date mulai,
-                                          @Param("sampai") Date sampai);
+    List<RekapPembayaran> rekapPembayaran(@Param("mulai") LocalDate mulai,
+                                          @Param("sampai") LocalDate sampai);
 
-    Iterable<Pembayaran> findByTagihanJenisTagihanAndWaktuTransaksiBetweenOrderByWaktuTransaksi(JenisTagihan jenis, Date mulai, Date sampai);
+    Iterable<Pembayaran> findByTagihanJenisTagihanAndWaktuTransaksiBetweenOrderByWaktuTransaksi(JenisTagihan jenis, LocalDate mulai, LocalDate sampai);
 }

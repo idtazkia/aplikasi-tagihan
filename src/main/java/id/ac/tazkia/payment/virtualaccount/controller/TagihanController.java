@@ -31,11 +31,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -91,7 +89,7 @@ public class TagihanController {
         if (tagihan == null) {
             tagihan = new Tagihan();
             tagihan.setNomor("--- otomatis ditentukan sistem ---");
-            tagihan.setTanggalJatuhTempo(Date.from(LocalDate.now().plusMonths(6).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            tagihan.setTanggalJatuhTempo(LocalDate.now().plusMonths(6));
         }
 
         tagihan.setDebitur(debitur);
@@ -222,7 +220,7 @@ public class TagihanController {
 
                 Tagihan t = new Tagihan();
                 t.setJenisTagihan(jenisTagihan);
-                t.setTanggalTagihan(new Date());
+                t.setTanggalTagihan(LocalDate.now());
                 t.setNomor(data[0]);
 
                 Debitur d = debiturDao.findByNomorDebitur(data[0]);
@@ -242,8 +240,7 @@ public class TagihanController {
                 }
 
                 try {
-                    Date tanggalJatuhTempo = Date.from(LocalDate.parse(data[3], DateTimeFormatter.ISO_LOCAL_DATE)
-                            .atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    LocalDate tanggalJatuhTempo = LocalDate.parse(data[3], DateTimeFormatter.ISO_LOCAL_DATE);
                     t.setTanggalJatuhTempo(tanggalJatuhTempo);
                 } catch (DateTimeParseException ex) {
                     errors.add(new UploadError(baris, "Format tanggal salah", content));

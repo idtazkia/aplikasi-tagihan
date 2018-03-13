@@ -9,7 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TagihanDao extends PagingAndSortingRepository<Tagihan, String> {
@@ -36,6 +36,6 @@ public interface TagihanDao extends PagingAndSortingRepository<Tagihan, String> 
             "from Tagihan t " +
             "where t.tanggalTagihan >= :mulai and t.tanggalTagihan <= :sampai " +
             "group by t.jenisTagihan, t.statusPembayaran")
-    List<RekapTagihan> rekapTagihan(@Param("mulai") Date mulai,
-                                    @Param("sampai") Date sampai);
+    List<RekapTagihan> rekapTagihan(@Param("mulai") LocalDate mulai,
+                                    @Param("sampai") LocalDate sampai);
 }

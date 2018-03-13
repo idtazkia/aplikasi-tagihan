@@ -3,13 +3,13 @@ package id.ac.tazkia.payment.virtualaccount.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class TagihanRequest {
     private String jenisTagihan;
     private String debitur;
     private BigDecimal nilaiTagihan;
-    private Date tanggalJatuhTempo;
+    private LocalDate tanggalJatuhTempo;
     private String keterangan;
 }

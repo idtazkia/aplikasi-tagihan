@@ -24,7 +24,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/pembayaran")
@@ -61,8 +64,8 @@ public class PembayaranController {
     public ModelMap findAllHtml(@RequestParam(required = false) JenisTagihan jenis,
                                 @RequestParam(required = false) Tagihan tagihan,
                                 @RequestParam(required = false) Debitur debitur,
-                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date mulai,
-                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date sampai,
+                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate mulai,
+                                @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate sampai,
                                 @PageableDefault(sort = "waktuTransaksi", direction = Sort.Direction.DESC) Pageable pageable) {
 
         if(tagihan != null) {
@@ -120,14 +123,14 @@ public class PembayaranController {
     @ResponseBody
     public List<RekapPembayaran> rekapPembayaranBulanan() {
         LocalDate sekarang = LocalDate.now();
-        Date mulai = Date.from(sekarang.minusMonths(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-        Date sampai = Date.from(sekarang.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        LocalDate mulai = sekarang.minusMonths(1);
+        LocalDate sampai = sekarang;
 
         Map<String, RekapPembayaran> hasil = new LinkedHashMap<>();
 
         for(LocalDate date = sekarang.minusMonths(1); date.isBefore(sekarang); date = date.plusDays(1)) {
             RekapPembayaran rekap = new RekapPembayaran(
-                    new java.sql.Date(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime()),
+                    date,
                     BigDecimal.ZERO, 0L);
             hasil.put(date.format(DateTimeFormatter.BASIC_ISO_DATE), rekap);
         }
@@ -143,8 +146,8 @@ public class PembayaranController {
 
     @GetMapping("/csv")
     public void rekapPembayaranCsv(@RequestParam JenisTagihan jenis,
-                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date mulai,
-                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date sampai,
+                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate mulai,
+                                   @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sampai,
                                    HttpServletResponse response) throws Exception {
         String filename = "pembayaran-"
                 +formatterTanggal.format(mulai).replace("-", "")

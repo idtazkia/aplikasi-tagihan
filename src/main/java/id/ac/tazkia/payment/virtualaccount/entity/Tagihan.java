@@ -10,7 +10,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity @Data
 public class Tagihan {
@@ -38,17 +39,15 @@ public class Tagihan {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
-    @Temporal(TemporalType.DATE)
-    private Date tanggalJatuhTempo;
+    private LocalDate tanggalJatuhTempo;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull
-    @Temporal(TemporalType.DATE)
-    private Date tanggalTagihan = new Date();
+    private LocalDate tanggalTagihan = LocalDate.now();
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
+    private LocalDateTime updatedAt;
 
     private String keterangan;
 

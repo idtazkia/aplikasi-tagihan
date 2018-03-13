@@ -11,7 +11,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -39,8 +40,8 @@ public class TagihanDaoTests {
     @Test
     public void rekapTagihan() throws Exception {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date mulai = formatter.parse("2018-01-01");
-        Date sampai = formatter.parse("2018-02-01");
+        LocalDate mulai = LocalDate.parse("2018-01-01", DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate sampai = LocalDate.parse("2018-02-01", DateTimeFormatter.ISO_LOCAL_DATE);
         List<RekapTagihan> rekapTagihanList = tagihanDao.rekapTagihan(mulai, sampai);
         for (RekapTagihan rekap : rekapTagihanList) {
             System.out.println("Jenis Tagihan : "+rekap.getJenisTagihan().getNama());

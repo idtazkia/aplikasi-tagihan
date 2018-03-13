@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class HomeController {
@@ -33,8 +35,8 @@ public class HomeController {
     @GetMapping("/home")
     public ModelMap home(){
         List<RekapTagihan> rekap = tagihanDao
-                .rekapTagihan(Date.from(LocalDate.parse(TANGGAL_LIVE, DateTimeFormatter.BASIC_ISO_DATE).atStartOfDay(ZoneId.systemDefault()).toInstant()),
-                        Date.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                .rekapTagihan(LocalDate.parse(TANGGAL_LIVE, DateTimeFormatter.BASIC_ISO_DATE),
+                        LocalDate.now());
 
         Map<String, LaporanTagihan> daftarLaporanTagihan = new LinkedHashMap<>();
 
