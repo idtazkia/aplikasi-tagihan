@@ -46,7 +46,6 @@ public class Tagihan {
     private LocalDate tanggalTagihan = LocalDate.now();
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 
     private String keterangan;

@@ -12,6 +12,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PembayaranDao extends PagingAndSortingRepository<Pembayaran, String> {
@@ -37,12 +38,12 @@ public interface PembayaranDao extends PagingAndSortingRepository<Pembayaran, St
 
     Page<Pembayaran> findByTagihanJenisTagihan(JenisTagihan jenisTagihan, Pageable pageable);
 
-    @Query("select new id.ac.tazkia.payment.virtualaccount.dto.RekapPembayaran(cast (p.waktuTransaksi as date), sum(p.jumlah), count(p)) " +
+    @Query("select new id.ac.tazkia.payment.virtualaccount.dto.RekapPembayaran(cast(p.waktuTransaksi as date), sum(p.jumlah), count(p)) " +
             "from Pembayaran p where p.waktuTransaksi >= :mulai and p.waktuTransaksi <= :sampai " +
             "group by cast(p.waktuTransaksi as date) "+
             "order by cast(p.waktuTransaksi as date) ")
-    List<RekapPembayaran> rekapPembayaran(@Param("mulai") LocalDate mulai,
-                                          @Param("sampai") LocalDate sampai);
+    List<RekapPembayaran> rekapPembayaran(@Param("mulai") LocalDateTime mulai,
+                                          @Param("sampai") LocalDateTime sampai);
 
     Iterable<Pembayaran> findByTagihanJenisTagihanAndWaktuTransaksiBetweenOrderByWaktuTransaksi(JenisTagihan jenis, LocalDate mulai, LocalDate sampai);
 }

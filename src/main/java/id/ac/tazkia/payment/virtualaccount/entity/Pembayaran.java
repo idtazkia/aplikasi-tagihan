@@ -18,7 +18,6 @@ public class Pembayaran {
     private String id;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime waktuTransaksi;
 
     @NotNull

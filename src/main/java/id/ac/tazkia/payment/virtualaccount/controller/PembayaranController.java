@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -130,13 +129,13 @@ public class PembayaranController {
 
         for(LocalDate date = sekarang.minusMonths(1); date.isBefore(sekarang); date = date.plusDays(1)) {
             RekapPembayaran rekap = new RekapPembayaran(
-                    date,
+                    java.sql.Date.valueOf(date),
                     BigDecimal.ZERO, 0L);
             hasil.put(date.format(DateTimeFormatter.BASIC_ISO_DATE), rekap);
         }
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-        for (RekapPembayaran r : pembayaranDao.rekapPembayaran(mulai, sampai)) {
+        for (RekapPembayaran r : pembayaranDao.rekapPembayaran(mulai.atStartOfDay(), sampai.plusDays(1).atStartOfDay())) {
             r.setJumlah(r.getJumlah());
             hasil.put(formatter.format(r.getTanggal()), r);
         }
