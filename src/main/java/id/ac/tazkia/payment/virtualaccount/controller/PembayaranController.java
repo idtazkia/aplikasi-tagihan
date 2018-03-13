@@ -149,9 +149,9 @@ public class PembayaranController {
                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sampai,
                                    HttpServletResponse response) throws Exception {
         String filename = "pembayaran-"
-                +formatterTanggal.format(mulai).replace("-", "")
+                +mulai.format(DateTimeFormatter.BASIC_ISO_DATE)
                 +"-"
-                +formatterTanggal.format(sampai).replace("-", "")
+                +sampai.format(DateTimeFormatter.BASIC_ISO_DATE)
                 +".csv";
         response.setHeader("Content-Disposition", "attachment;filename="+filename);
         response.setContentType("text/csv");
@@ -176,9 +176,9 @@ public class PembayaranController {
             response.getWriter().print(",");
             response.getWriter().print(p.getJumlah().setScale(0).toPlainString());
             response.getWriter().print(",");
-            response.getWriter().print(formatterTanggal.format(p.getWaktuTransaksi()));
+            response.getWriter().print(p.getWaktuTransaksi().format(DateTimeFormatter.ISO_LOCAL_DATE));
             response.getWriter().print(",");
-            response.getWriter().print(formatterWaktu.format(p.getWaktuTransaksi()));
+            response.getWriter().print(p.getWaktuTransaksi().format(DateTimeFormatter.ISO_LOCAL_TIME));
             response.getWriter().println();
         }
 
