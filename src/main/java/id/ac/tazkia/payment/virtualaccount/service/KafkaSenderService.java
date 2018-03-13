@@ -17,9 +17,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,8 +26,7 @@ import java.util.Map;
 @Service @Transactional
 public class KafkaSenderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSenderService.class);
-    private static final SimpleDateFormat FORMATTER_ISO_DATE = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat FORMATTER_ISO_DATE_TIME = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final String FORMAT_DATETIME = "yyyy-MM-dd HH:mm:ss";
 
     private static final Integer NOTIFICATION_BATCH_SIZE = 50;
 
@@ -135,7 +133,7 @@ public class KafkaSenderService {
                     .nomorTagihan(tagihan.getNomor())
                     .rekening(rekening.toString())
                     .rekeningFull(rekeningFull.toString())
-                    .tanggalTagihan(FORMATTER_ISO_DATE.format(tagihan.getTanggalTagihan()))
+                    .tanggalTagihan(tagihan.getTanggalTagihan().format(DateTimeFormatter.ISO_LOCAL_DATE))
                     .contactinfo(contactinfo)
                     .contactinfoFull(contactinfoFull)
                     .build();
@@ -177,11 +175,11 @@ public class KafkaSenderService {
                 .nomorTagihan(pembayaran.getTagihan().getNomor())
                 .nama(pembayaran.getTagihan().getDebitur().getNama())
                 .noHp(pembayaran.getTagihan().getDebitur().getNoHp())
-                .tanggalTagihan(FORMATTER_ISO_DATE.format(pembayaran.getTagihan().getTanggalTagihan()))
+                .tanggalTagihan(pembayaran.getTagihan().getTanggalTagihan().format(DateTimeFormatter.ISO_LOCAL_DATE))
                 .nilaiPembayaran(pembayaran.getJumlah())
                 .nilaiTagihan(pembayaran.getTagihan().getNilaiTagihan())
                 .rekening(pembayaran.getBank().getNama())
-                .waktu(FORMATTER_ISO_DATE_TIME.format(pembayaran.getWaktuTransaksi()))
+                .waktu(pembayaran.getWaktuTransaksi().format(DateTimeFormatter.ofPattern(FORMAT_DATETIME)))
                 .referensi(pembayaran.getReferensi())
                 .build();
         Map<String, Object> notifikasi = new LinkedHashMap<>();
@@ -223,9 +221,9 @@ public class KafkaSenderService {
                 .nilaiPembayaran(p.getJumlah())
                 .nilaiAkumulasiPembayaran(p.getTagihan().getJumlahPembayaran())
                 .referensiPembayaran(p.getReferensi())
-                .waktuPembayaran(FORMATTER_ISO_DATE_TIME.format(p.getWaktuTransaksi()))
-                .tanggalTagihan(FORMATTER_ISO_DATE.format(p.getTagihan().getTanggalTagihan()))
-                .tanggalJatuhTempo(FORMATTER_ISO_DATE.format(p.getTagihan().getTanggalJatuhTempo()))
+                .waktuPembayaran(p.getWaktuTransaksi().format(DateTimeFormatter.ofPattern(FORMAT_DATETIME)))
+                .tanggalTagihan(p.getTagihan().getTanggalTagihan().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .tanggalJatuhTempo(p.getTagihan().getTanggalJatuhTempo().format(DateTimeFormatter.ISO_LOCAL_DATE))
                 .build();
 
         try {
@@ -261,7 +259,8 @@ public class KafkaSenderService {
                 .description(va.getTagihan().getKeterangan())
                 .email(va.getTagihan().getDebitur().getEmail())
                 .phone(va.getTagihan().getDebitur().getNoHp())
-                .expireDate(FORMATTER_ISO_DATE.format(va.getTagihan().getTanggalJatuhTempo()))
+                .expireDate(va.getTagihan().getTanggalJatuhTempo().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .expireDate(va.getTagihan().getTanggalJatuhTempo().format(DateTimeFormatter.ISO_LOCAL_DATE))
                 .invoiceNumber(va.getTagihan().getNomor())
                 .name(va.getTagihan().getDebitur().getNama())
                 .bankId(va.getBank().getId())
