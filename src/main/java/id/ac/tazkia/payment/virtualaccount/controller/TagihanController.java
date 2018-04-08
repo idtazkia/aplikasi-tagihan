@@ -2,6 +2,7 @@ package id.ac.tazkia.payment.virtualaccount.controller;
 
 import id.ac.tazkia.payment.virtualaccount.dao.DebiturDao;
 import id.ac.tazkia.payment.virtualaccount.dao.JenisTagihanDao;
+import id.ac.tazkia.payment.virtualaccount.dao.PeriksaStatusTagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dto.UpdateTagihan;
 import id.ac.tazkia.payment.virtualaccount.dto.UploadError;
@@ -43,6 +44,7 @@ public class TagihanController {
 
     @Autowired
     private TagihanDao tagihanDao;
+    @Autowired private PeriksaStatusTagihanDao periksaStatusTagihanDao;
     @Autowired
     private TagihanService tagihanService;
     @Autowired private KafkaSenderService kafkaSenderService;
@@ -106,6 +108,19 @@ public class TagihanController {
         tagihanService.saveTagihan(tagihan);
         status.setComplete();
         return "redirect:list";
+    }
+
+    @GetMapping("/status")
+    public ModelMap statusTagihan(@RequestParam Tagihan tagihan, @PageableDefault(size = 20) Pageable page) {
+        return new ModelMap()
+                .addAttribute(tagihan)
+                .addAttribute("daftarHasilPeriksa", periksaStatusTagihanDao.findByVirtualAccountTagihanOrderByWaktuPeriksaDesc(tagihan, page));
+    }
+
+    @PostMapping("/status")
+    public String periksaStatusTagihan(@RequestParam Tagihan tagihan) {
+        tagihanService.periksaStatus(tagihan);
+        return "redirect:status?tagihan="+tagihan.getId();
     }
 
     @GetMapping("/update")

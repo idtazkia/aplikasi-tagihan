@@ -33,6 +33,7 @@ public class KafkaListenerService {
     @Autowired private PembayaranDao pembayaranDao;
     @Autowired private DebiturDao debiturDao;
     @Autowired private JenisTagihanDao jenisTagihanDao;
+    @Autowired private PeriksaStatusTagihanDao periksaStatusTagihanDao;
     @Autowired private TagihanService tagihanService;
     @Autowired private KafkaSenderService kafkaSenderService;
 
@@ -149,6 +150,20 @@ public class KafkaListenerService {
                 return;
             }
 
+            if (VaStatus.INQUIRY.equals(vaResponse.getRequestType())) {
+                List<PeriksaStatusTagihan> daftarPeriksaStatus = periksaStatusTagihanDao.findByVirtualAccountAndStatusPemeriksaanTagihan(va, StatusPemeriksaanTagihan.BARU);
+                if (daftarPeriksaStatus == null || daftarPeriksaStatus.isEmpty()) {
+                    LOGGER.warn("Pemeriksaan status untuk VA {} di bank {} tidak ada", va.getNomor(), va.getBank().getNama());
+                    return;
+                }
+
+                for (PeriksaStatusTagihan p : daftarPeriksaStatus) {
+                    p.setStatusPemeriksaanTagihan(
+                            VaRequestStatus.SUCCESS.equals(vaResponse.getRequestStatus()) ?
+                                    StatusPemeriksaanTagihan.SUKSES : StatusPemeriksaanTagihan.ERROR);
+                }
+            }
+
             if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
                 va.setVaStatus(VaStatus.ERROR);
                 virtualAccountDao.save(va);
@@ -164,6 +179,7 @@ public class KafkaListenerService {
             va.setNomor(vaResponse.getAccountNumber());
             va.setVaStatus(VaStatus.AKTIF);
             virtualAccountDao.save(va);
+
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
         }

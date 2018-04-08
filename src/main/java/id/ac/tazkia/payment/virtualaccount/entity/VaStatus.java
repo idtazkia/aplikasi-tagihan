@@ -4,6 +4,7 @@ public enum VaStatus {
     CREATE,
     UPDATE,
     DELETE,
+    INQUIRY,
     SEDANG_PROSES,
     AKTIF,
     NONAKTIF,

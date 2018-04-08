@@ -1,5 +1,6 @@
 package id.ac.tazkia.payment.virtualaccount.service;
 
+import id.ac.tazkia.payment.virtualaccount.dao.PeriksaStatusTagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
@@ -24,6 +25,7 @@ public class TagihanService {
     @Autowired private RunningNumberService runningNumberService;
     @Autowired private TagihanDao tagihanDao;
     @Autowired private VirtualAccountDao virtualAccountDao;
+    @Autowired private PeriksaStatusTagihanDao periksaStatusTagihanDao;
 
     public void saveTagihan(Tagihan t) {
         t.setNilaiTagihan(t.getNilaiTagihan().setScale(0, RoundingMode.DOWN));
@@ -47,6 +49,19 @@ public class TagihanService {
                 virtualAccountDao.save(va);
             }
             tagihanDao.save(t);
+        }
+    }
+
+    public void periksaStatus(Tagihan tagihan) {
+        for (VirtualAccount va : virtualAccountDao.findByTagihan(tagihan)) {
+            PeriksaStatusTagihan p = new PeriksaStatusTagihan();
+            p.setVirtualAccount(va);
+            p.setWaktuPeriksa(LocalDateTime.now());
+            p.setStatusPemeriksaanTagihan(StatusPemeriksaanTagihan.BARU);
+            periksaStatusTagihanDao.save(p);
+
+            va.setVaStatus(VaStatus.INQUIRY);
+            virtualAccountDao.save(va);
         }
     }
 }

@@ -69,6 +69,11 @@ public class KafkaSenderService {
         processVa(VaStatus.DELETE);
     }
 
+    @Scheduled(fixedDelay = 1000)
+    public void prosesVaInquiry() {
+        processVa(VaStatus.INQUIRY);
+    }
+
     @Scheduled(fixedDelay = 60 * 1000)
     public void prosesNotifikasiTagihan() {
         for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM,
