@@ -16,6 +16,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -238,6 +239,12 @@ public class KafkaSenderService {
         if (daftarVa.hasNext()) {
             VirtualAccount va = daftarVa.next();
             try {
+                // VA update dan delete harus ada nomor VAnya
+                if (!VaStatus.CREATE.equals(status) && !StringUtils.hasText(va.getNomor())) {
+                    LOGGER.warn("VA Request {} untuk no tagihan {} tidak ada nomer VA-nya ", status, va.getTagihan().getNomor());
+                    return;
+                }
+
                 VaRequest vaRequest = createRequest(va, status);
                 String json = objectMapper.writeValueAsString(vaRequest);
                 LOGGER.debug("VA Request : {}", json);
