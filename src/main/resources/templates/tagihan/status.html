@@ -39,7 +39,6 @@
                                 <th>Nilai</th>
                                 <th>Tanggal Periksa</th>
                                 <th>Status Pemeriksaan</th>
-                                <th>Status Pembayaran</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -51,9 +50,6 @@
                                     <td th:text="${#numbers.formatDecimal(p.virtualAccount.tagihan.nilaiTagihanEfektif,1,'POINT',2,'COMMA')}">Yayasan Tazkia</td>
                                     <td th:text="${p.waktuPeriksa}">Yayasan Tazkia</td>
                                     <td th:text="${p.statusPemeriksaanTagihan}">Yayasan Tazkia</td>
-                                    <td>
-                                        <a th:href="@{/pembayaran/list(tagihan=${p.virtualAccount.tagihan.id})}" th:text="${p.statusPembayaran}">LUNAS</a>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>

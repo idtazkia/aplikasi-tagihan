@@ -21,9 +21,6 @@ public class PeriksaStatusTagihan {
     @NotNull
     private LocalDateTime waktuPeriksa;
 
-    @Enumerated(EnumType.STRING)
-    private StatusPembayaran statusPembayaran;
-
     @NotNull
     @Enumerated(EnumType.STRING)
     private StatusPemeriksaanTagihan statusPemeriksaanTagihan = StatusPemeriksaanTagihan.BARU;
