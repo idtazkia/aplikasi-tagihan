@@ -3,6 +3,7 @@ package id.ac.tazkia.payment.virtualaccount.service;
 import id.ac.tazkia.payment.virtualaccount.dao.PeriksaStatusTagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
+import id.ac.tazkia.payment.virtualaccount.dto.TagihanResponse;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class TagihanService {
     @Autowired private TagihanDao tagihanDao;
     @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private PeriksaStatusTagihanDao periksaStatusTagihanDao;
+    @Autowired private KafkaSenderService kafkaSenderService;
 
     public void saveTagihan(Tagihan t) {
         t.setNilaiTagihan(t.getNilaiTagihan().setScale(0, RoundingMode.DOWN));
@@ -50,6 +52,17 @@ public class TagihanService {
             }
             tagihanDao.save(t);
         }
+
+        TagihanResponse response = new TagihanResponse();
+        response.setDebitur(t.getDebitur().getNomorDebitur());
+        response.setJenisTagihan(t.getJenisTagihan().getId());
+        response.setKeterangan(t.getKeterangan());
+        response.setNilaiTagihan(t.getNilaiTagihan());
+        response.setSukses(true);
+        response.setNomorTagihan(t.getNomor());
+        response.setTanggalTagihan(t.getTanggalTagihan());
+        response.setTanggalJatuhTempo(t.getTanggalJatuhTempo());
+        kafkaSenderService.sendTagihanResponse(response);
     }
 
     public void periksaStatus(Tagihan tagihan) {

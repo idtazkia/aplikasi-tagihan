@@ -200,7 +200,9 @@ public class KafkaSenderService {
 
     public void sendTagihanResponse(TagihanResponse tagihanResponse) {
         try {
-            kafkaTemplate.send(kafkaTopicTagihanResponse, objectMapper.writeValueAsString(tagihanResponse));
+            String message = objectMapper.writeValueAsString(tagihanResponse);
+            LOGGER.debug("Kirim tagihan response : {}", message);
+            kafkaTemplate.send(kafkaTopicTagihanResponse, message);
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
         }

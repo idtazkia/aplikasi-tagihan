@@ -110,10 +110,6 @@ public class KafkaListenerService {
             t.setTanggalJatuhTempo(request.getTanggalJatuhTempo());
 
             tagihanService.saveTagihan(t);
-
-            response.setNomorTagihan(t.getNomor());
-            response.setTanggalTagihan(t.getTanggalTagihan());
-            kafkaSenderService.sendTagihanResponse(response);
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
             response.setSukses(false);
