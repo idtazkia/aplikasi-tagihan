@@ -22,9 +22,6 @@ public class JenisTagihan {
     @NotNull @NotEmpty @Column(unique = true)
     private String nama;
 
-    @NotNull @NotEmpty
-    private String kodeAkun;
-
     @NotNull @Enumerated(EnumType.STRING)
     private TipePembayaran tipePembayaran;
 
