@@ -55,8 +55,9 @@ public class KafkaListenerService {
             }
 
             if (debiturDao.findByNomorDebitur(d.getNomorDebitur()) != null) {
-                response.put("sukses", false);
+                response.put("sukses", true);
                 response.put("data", "Nomor debitur " + d.getNomorDebitur() + " sudah ada");
+                response.put("nomorDebitur", d.getNomorDebitur());
                 kafkaSenderService.sendDebiturResponse(response);
                 return;
             }
