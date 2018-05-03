@@ -30,6 +30,13 @@
                                 </div>
 
                                 <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Kode Biaya</label>
+                                    <div class="col-sm-9">
+                                        <label class="form-control-label" th:text="${tagihan.kodeBiaya.kode + ' - ' + tagihan.kodeBiaya.nama}">Debitur</label>
+                                    </div>
+                                </div>
+
+                                <div class="row form-group">
                                     <label class="col-sm-3 form-control-label">Debitur</label>
                                     <div class="col-sm-9">
                                         <label class="form-control-label" th:text="${tagihan.debitur.nomorDebitur + ' - ' + tagihan.debitur.nama}">Debitur</label>

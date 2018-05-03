@@ -1,15 +1,9 @@
 package id.ac.tazkia.payment.virtualaccount.controller;
 
-import id.ac.tazkia.payment.virtualaccount.dao.DebiturDao;
-import id.ac.tazkia.payment.virtualaccount.dao.JenisTagihanDao;
-import id.ac.tazkia.payment.virtualaccount.dao.PeriksaStatusTagihanDao;
-import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
+import id.ac.tazkia.payment.virtualaccount.dao.*;
 import id.ac.tazkia.payment.virtualaccount.dto.UpdateTagihan;
 import id.ac.tazkia.payment.virtualaccount.dto.UploadError;
-import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
-import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
-import id.ac.tazkia.payment.virtualaccount.entity.StatusTagihan;
-import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
+import id.ac.tazkia.payment.virtualaccount.entity.*;
 import id.ac.tazkia.payment.virtualaccount.service.KafkaSenderService;
 import id.ac.tazkia.payment.virtualaccount.service.TagihanService;
 import org.slf4j.Logger;
@@ -41,6 +35,8 @@ import java.util.List;
 @RequestMapping("/tagihan")
 public class TagihanController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagihanController.class);
+
+    @Autowired private KodeBiayaDao kodeBiayaDao;
 
     @Autowired
     private TagihanDao tagihanDao;
@@ -77,6 +73,11 @@ public class TagihanController {
     @ModelAttribute("listJenisTagihan")
     public Iterable<JenisTagihan> daftarJenisTagihan() {
         return jenisTagihanDao.findByAktifOrderByKode(true);
+    }
+
+    @ModelAttribute("listKodeBiaya")
+    public Iterable<KodeBiaya> daftarKodeBiaya() {
+        return kodeBiayaDao.findAll();
     }
 
     @ModelAttribute("listDebitur")
@@ -196,6 +197,7 @@ public class TagihanController {
 
     @PostMapping("/upload/form")
     public String processFormUpload(@RequestParam JenisTagihan jenisTagihan,
+                                    @RequestParam KodeBiaya kodeBiaya,
                               @RequestParam(required = false) Boolean pakaiHeader,
                               MultipartFile fileTagihan,
                               RedirectAttributes redirectAttrs) {
@@ -235,6 +237,7 @@ public class TagihanController {
 
                 Tagihan t = new Tagihan();
                 t.setJenisTagihan(jenisTagihan);
+                t.setKodeBiaya(kodeBiaya);
                 t.setTanggalTagihan(LocalDate.now());
                 t.setNomor(data[0]);
 

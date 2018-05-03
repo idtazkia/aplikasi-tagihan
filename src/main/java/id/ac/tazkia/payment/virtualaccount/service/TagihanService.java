@@ -56,6 +56,7 @@ public class TagihanService {
         TagihanResponse response = new TagihanResponse();
         response.setDebitur(t.getDebitur().getNomorDebitur());
         response.setJenisTagihan(t.getJenisTagihan().getId());
+        response.setKodeBiaya(t.getKodeBiaya().getId());
         response.setKeterangan(t.getKeterangan());
         response.setNilaiTagihan(t.getNilaiTagihan());
         response.setSukses(true);

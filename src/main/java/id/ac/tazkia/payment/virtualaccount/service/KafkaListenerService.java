@@ -29,6 +29,7 @@ public class KafkaListenerService {
 
     @Autowired private VirtualAccountDao virtualAccountDao;
     @Autowired private BankDao bankDao;
+    @Autowired private KodeBiayaDao kodeBiayaDao;
     @Autowired private TagihanDao tagihanDao;
     @Autowired private PembayaranDao pembayaranDao;
     @Autowired private DebiturDao debiturDao;
@@ -105,6 +106,16 @@ public class KafkaListenerService {
                 return;
             }
             t.setJenisTagihan(jt.get());
+
+            Optional<KodeBiaya> kodeBiaya = kodeBiayaDao.findById(request.getKodeBiaya());
+            if (!kodeBiaya.isPresent()) {
+                LOGGER.warn("Kode biaya dengan id {} tidak terdaftar", request.getKodeBiaya());
+                response.setSukses(false);
+                response.setError("Kode biaya dengan id "+request.getKodeBiaya()+" tidak terdaftar");
+                kafkaSenderService.sendTagihanResponse(response);
+                return;
+            }
+            t.setKodeBiaya(kodeBiaya.get());
 
             t.setNilaiTagihan(request.getNilaiTagihan());
             t.setKeterangan(request.getKeterangan());

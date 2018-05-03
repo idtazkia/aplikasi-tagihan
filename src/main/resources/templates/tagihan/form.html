@@ -50,6 +50,20 @@
                                     </div>
                                 </div>
 
+                                <p th:if="${#fields.hasErrors('all')}" th:errors="*{all}">Invalid Input</p>
+                                <div th:class="${#fields.hasErrors('kodeBiaya')}? 'row form-group has-danger' : 'row form-group'">
+                                    <label class="col-sm-3 form-control-label">Kode Biaya</label>
+                                    <div class="col-sm-9">
+                                        <select name="kodeBiaya" th:class="form-control" th:field="*{kodeBiaya}">
+                                            <option value="">... Pilih Kode Biaya ...</option>
+                                            <option th:each="kodeBiaya : ${listKodeBiaya}"
+                                                    th:value="${kodeBiaya.id}"
+                                                    th:text="${kodeBiaya.kode + ' - ' + kodeBiaya.nama}"></option>
+                                        </select>
+                                        <small class="invalid-feedback" th:if="${#fields.hasErrors('kodeBiaya')}" th:errors="*{kodeBiaya}">Example help text that remains unchanged.</small>
+                                    </div>
+                                </div>
+
                                 <div th:class="${#fields.hasErrors('nomor')}? 'row form-group has-danger' : 'row form-group'">
                                     <label class="col-sm-3 form-control-label">Nomor Tagihan</label>
                                     <div class="col-sm-9">

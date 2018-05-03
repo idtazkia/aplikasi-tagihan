@@ -13,6 +13,7 @@ public class TagihanResponse {
     private String error;
     private String debitur;
     private String jenisTagihan;
+    private String kodeBiaya;
     private BigDecimal nilaiTagihan;
     private LocalDate tanggalTagihan;
     private LocalDate tanggalJatuhTempo;

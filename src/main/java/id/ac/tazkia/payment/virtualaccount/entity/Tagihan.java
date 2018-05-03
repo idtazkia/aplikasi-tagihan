@@ -31,6 +31,10 @@ public class Tagihan {
     @JoinColumn(name = "id_jenis_tagihan")
     private JenisTagihan jenisTagihan;
 
+    @ManyToOne @NotNull
+    @JoinColumn(name = "id_kode_biaya")
+    private KodeBiaya kodeBiaya;
+
     @NotNull @Min(0)
     private BigDecimal nilaiTagihan;
 

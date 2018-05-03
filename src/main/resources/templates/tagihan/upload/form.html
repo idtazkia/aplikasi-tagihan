@@ -36,6 +36,17 @@
                                     </div>
                                 </div>
                                 <div class="row form-group">
+                                    <label class="col-sm-3 form-control-label">Kode Biaya</label>
+                                    <div class="col-sm-9">
+                                        <select name="kodeBiaya" th:class="form-control">
+                                            <option value="">... Pilih Kode Biaya ...</option>
+                                            <option th:each="kodeBiaya : ${listKodeBiaya}"
+                                                    th:value="${kodeBiaya.id}"
+                                                    th:text="${kodeBiaya.kode + ' - ' + kodeBiaya.nama}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row form-group">
                                     <label class="col-sm-3 form-control-label">File Tagihan</label>
                                     <div class="col-sm-9">
                                         <input id="fileTagihan" type="file"
