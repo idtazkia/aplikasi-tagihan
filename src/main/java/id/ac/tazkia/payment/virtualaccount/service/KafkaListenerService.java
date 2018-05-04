@@ -133,6 +133,7 @@ public class KafkaListenerService {
             }
             t.setJenisTagihan(jt.get());
 
+            LOGGER.debug("Kode biaya request : {}", request.getKodeBiaya());
             if (!StringUtils.hasText(request.getKodeBiaya())) {
                 t.setKodeBiaya(kodeBiayaDefault);
             } else {
@@ -143,6 +144,7 @@ public class KafkaListenerService {
                 }
                 t.setKodeBiaya(kodeBiaya.get());
             }
+            LOGGER.debug("Kode Biaya Tagihan: {}", t.getKodeBiaya());
 
             t.setNilaiTagihan(request.getNilaiTagihan());
             t.setKeterangan(request.getKeterangan());
