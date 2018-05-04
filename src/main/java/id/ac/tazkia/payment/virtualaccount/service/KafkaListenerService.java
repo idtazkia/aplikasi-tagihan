@@ -143,7 +143,7 @@ public class KafkaListenerService {
                 }
                 t.setKodeBiaya(kodeBiaya.get());
             }
-            
+
             t.setNilaiTagihan(request.getNilaiTagihan());
             t.setKeterangan(request.getKeterangan());
             t.setTanggalJatuhTempo(request.getTanggalJatuhTempo());
