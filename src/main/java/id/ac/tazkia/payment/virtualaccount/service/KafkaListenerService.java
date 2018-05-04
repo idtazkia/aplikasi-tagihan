@@ -8,9 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 
@@ -20,25 +22,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Service @Transactional
+@Service
+@Transactional
 public class KafkaListenerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaListenerService.class);
 
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private Validator validator;
+    @Value("${kode.biaya.default}")
+    private String idKodeBiayaDefault;
 
-    @Autowired private VirtualAccountDao virtualAccountDao;
-    @Autowired private BankDao bankDao;
-    @Autowired private KodeBiayaDao kodeBiayaDao;
-    @Autowired private TagihanDao tagihanDao;
-    @Autowired private PembayaranDao pembayaranDao;
-    @Autowired private DebiturDao debiturDao;
-    @Autowired private JenisTagihanDao jenisTagihanDao;
-    @Autowired private PeriksaStatusTagihanDao periksaStatusTagihanDao;
-    @Autowired private TagihanService tagihanService;
-    @Autowired private KafkaSenderService kafkaSenderService;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
+    private Validator validator;
+
+    @Autowired
+    private VirtualAccountDao virtualAccountDao;
+    @Autowired
+    private BankDao bankDao;
+    @Autowired
+    private KodeBiayaDao kodeBiayaDao;
+    @Autowired
+    private TagihanDao tagihanDao;
+    @Autowired
+    private PembayaranDao pembayaranDao;
+    @Autowired
+    private DebiturDao debiturDao;
+    @Autowired
+    private JenisTagihanDao jenisTagihanDao;
+    @Autowired
+    private PeriksaStatusTagihanDao periksaStatusTagihanDao;
+    @Autowired
+    private TagihanService tagihanService;
+    @Autowired
+    private KafkaSenderService kafkaSenderService;
+
+    private KodeBiaya kodeBiayaDefault;
+
+    public KafkaListenerService() {
+        kodeBiayaDefault = new KodeBiaya();
+        kodeBiayaDefault.setId(idKodeBiayaDefault);
+    }
 
     @KafkaListener(topics = "${kafka.topic.debitur.request}", groupId = "${spring.kafka.consumer.group-id}")
+
     public void handleDebiturRequest(String message) {
         Map<String, Object> response = new LinkedHashMap<>();
         try {
@@ -91,7 +117,7 @@ public class KafkaListenerService {
             if (d == null) {
                 LOGGER.warn("Debitur dengan nomor {} tidak terdaftar", request.getDebitur());
                 response.setSukses(false);
-                response.setError("Debitur dengan nomor "+request.getDebitur()+" tidak terdaftar");
+                response.setError("Debitur dengan nomor " + request.getDebitur() + " tidak terdaftar");
                 kafkaSenderService.sendTagihanResponse(response);
                 return;
             }
@@ -101,22 +127,23 @@ public class KafkaListenerService {
             if (!jt.isPresent()) {
                 LOGGER.warn("Jenis Tagihan dengan id {} tidak terdaftar", request.getJenisTagihan());
                 response.setSukses(false);
-                response.setError("Jenis Tagihan dengan id "+request.getJenisTagihan()+" tidak terdaftar");
+                response.setError("Jenis Tagihan dengan id " + request.getJenisTagihan() + " tidak terdaftar");
                 kafkaSenderService.sendTagihanResponse(response);
                 return;
             }
             t.setJenisTagihan(jt.get());
 
-            Optional<KodeBiaya> kodeBiaya = kodeBiayaDao.findById(request.getKodeBiaya());
-            if (!kodeBiaya.isPresent()) {
-                LOGGER.warn("Kode biaya dengan id {} tidak terdaftar", request.getKodeBiaya());
-                response.setSukses(false);
-                response.setError("Kode biaya dengan id "+request.getKodeBiaya()+" tidak terdaftar");
-                kafkaSenderService.sendTagihanResponse(response);
-                return;
+            if (!StringUtils.hasText(request.getKodeBiaya())) {
+                t.setKodeBiaya(kodeBiayaDefault);
+            } else {
+                Optional<KodeBiaya> kodeBiaya = kodeBiayaDao.findById(request.getKodeBiaya());
+                if (!kodeBiaya.isPresent()) {
+                    LOGGER.warn("Kode biaya dengan id {} tidak terdaftar", request.getKodeBiaya());
+                    kodeBiaya = Optional.of(kodeBiayaDefault);
+                }
+                t.setKodeBiaya(kodeBiaya.get());
             }
-            t.setKodeBiaya(kodeBiaya.get());
-
+            
             t.setNilaiTagihan(request.getNilaiTagihan());
             t.setKeterangan(request.getKeterangan());
             t.setTanggalJatuhTempo(request.getTanggalJatuhTempo());
@@ -221,11 +248,12 @@ public class KafkaListenerService {
             }
 
             BigDecimal akumulasiPembayaran = tagihan.getJumlahPembayaran().add(payment.getAmount());
-            if(akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) > 0){
+            if (akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) > 0) {
                 LOGGER.warn("Nilai pembayaran [{}] lebih besar daripada nilai tagihan [{}] nomor [{}]",
                         akumulasiPembayaran, tagihan.getNilaiTagihan(), tagihan.getNomor());
                 return;
-            } if(akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) < 0){
+            }
+            if (akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) < 0) {
                 tagihan.setStatusPembayaran(StatusPembayaran.DIBAYAR_SEBAGIAN);
             } else {
                 tagihan.setStatusPembayaran(StatusPembayaran.LUNAS);
@@ -260,7 +288,7 @@ public class KafkaListenerService {
             p.setVirtualAccount(vaPembayaran);
             p.setJumlah(payment.getAmount());
             p.setReferensi(payment.getReference());
-            p.setKeterangan("Pembayaran melalui VA Bank "+bank.get().getNama()+" Nomor "+payment.getAccountNumber());
+            p.setKeterangan("Pembayaran melalui VA Bank " + bank.get().getNama() + " Nomor " + payment.getAccountNumber());
             p.setWaktuTransaksi(payment.getPaymentTime());
             pembayaranDao.save(p);
 
