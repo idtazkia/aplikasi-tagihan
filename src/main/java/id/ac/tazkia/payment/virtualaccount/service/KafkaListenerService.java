@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 
+import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -58,9 +59,11 @@ public class KafkaListenerService {
 
     private KodeBiaya kodeBiayaDefault;
 
-    public KafkaListenerService() {
-        kodeBiayaDefault = new KodeBiaya();
-        kodeBiayaDefault.setId(idKodeBiayaDefault);
+    @PostConstruct
+    public void inisialisasiKodeBiaya() {
+        LOGGER.debug("ID kode biaya default : {}", idKodeBiayaDefault);
+        kodeBiayaDefault = kodeBiayaDao.findById(idKodeBiayaDefault).get();
+        LOGGER.debug("Kode biaya default : {}", kodeBiayaDefault);
     }
 
     @KafkaListener(topics = "${kafka.topic.debitur.request}", groupId = "${spring.kafka.consumer.group-id}")
