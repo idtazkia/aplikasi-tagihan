@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service @Transactional
@@ -47,6 +48,10 @@ public class KafkaSenderService {
     @Value("${notifikasi.email.finance.send}") private Boolean sendFinanceEmail;
     @Value("${notifikasi.email.it}") private String itEmail;
     @Value("${notifikasi.email.it.send}") private Boolean sendItEmail;
+    @Value("${notifikasi.email.marketing}") private String marketingEmail;
+    @Value("${notifikasi.email.marketing.send}") private Boolean sendMarketingEmail;
+
+    @Value("${jenis.biaya.marketing}") private List<String> jenisBiayaMarketing;
 
     @Autowired private ObjectMapper objectMapper;
     @Autowired private KafkaTemplate<String, String> kafkaTemplate;
@@ -105,15 +110,6 @@ public class KafkaSenderService {
 
     public void sendNotifikasiTagihan(Tagihan tagihan) {
         try {
-            String email = tagihan.getDebitur().getEmail();
-            String hp = tagihan.getDebitur().getNoHp();
-
-            Map<String, Object> notifikasi = new LinkedHashMap<>();
-            notifikasi.put("email", email);
-            notifikasi.put("mobile", hp);
-            notifikasi.put("konfigurasi", konfigurasiTagihan);
-
-
             StringBuilder rekening = new StringBuilder("");
             StringBuilder rekeningFull = new StringBuilder("<ul>");
 
@@ -129,28 +125,48 @@ public class KafkaSenderService {
             }
             rekeningFull.append("</ul>");
 
+            String email = tagihan.getDebitur().getEmail();
+            sendNotifikasiTagihan(email, tagihan, rekening.toString(), rekeningFull.toString());
 
-            NotifikasiTagihanRequest requestData = NotifikasiTagihanRequest.builder()
-                    .jumlah(tagihan.getNilaiTagihan())
-                    .keterangan(tagihan.getJenisTagihan().getNama())
-                    .nama(tagihan.getDebitur().getNama())
-                    .email(tagihan.getDebitur().getEmail())
-                    .noHp(tagihan.getDebitur().getNoHp())
-                    .nomorTagihan(tagihan.getNomor())
-                    .rekening(rekening.toString())
-                    .rekeningFull(rekeningFull.toString())
-                    .tanggalTagihan(tagihan.getTanggalTagihan().format(DateTimeFormatter.ISO_LOCAL_DATE))
-                    .contactinfo(contactinfo)
-                    .contactinfoFull(contactinfoFull)
-                    .build();
+            if (sendMarketingEmail) {
+                if(jenisBiayaMarketing.contains(tagihan.getJenisTagihan().getId())) {
+                    sendNotifikasiTagihan(marketingEmail, tagihan,
+                            rekening.toString(), rekeningFull.toString());
+                }
+            }
 
-            notifikasi.put("data", requestData);
-            kafkaTemplate.send(kafkaTopicNotificationRequest, objectMapper.writeValueAsString(notifikasi));
             tagihan.setStatusNotifikasi(StatusNotifikasi.SUDAH_TERKIRIM);
             tagihanDao.save(tagihan);
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
         }
+    }
+
+    private void sendNotifikasiTagihan(String email, Tagihan tagihan, String rekeningText, String rekeningHtml) throws Exception {
+
+        String hp = tagihan.getDebitur().getNoHp();
+
+        Map<String, Object> notifikasi = new LinkedHashMap<>();
+        notifikasi.put("email", email);
+        notifikasi.put("mobile", hp);
+        notifikasi.put("konfigurasi", konfigurasiTagihan);
+
+        NotifikasiTagihanRequest requestData = NotifikasiTagihanRequest.builder()
+                .jumlah(tagihan.getNilaiTagihan())
+                .keterangan(tagihan.getJenisTagihan().getNama())
+                .nama(tagihan.getDebitur().getNama())
+                .email(tagihan.getDebitur().getEmail())
+                .noHp(tagihan.getDebitur().getNoHp())
+                .nomorTagihan(tagihan.getNomor())
+                .rekening(rekeningText)
+                .rekeningFull(rekeningHtml)
+                .tanggalTagihan(tagihan.getTanggalTagihan().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .contactinfo(contactinfo)
+                .contactinfoFull(contactinfoFull)
+                .build();
+
+        notifikasi.put("data", requestData);
+        kafkaTemplate.send(kafkaTopicNotificationRequest, objectMapper.writeValueAsString(notifikasi));
     }
 
     public void sendNotifikasiPembayaran(Pembayaran pembayaran) {
