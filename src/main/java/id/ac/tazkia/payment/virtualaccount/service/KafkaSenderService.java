@@ -51,7 +51,8 @@ public class KafkaSenderService {
     @Value("${notifikasi.email.marketing}") private String marketingEmail;
     @Value("${notifikasi.email.marketing.send}") private Boolean sendMarketingEmail;
 
-    @Value("${jenis.biaya.marketing}") private List<String> jenisBiayaMarketing;
+    @Value("#{'${jenis.biaya.marketing}'.split(',')}")
+    private List<String> jenisBiayaMarketing;
 
     @Autowired private ObjectMapper objectMapper;
     @Autowired private KafkaTemplate<String, String> kafkaTemplate;
@@ -128,8 +129,15 @@ public class KafkaSenderService {
             String email = tagihan.getDebitur().getEmail();
             sendNotifikasiTagihan(email, tagihan, rekening.toString(), rekeningFull.toString());
 
+            LOGGER.debug("Send Marketing Email : {}", sendMarketingEmail);
+            LOGGER.debug("Marketing Email : {}", marketingEmail);
+            LOGGER.debug("Jenis Biaya Marketing : {}", jenisBiayaMarketing.size());
+            LOGGER.debug("Jenis Biaya Tagihan : {}", tagihan.getJenisTagihan().getId());
+            LOGGER.debug("Jenis Biaya : {}", jenisBiayaMarketing.contains(tagihan.getJenisTagihan().getId()));
+
             if (sendMarketingEmail) {
                 if(jenisBiayaMarketing.contains(tagihan.getJenisTagihan().getId())) {
+                    LOGGER.debug("Kirim email tagihan ke marketing");
                     sendNotifikasiTagihan(marketingEmail, tagihan,
                             rekening.toString(), rekeningFull.toString());
                 }
@@ -182,6 +190,13 @@ public class KafkaSenderService {
 
             if (sendItEmail) {
                 sendNotifikasiPembayaran(itEmail, null, pembayaran);
+            }
+
+            if (sendMarketingEmail) {
+                if(jenisBiayaMarketing.contains(pembayaran.getTagihan().getJenisTagihan().getId())) {
+                    LOGGER.debug("Kirim email tagihan ke marketing");
+                    sendNotifikasiPembayaran(marketingEmail, null, pembayaran);
+                }
             }
 
         } catch (Exception err) {
