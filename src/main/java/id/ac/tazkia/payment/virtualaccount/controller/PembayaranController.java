@@ -155,7 +155,7 @@ public class PembayaranController {
                 +".csv";
         response.setHeader("Content-Disposition", "attachment;filename="+filename);
         response.setContentType("text/csv");
-        response.getWriter().println("No,NIM,Nama,Bank,Nominal,Tanggal Transfer,Waktu Transfer");
+        response.getWriter().println("No,NIM,Nama,Bank,Nominal,Tanggal Transfer,Waktu Transfer,Referensi");
 
 
         Iterable<Pembayaran> dataPembayaran = pembayaranDao
@@ -179,6 +179,8 @@ public class PembayaranController {
             response.getWriter().print(p.getWaktuTransaksi().format(DateTimeFormatter.ISO_LOCAL_DATE));
             response.getWriter().print(",");
             response.getWriter().print(p.getWaktuTransaksi().format(DateTimeFormatter.ISO_LOCAL_TIME));
+            response.getWriter().print(",");
+            response.getWriter().print(p.getReferensi());
             response.getWriter().println();
         }
 
