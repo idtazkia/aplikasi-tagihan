@@ -84,29 +84,32 @@ public class KafkaSenderService {
     public void prosesNotifikasiTagihan() {
         for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM,
                 PageRequest.of(0, NOTIFICATION_BATCH_SIZE)).getContent()) {
-            // tunggu aktivasi VA dulu selama 60 menit
-            if (LocalDateTime.now().isBefore(
-                    tagihan.getUpdatedAt().plusMinutes(delayNotifikasi))) {
-                continue;
-            }
+            if (!getActiveVA(tagihan)) continue;
 
-            // tidak ada VA, tidak usah kirim notifikasi
-            Iterator<VirtualAccount> daftarVa = virtualAccountDao.findByTagihan(tagihan).iterator();
-            Boolean adaVaAktif = false;
-            while (daftarVa.hasNext()) {
-                VirtualAccount va = daftarVa.next();
-                if (VaStatus.AKTIF.equals(va.getVaStatus())) {
-                    adaVaAktif = true;
-                    break;
-                }
-            }
-
-            if (!adaVaAktif) {
-                continue;
-            }
-
+            // notif bill if have active VA..
             sendNotifikasiTagihan(tagihan);
         }
+    }
+
+    private boolean getActiveVA(Tagihan tagihan) {
+        // tunggu aktivasi VA dulu selama 60 menit
+        if (LocalDateTime.now().isBefore(
+                tagihan.getUpdatedAt().plusMinutes(delayNotifikasi))) {
+            return false;
+        }
+
+        // tidak ada VA, tidak usah kirim notifikasi
+        Iterator<VirtualAccount> daftarVa = virtualAccountDao.findByTagihan(tagihan).iterator();
+        Boolean adaVaAktif = false;
+        while (daftarVa.hasNext()) {
+            VirtualAccount va = daftarVa.next();
+            if (VaStatus.AKTIF.equals(va.getVaStatus())) {
+                adaVaAktif = true;
+                break;
+            }
+        }
+
+        return adaVaAktif;
     }
 
     public void sendNotifikasiTagihan(Tagihan tagihan) {
@@ -135,12 +138,11 @@ public class KafkaSenderService {
             LOGGER.debug("Jenis Biaya Tagihan : {}", tagihan.getJenisTagihan().getId());
             LOGGER.debug("Jenis Biaya : {}", jenisBiayaMarketing.contains(tagihan.getJenisTagihan().getId()));
 
-            if (sendMarketingEmail) {
-                if(jenisBiayaMarketing.contains(tagihan.getJenisTagihan().getId())) {
-                    LOGGER.debug("Kirim email tagihan ke marketing");
-                    sendNotifikasiTagihan(marketingEmail, tagihan,
-                            rekening.toString(), rekeningFull.toString());
-                }
+            if (sendMarketingEmail
+                    && jenisBiayaMarketing.contains(tagihan.getJenisTagihan().getId())) {
+                LOGGER.debug("Kirim email tagihan ke marketing");
+                sendNotifikasiTagihan(marketingEmail, tagihan,
+                        rekening.toString(), rekeningFull.toString());
             }
 
             tagihan.setStatusNotifikasi(StatusNotifikasi.SUDAH_TERKIRIM);
@@ -150,7 +152,7 @@ public class KafkaSenderService {
         }
     }
 
-    private void sendNotifikasiTagihan(String email, Tagihan tagihan, String rekeningText, String rekeningHtml) throws Exception {
+    private void sendNotifikasiTagihan(String email, Tagihan tagihan, String rekeningText, String rekeningHtml) {
 
         String hp = tagihan.getDebitur().getNoHp();
 
@@ -192,11 +194,10 @@ public class KafkaSenderService {
                 sendNotifikasiPembayaran(itEmail, null, pembayaran);
             }
 
-            if (sendMarketingEmail) {
-                if(jenisBiayaMarketing.contains(pembayaran.getTagihan().getJenisTagihan().getId())) {
-                    LOGGER.debug("Kirim email tagihan ke marketing");
-                    sendNotifikasiPembayaran(marketingEmail, null, pembayaran);
-                }
+            if (sendMarketingEmail
+                    && jenisBiayaMarketing.contains(pembayaran.getTagihan().getJenisTagihan().getId())) {
+                LOGGER.debug("Kirim email tagihan ke marketing");
+                sendNotifikasiPembayaran(marketingEmail, null, pembayaran);
             }
 
         } catch (Exception err) {
