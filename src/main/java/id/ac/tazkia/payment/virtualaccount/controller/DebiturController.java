@@ -107,6 +107,7 @@ public class DebiturController {
 
     @GetMapping("/debitur/upload/form")
     public void displayFormUpload() {
+        // display static html, tidak perlu kirim data
     }
 
     @PostMapping("/debitur/upload/form")
@@ -124,27 +125,14 @@ public class DebiturController {
             BufferedReader reader = new BufferedReader(new InputStreamReader(fileDebitur.getInputStream()));
             String content;
 
-            if ((pakaiHeader != null && pakaiHeader)) {
-                content = reader.readLine();
+            if (adaHeader(pakaiHeader)) {
+                reader.readLine();
             }
 
             while ((content = reader.readLine()) != null) {
                 baris++;
                 String[] data = content.split(",", -1);
-                if (data.length != 4) {
-                    errors.add(new UploadError(baris, "Format data salah", content));
-                    continue;
-                }
-
-                if (!StringUtils.hasText(data[0])) {
-                    errors.add(new UploadError(baris, "Nomor debitur harus diisi", content));
-                    continue;
-                }
-
-                if (!StringUtils.hasText(data[1])) {
-                    errors.add(new UploadError(baris, "Nama debitur harus diisi", content));
-                    continue;
-                }
+                if (rowInvalid(data, errors, baris, content)) continue;
 
                 Debitur d = new Debitur();
                 d.setNomorDebitur(data[0]);
@@ -190,6 +178,26 @@ public class DebiturController {
                 .addFlashAttribute("errors", errors);
 
         return "redirect:hasil";
+    }
+
+    private boolean rowInvalid(String[] data, List<UploadError> errors, Integer baris, String content) {
+        if (data.length != 4) {
+            errors.add(new UploadError(baris, "Format data salah", content));
+            return true;
+        }
+        if (!StringUtils.hasText(data[0])) {
+            errors.add(new UploadError(baris, "Nomor debitur harus diisi", content));
+            return true;
+        }
+        if (!StringUtils.hasText(data[1])) {
+            errors.add(new UploadError(baris, "Nama debitur harus diisi", content));
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean adaHeader(Boolean pakaiHeader) {
+        return pakaiHeader != null && pakaiHeader;
     }
 
     @GetMapping("/debitur/upload/hasil")

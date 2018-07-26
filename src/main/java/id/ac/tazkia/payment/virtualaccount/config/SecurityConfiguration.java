@@ -77,6 +77,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Configuration
     @Order(1)
     public static class ApiWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+        @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.antMatcher("/api/client/**")
                     .authorizeRequests()
