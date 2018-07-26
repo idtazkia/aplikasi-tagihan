@@ -7,7 +7,7 @@ import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
-import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/pembayaran")
@@ -46,9 +47,10 @@ public class PembayaranController {
     @GetMapping("/form")
     public ModelMap displayForm(@RequestParam(value = "id", required = false) String id) {
         Pembayaran p;
-
-        if (id != null && pembayaranDao.findById(id).isPresent()) {
-            p = pembayaranDao.findById(id).get();
+        Optional<Pembayaran> optPembayaran = pembayaranDao.findById(id);
+        
+        if (id != null && optPembayaran.isPresent()) {
+            p = optPembayaran.get();
         } else {
             p = new Pembayaran();
         }
