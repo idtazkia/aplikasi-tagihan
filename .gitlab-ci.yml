@@ -27,7 +27,7 @@ build:
    POSTGRES_PASSWORD: "HBQD1KLFmjfD3GjeMkLS"
    SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/paymentva
  script:
- - mvn clean package
+ - mvn clean package sonar:sonar -Dsonar.organization=$SONAR_ORG -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN 
  artifacts:
      paths:
        - target/*.jar
