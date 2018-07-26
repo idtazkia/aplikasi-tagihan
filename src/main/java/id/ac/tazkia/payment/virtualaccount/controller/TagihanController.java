@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +36,11 @@ import java.util.List;
 @RequestMapping("/tagihan")
 public class TagihanController {
     private static final Logger LOGGER = LoggerFactory.getLogger(TagihanController.class);
+    
+    private static final String ATTR_JENIS_TAGIHAN = "jenisTagihan";
+    private static final String ATTR_LIST_TAGIHAN = "listTagihan";
+    private static final String ATTR_TAGIHAN = "tagihan";
+    private static final String REDIRECT_LIST_VIEW = "redirect:list";
 
     @Autowired private KodeBiayaDao kodeBiayaDao;
 
@@ -54,20 +60,20 @@ public class TagihanController {
                                 @PageableDefault(size = 10, sort = "nomor", direction = Sort.Direction.DESC) Pageable pageable) {
         if (jenisTagihan != null) {
             return new ModelMap()
-                    .addAttribute("jenisTagihan", jenisTagihan)
-                    .addAttribute("listTagihan", tagihanDao
+                    .addAttribute(ATTR_JENIS_TAGIHAN, jenisTagihan)
+                    .addAttribute(ATTR_LIST_TAGIHAN, tagihanDao
                             .findByJenisTagihanAndStatusTagihanOrderByTanggalTagihan(
                                     jenisTagihan, StatusTagihan.AKTIF, pageable));
         }
 
         if (debitur != null) {
             return new ModelMap()
-                    .addAttribute("listTagihan", tagihanDao
+                    .addAttribute(ATTR_LIST_TAGIHAN, tagihanDao
                             .findByDebiturAndStatusTagihanOrderByTanggalTagihan(
                                     debitur, StatusTagihan.AKTIF, pageable));
         }
 
-        return new ModelMap("listTagihan", tagihanDao.findAllByStatusTagihan(StatusTagihan.AKTIF, pageable));
+        return new ModelMap(ATTR_LIST_TAGIHAN, tagihanDao.findAllByStatusTagihan(StatusTagihan.AKTIF, pageable));
     }
 
     @ModelAttribute("listJenisTagihan")
@@ -97,7 +103,7 @@ public class TagihanController {
 
         tagihan.setDebitur(debitur);
 
-        return new ModelMap().addAttribute("tagihan", tagihan);
+        return new ModelMap().addAttribute(ATTR_TAGIHAN, tagihan);
 
     }
 
@@ -108,7 +114,7 @@ public class TagihanController {
         }
         tagihanService.saveTagihan(tagihan);
         status.setComplete();
-        return "redirect:list";
+        return REDIRECT_LIST_VIEW;
     }
 
     @GetMapping("/status")
@@ -141,7 +147,7 @@ public class TagihanController {
                                     BindingResult errors, SessionStatus status) {
         if (tagihan == null) {
             LOGGER.warn("Update tagihan null");
-            return "redirect:list";
+            return REDIRECT_LIST_VIEW;
         }
 
         if (errors.hasErrors()) {
@@ -155,7 +161,7 @@ public class TagihanController {
 
         tagihanService.saveTagihan(tagihan);
         status.setComplete();
-        return "redirect:list";
+        return REDIRECT_LIST_VIEW;
     }
 
     @GetMapping("/hapus")
@@ -169,11 +175,11 @@ public class TagihanController {
     public String processHapusForm(@RequestParam Tagihan tagihan) {
         if (tagihan == null) {
             LOGGER.warn("Update tagihan null");
-            return "redirect:list";
+            return REDIRECT_LIST_VIEW;
         }
         tagihan.setStatusTagihan(StatusTagihan.NONAKTIF);
         tagihanService.saveTagihan(tagihan);
-        return "redirect:list";
+        return REDIRECT_LIST_VIEW;
     }
 
     @GetMapping("/notifikasi")
@@ -186,10 +192,10 @@ public class TagihanController {
     public String processNotifikasiForm(@RequestParam Tagihan tagihan) {
         if (tagihan == null) {
             LOGGER.warn("Notifikasi tagihan null");
-            return "redirect:list";
+            return REDIRECT_LIST_VIEW;
         }
         kafkaSenderService.sendNotifikasiTagihan(tagihan);
-        return "redirect:list";
+        return REDIRECT_LIST_VIEW;
     }
 
     @GetMapping("/upload/form")
@@ -201,11 +207,6 @@ public class TagihanController {
                               @RequestParam(required = false) Boolean pakaiHeader,
                               MultipartFile fileTagihan,
                               RedirectAttributes redirectAttrs) {
-        LOGGER.debug("Jenis Tagihan : {}",jenisTagihan.getNama());
-        LOGGER.debug("Pakai Header : {}",pakaiHeader);
-        LOGGER.debug("Nama File : {}",fileTagihan.getName());
-        LOGGER.debug("Ukuran File : {}",fileTagihan.getSize());
-
         List<UploadError> errors = new ArrayList<>();
         Integer baris = 0;
 
@@ -216,7 +217,7 @@ public class TagihanController {
                     .addFlashAttribute("jumlahSukses", 0)
                     .addFlashAttribute("jumlahError", errors.size())
                     .addFlashAttribute("errors", errors);
-            return "redirect:hasil";
+            return REDIRECT_HASIL_VIEW;
         }
 
         try {
@@ -224,7 +225,7 @@ public class TagihanController {
             String content;
 
             if((pakaiHeader != null && pakaiHeader)){
-                content = reader.readLine();
+                content = reader.readLine(); //NOSONAR
             }
 
             while ((content = reader.readLine()) != null) {
@@ -265,16 +266,10 @@ public class TagihanController {
                     continue;
                 }
 
-                try {
-                    tagihanService.saveTagihan(t);
-                } catch (Exception ex) {
-                    LOGGER.warn(ex.getMessage(), ex);
-                    errors.add(new UploadError(baris, "Gagal simpan ke database", content));
-                    continue;
-                }
-
+                tagihanService.saveTagihan(t);
+                
             }
-        } catch (Exception err){
+        } catch (IOException err){
             LOGGER.warn(err.getMessage(), err);
             errors.add(new UploadError(0, "Format file salah", ""));
         }
@@ -285,10 +280,13 @@ public class TagihanController {
                 .addFlashAttribute("jumlahError", errors.size())
                 .addFlashAttribute("errors", errors);
 
-        return "redirect:hasil";
+        return REDIRECT_HASIL_VIEW;
     }
+    private static final String REDIRECT_HASIL_VIEW = "redirect:hasil";
 
     @GetMapping("/upload/hasil")
-    public void hasilFormUpload(){}
+    public void hasilFormUpload(){
+        // tampilkan form
+    }
 
 }
