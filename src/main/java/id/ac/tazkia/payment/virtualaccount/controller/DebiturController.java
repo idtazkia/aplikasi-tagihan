@@ -143,16 +143,11 @@ public class DebiturController {
                     d.setNoHp(data[3]);
                 }
                 
-                try {
-                    debiturDao.save(d);
-                } catch (Exception ex) {
-                    errors.add(new UploadError(baris, "Gagal simpan ke database", content));
-                    LOGGER.warn(ex.getMessage(), ex);
-                }
+                debiturDao.save(d);
             }
         } catch (IOException err) {
             LOGGER.warn(err.getMessage(), err);
-            errors.add(new UploadError(0, "Format file salah", ""));
+            errors.add(new UploadError(0, "Format file salah", err.getMessage()));
         }
 
         redirectAttrs
