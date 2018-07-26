@@ -5,8 +5,6 @@ import id.ac.tazkia.payment.virtualaccount.dao.TagihanDao;
 import id.ac.tazkia.payment.virtualaccount.dao.VirtualAccountDao;
 import id.ac.tazkia.payment.virtualaccount.dto.TagihanResponse;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +16,6 @@ import java.time.format.DateTimeFormatter;
 
 @Service @Transactional
 public class TagihanService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TagihanService.class);
-
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
     private static final String TIMEZONE = "GMT+07:00";
 
