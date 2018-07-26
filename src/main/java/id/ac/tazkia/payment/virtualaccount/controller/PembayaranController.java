@@ -19,6 +19,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -35,9 +36,6 @@ public class PembayaranController {
     @Autowired private PembayaranDao pembayaranDao;
     @Autowired private JenisTagihanDao jenisTagihanDao;
 
-    private SimpleDateFormat formatterTanggal = new SimpleDateFormat("yyyy-MM-dd");
-    private SimpleDateFormat formatterWaktu = new SimpleDateFormat("HH:mm:ss");
-
     @ModelAttribute("listJenisTagihan")
     public Iterable<JenisTagihan> daftarJenisTagihan() {
         return jenisTagihanDao.findAll(new Sort(Sort.Direction.ASC, "kode"));
@@ -48,7 +46,7 @@ public class PembayaranController {
     public ModelMap displayForm(@RequestParam(value = "id", required = false) String id) {
         Pembayaran p;
 
-        if (id != null) {
+        if (id != null && pembayaranDao.findById(id).isPresent()) {
             p = pembayaranDao.findById(id).get();
         } else {
             p = new Pembayaran();
@@ -147,7 +145,7 @@ public class PembayaranController {
     public void rekapPembayaranCsv(@RequestParam JenisTagihan jenis,
                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate mulai,
                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sampai,
-                                   HttpServletResponse response) throws Exception {
+                                   HttpServletResponse response) throws IOException {
         String filename = "pembayaran-"
                 +mulai.format(DateTimeFormatter.BASIC_ISO_DATE)
                 +"-"
