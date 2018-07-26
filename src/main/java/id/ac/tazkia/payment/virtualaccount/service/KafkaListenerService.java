@@ -62,7 +62,7 @@ public class KafkaListenerService {
     @PostConstruct
     public void inisialisasiKodeBiaya() {
         LOGGER.debug("ID kode biaya default : {}", idKodeBiayaDefault);
-        kodeBiayaDefault = kodeBiayaDao.findById(idKodeBiayaDefault).get();
+        kodeBiayaDefault = kodeBiayaDao.findById(idKodeBiayaDefault).orElse(new KodeBiaya()) ;
         LOGGER.debug("Kode biaya default : {}", kodeBiayaDefault);
     }
 

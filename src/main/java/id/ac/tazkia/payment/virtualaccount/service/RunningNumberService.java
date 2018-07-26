@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-@Service @Transactional
+@Service @Transactional(propagation = Propagation.REQUIRES_NEW)
 public class RunningNumberService {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMdd");
     private static final String TIMEZONE = "GMT+07:00";
@@ -27,7 +27,6 @@ public class RunningNumberService {
         return getNumber(RunningNumber.PEMAKAIAN_DEFAULT, prefix);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Long getNumber(String pemakaian, String prefix) {
         RunningNumber rn = runningNumberDao.findByPemakaianAndPrefix(pemakaian, prefix);
         if(rn == null){

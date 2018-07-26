@@ -79,7 +79,7 @@ public class DebiturController {
         if (id == null) {
             debitur = new Debitur();
         } else {
-            debitur = debiturDao.findById(id).get();
+            debitur = debiturDao.findById(id).orElse(new Debitur());
         }
 
         return new ModelMap("debitur", debitur);
@@ -127,7 +127,7 @@ public class DebiturController {
             String content;
 
             if (adaHeader(pakaiHeader)) {
-                reader.readLine();
+                content = reader.readLine();
             }
 
             while ((content = reader.readLine()) != null) {
