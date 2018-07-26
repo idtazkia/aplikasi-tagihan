@@ -3,7 +3,6 @@ package id.ac.tazkia.payment.virtualaccount.controller;
 import id.ac.tazkia.payment.virtualaccount.dao.KodeBiayaDao;
 import id.ac.tazkia.payment.virtualaccount.entity.KodeBiaya;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;

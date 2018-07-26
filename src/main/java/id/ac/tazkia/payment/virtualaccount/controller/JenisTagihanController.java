@@ -25,6 +25,8 @@ import java.util.Set;
 @Transactional
 @Controller
 public class JenisTagihanController {
+    private static final String REDIRECT_JENIS_TAGIHAN_BANK = "redirect:/jenistagihan/bank?id=";
+    
     @Autowired
     private JenisTagihanDao jenisTagihanDao;
 
@@ -72,9 +74,7 @@ public class JenisTagihanController {
         Iterable<Bank> pilihanBankJenisTagihan = bankDao.findAll();
         if (!jenisTagihan.getDaftarBank().isEmpty()) {
             Set<String> idBanks = new HashSet<>();
-            jenisTagihan.getDaftarBank().forEach(bank -> {
-                idBanks.add(bank.getId());
-            });
+            jenisTagihan.getDaftarBank().forEach(bank -> idBanks.add(bank.getId()));
             pilihanBankJenisTagihan = bankDao.findByIdNotIn(idBanks);
         }
 
@@ -90,14 +90,14 @@ public class JenisTagihanController {
         }
 
         if (bank == null) {
-            return "redirect:/jenistagihan/bank?id=" + jenisTagihan.getId();
+            return REDIRECT_JENIS_TAGIHAN_BANK + jenisTagihan.getId();
         }
 
         jenisTagihan.getDaftarBank().add(bank);
         jenisTagihanDao.save(jenisTagihan);
-        return "redirect:/jenistagihan/bank?id=" + jenisTagihan.getId();
+        return REDIRECT_JENIS_TAGIHAN_BANK + jenisTagihan.getId();
     }
-
+    
     @PostMapping("/jenistagihan/bank/hapus")
     public String hapusJenisTagihanBank(@RequestParam(value = "id") JenisTagihan jenisTagihan, @RequestParam(name = "bank") Bank bank) {
         if (jenisTagihan == null) {
@@ -105,12 +105,12 @@ public class JenisTagihanController {
         }
 
         if (bank == null) {
-            return "redirect:/jenistagihan/bank?id=" + jenisTagihan.getId();
+            return REDIRECT_JENIS_TAGIHAN_BANK + jenisTagihan.getId();
         }
 
         jenisTagihan.getDaftarBank().remove(bank);
         jenisTagihanDao.save(jenisTagihan);
 
-        return "redirect:/jenistagihan/bank?id=" + jenisTagihan.getId();
+        return REDIRECT_JENIS_TAGIHAN_BANK + jenisTagihan.getId();
     }
 }

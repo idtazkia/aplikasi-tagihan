@@ -7,6 +7,7 @@ import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,9 +35,6 @@ public class PembayaranController {
 
     @Autowired private PembayaranDao pembayaranDao;
     @Autowired private JenisTagihanDao jenisTagihanDao;
-
-    private SimpleDateFormat formatterTanggal = new SimpleDateFormat("yyyy-MM-dd");
-    private SimpleDateFormat formatterWaktu = new SimpleDateFormat("HH:mm:ss");
 
     @ModelAttribute("listJenisTagihan")
     public Iterable<JenisTagihan> daftarJenisTagihan() {
@@ -147,7 +145,7 @@ public class PembayaranController {
     public void rekapPembayaranCsv(@RequestParam JenisTagihan jenis,
                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate mulai,
                                    @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate sampai,
-                                   HttpServletResponse response) throws Exception {
+                                   HttpServletResponse response) throws IOException {
         String filename = "pembayaran-"
                 +mulai.format(DateTimeFormatter.BASIC_ISO_DATE)
                 +"-"
