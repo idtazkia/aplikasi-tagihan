@@ -138,7 +138,7 @@ public class TagihanController {
 
         return new ModelMap()
                 .addAttribute("updateTagihan", ut)
-                .addAttribute("tagihan", tagihan);
+                .addAttribute(ATTR_TAGIHAN, tagihan);
     }
 
     @PostMapping("/update")
@@ -151,7 +151,7 @@ public class TagihanController {
         }
 
         if (errors.hasErrors()) {
-            data.addAttribute("updateTagihan", updateTagihan).addAttribute("tagihan", tagihan);
+            data.addAttribute("updateTagihan", updateTagihan).addAttribute(ATTR_TAGIHAN, tagihan);
             LOGGER.debug("Update tagihan datanya tidak valid {}", errors.getAllErrors());
             return "/tagihan/update";
         }
@@ -168,7 +168,7 @@ public class TagihanController {
     public ModelMap displayHapusForm(@RequestParam Tagihan tagihan) {
 
         return new ModelMap()
-                .addAttribute("tagihan", tagihan);
+                .addAttribute(ATTR_TAGIHAN, tagihan);
     }
 
     @PostMapping("/hapus")
@@ -185,7 +185,7 @@ public class TagihanController {
     @GetMapping("/notifikasi")
     public ModelMap displayNotifikasiForm(@RequestParam Tagihan tagihan) {
         return new ModelMap()
-                .addAttribute("tagihan", tagihan);
+                .addAttribute(ATTR_TAGIHAN, tagihan);
     }
 
     @PostMapping("/notifikasi")
@@ -199,7 +199,9 @@ public class TagihanController {
     }
 
     @GetMapping("/upload/form")
-    public void displayFormUpload(){}
+    public void displayFormUpload(){
+        // tidak ada data
+    }
 
     @PostMapping("/upload/form")
     public String processFormUpload(@RequestParam JenisTagihan jenisTagihan,
