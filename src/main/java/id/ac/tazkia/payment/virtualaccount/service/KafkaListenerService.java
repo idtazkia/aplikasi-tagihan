@@ -26,11 +26,12 @@ import java.util.Optional;
 @Service
 @Transactional
 public class KafkaListenerService {
+
     private static final String SUKSES = "sukses";
 
-	private static final String TERIMA_MESSAGE = "Terima message : {}";
+    private static final String TERIMA_MESSAGE = "Terima message : {}";
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(KafkaListenerService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaListenerService.class);
 
     @Value("${kode.biaya.default}")
     private String idKodeBiayaDefault;
@@ -66,7 +67,7 @@ public class KafkaListenerService {
     @PostConstruct
     public void inisialisasiKodeBiaya() {
         LOGGER.debug("ID kode biaya default : {}", idKodeBiayaDefault);
-        kodeBiayaDefault = kodeBiayaDao.findById(idKodeBiayaDefault).orElse(new KodeBiaya()) ;
+        kodeBiayaDefault = kodeBiayaDao.findById(idKodeBiayaDefault).orElse(new KodeBiaya());
         LOGGER.debug("Kode biaya default : {}", kodeBiayaDefault);
     }
 
@@ -148,10 +149,10 @@ public class KafkaListenerService {
                 if (!kodeBiaya.isPresent()) {
                     LOGGER.warn("Kode biaya dengan id {}  tidak terdaftar", request.getKodeBiaya());
                     t.setKodeBiaya(Optional.of(kodeBiayaDefault).get());
-                }else {
-                	t.setKodeBiaya(kodeBiaya.get());
+                } else {
+                    t.setKodeBiaya(kodeBiaya.get());
                 }
-                
+
             }
             LOGGER.debug("Kode Biaya Tagihan: {}", t.getKodeBiaya());
 
@@ -199,47 +200,49 @@ public class KafkaListenerService {
 
                 for (PeriksaStatusTagihan p : daftarPeriksaStatus) {
                     p.setStatusPemeriksaanTagihan(
-                            VaRequestStatus.SUCCESS.equals(vaResponse.getRequestStatus()) ?
-                                    StatusPemeriksaanTagihan.SUKSES : StatusPemeriksaanTagihan.ERROR);
+                            VaRequestStatus.SUCCESS.equals(vaResponse.getRequestStatus())
+                            ? StatusPemeriksaanTagihan.SUKSES : StatusPemeriksaanTagihan.ERROR);
                 }
             }
 
-            if(saveVA(vaResponse, va)) return;
+            if (saveVA(vaResponse, va)) {
+                return;
+            }
 
         } catch (Exception err) {
             LOGGER.warn(err.getMessage(), err);
         }
     }
 
-	private VirtualAccount getVirtualAccount(VaResponse vaResponse, List<VirtualAccount> daftarVa) {
-		VirtualAccount va = null;
-		for (VirtualAccount v : daftarVa) {
-		    if (vaResponse.getBankId().equals(v.getBank().getId())) {
-		        va = v;
-		        break;
-		    }
-		}
-		return va;
-	}
+    private VirtualAccount getVirtualAccount(VaResponse vaResponse, List<VirtualAccount> daftarVa) {
+        VirtualAccount va = null;
+        for (VirtualAccount v : daftarVa) {
+            if (vaResponse.getBankId().equals(v.getBank().getId())) {
+                va = v;
+                break;
+            }
+        }
+        return va;
+    }
 
-	private Boolean saveVA(VaResponse vaResponse, VirtualAccount va) {
-		if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
-		    va.setVaStatus(VaStatus.ERROR);
-		    virtualAccountDao.save(va);
-		    return true;
-		}
+    private Boolean saveVA(VaResponse vaResponse, VirtualAccount va) {
+        if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
+            va.setVaStatus(VaStatus.ERROR);
+            virtualAccountDao.save(va);
+            return true;
+        }
 
-		if (VaStatus.DELETE.equals(vaResponse.getRequestType())) {
-		    va.setVaStatus(VaStatus.NONAKTIF);
-		    virtualAccountDao.save(va);
-		    return true;
-		}
+        if (VaStatus.DELETE.equals(vaResponse.getRequestType())) {
+            va.setVaStatus(VaStatus.NONAKTIF);
+            virtualAccountDao.save(va);
+            return true;
+        }
 
-		va.setNomor(vaResponse.getAccountNumber());
-		va.setVaStatus(VaStatus.AKTIF);
-		virtualAccountDao.save(va);
-		return false;
-	}
+        va.setNomor(vaResponse.getAccountNumber());
+        va.setVaStatus(VaStatus.AKTIF);
+        virtualAccountDao.save(va);
+        return false;
+    }
 
     @KafkaListener(topics = "${kafka.topic.va.payment}", groupId = "${spring.kafka.consumer.group-id}")
     public void handleVaPayment(String message) {
@@ -252,16 +255,15 @@ public class KafkaListenerService {
 
             List<VirtualAccount> daftarVa = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
 
-            if(validasiPayment(bank, tagihan, daftarVa, payment)) return;
-
-            Bank bankModel = bank.isPresent() ? bank.get() : new Bank();
-            
             BigDecimal akumulasiPembayaran = tagihan.getJumlahPembayaran().add(payment.getAmount());
-            if (akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) > 0) {
-                LOGGER.warn("Nilai pembayaran [{}] lebih besar daripada nilai tagihan [{}] nomor [{}]",
-                        akumulasiPembayaran, tagihan.getNilaiTagihan(), tagihan.getNomor());
+            
+            if (paymentInvalid(bank, tagihan, daftarVa, payment)) {
                 return;
-            } else if (akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) < 0) {
+            }
+            
+            Bank bankModel = bank.orElse(new Bank());
+
+            if (pembayaranKurangDariTagihan(akumulasiPembayaran, tagihan)) {
                 tagihan.setStatusPembayaran(StatusPembayaran.DIBAYAR_SEBAGIAN);
             } else {
                 tagihan.setStatusPembayaran(StatusPembayaran.LUNAS);
@@ -271,7 +273,7 @@ public class KafkaListenerService {
 
             // update VA
             VirtualAccount vaPembayaran = simpanVA(bankModel, tagihan, daftarVa);
-            
+
             if (vaPembayaran == null) {
                 LOGGER.warn("Virtual account untuk nomor tagihan {} dan bank {} tidak terdaftar",
                         tagihan.getNomor(), bankModel.getNama());
@@ -299,29 +301,37 @@ public class KafkaListenerService {
         }
     }
 
-	private VirtualAccount simpanVA(Bank bank, Tagihan tagihan, List<VirtualAccount> daftarVa) {
-		
-		VirtualAccount vaPembayaran = null;
-		for (VirtualAccount va : daftarVa) {
-		    if (bank.getId().equalsIgnoreCase(va.getBank().getId())) {
-		        vaPembayaran = va;
-		        va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
-		                ? VaStatus.NONAKTIF : VaStatus.UPDATE);
-		    } else {
-		        va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
-		                ? VaStatus.DELETE : VaStatus.UPDATE);
-		    }
-		    virtualAccountDao.save(va);
-		}
-		return vaPembayaran;
-	}
+    private static boolean pembayaranKurangDariTagihan(BigDecimal akumulasiPembayaran, Tagihan tagihan) {
+        return akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) < 0;
+    }
 
-	private boolean validasiPayment(Optional<Bank> bank, Tagihan tagihan, List<VirtualAccount> daftarVa, VaPayment payment) {
-		if (!bank.isPresent()) {
+    private static boolean pembayaranMelebihiTagihan(BigDecimal akumulasiPembayaran, Tagihan tagihan) {
+        return akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) > 0;
+    }
+
+    private VirtualAccount simpanVA(Bank bank, Tagihan tagihan, List<VirtualAccount> daftarVa) {
+
+        VirtualAccount vaPembayaran = null;
+        for (VirtualAccount va : daftarVa) {
+            if (bank.getId().equalsIgnoreCase(va.getBank().getId())) {
+                vaPembayaran = va;
+                va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
+                        ? VaStatus.NONAKTIF : VaStatus.UPDATE);
+            } else {
+                va.setVaStatus(StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())
+                        ? VaStatus.DELETE : VaStatus.UPDATE);
+            }
+            virtualAccountDao.save(va);
+        }
+        return vaPembayaran;
+    }
+
+    private boolean paymentInvalid(Optional<Bank> bank, Tagihan tagihan, List<VirtualAccount> daftarVa, VaPayment payment) {
+        if (!bank.isPresent()) {
             LOGGER.warn("Bank dengan ID {} tidak terdaftar", payment.getBankId());
             return true;
         }
-		if (tagihan == null) {
+        if (tagihan == null) {
             LOGGER.warn("Tagihan dengan nomor {} tidak terdaftar", payment.getInvoiceNumber());
             return true;
         }
@@ -333,6 +343,14 @@ public class KafkaListenerService {
             LOGGER.warn("Nomor tagihan {} tidak memiliki VA", tagihan.getNomor());
             return true;
         }
-		return false;
-	}
+        
+        BigDecimal akumulasiPembayaran = tagihan.getJumlahPembayaran().add(payment.getAmount());
+        if (pembayaranMelebihiTagihan(akumulasiPembayaran, tagihan)) {
+                LOGGER.warn("Nilai pembayaran [{}] lebih besar daripada nilai tagihan [{}] nomor [{}]",
+                        akumulasiPembayaran, tagihan.getNilaiTagihan(), tagihan.getNomor());
+                return true;
+        }
+        
+        return false;
+    }
 }
