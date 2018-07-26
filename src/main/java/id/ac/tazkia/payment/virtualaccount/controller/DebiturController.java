@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,35 +139,18 @@ public class DebiturController {
                 d.setNomorDebitur(data[0]);
                 d.setNama(data[1]);
 
-                if (StringUtils.hasText(data[2])) {
-                    d.setEmail(data[2]);
-                    BeanPropertyBindingResult binder = new BeanPropertyBindingResult(d, "debitur");
-                    validator.validate(d, binder);
-
-                    if (binder.hasFieldErrors("email")) {
-                        errors.add(new UploadError(baris, "Format email salah", content));
-                        continue;
-                    }
-                }
-
                 if (StringUtils.hasText(data[3])) {
                     d.setNoHp(data[3]);
                 }
-
-                if (debiturDao.findByNomorDebitur(d.getNomorDebitur()) != null) {
-                    errors.add(new UploadError(baris, "Nomor debitur " + data[0] + " sudah digunakan", content));
-                    continue;
-                }
-
+                
                 try {
                     debiturDao.save(d);
                 } catch (Exception ex) {
                     errors.add(new UploadError(baris, "Gagal simpan ke database", content));
                     LOGGER.warn(ex.getMessage(), ex);
-                    continue;
                 }
             }
-        } catch (Exception err) {
+        } catch (IOException err) {
             LOGGER.warn(err.getMessage(), err);
             errors.add(new UploadError(0, "Format file salah", ""));
         }
@@ -193,6 +177,22 @@ public class DebiturController {
             errors.add(new UploadError(baris, "Nama debitur harus diisi", content));
             return true;
         }
+        if (debiturDao.findByNomorDebitur(data[0]) != null) {
+            errors.add(new UploadError(baris, "Nomor debitur " + data[0] + " sudah digunakan", content));
+            return true;
+        }
+        
+        if(StringUtils.hasText(data[2])) {
+            Debitur d = new Debitur();
+            d.setEmail(data[2]);
+            BeanPropertyBindingResult binder = new BeanPropertyBindingResult(d, "debitur");
+            validator.validate(d, binder);
+
+            if (binder.hasFieldErrors("email")) {
+                errors.add(new UploadError(baris, "Format email salah", content));
+                return true;
+            }
+        }
         return false;
     }
 
@@ -202,6 +202,7 @@ public class DebiturController {
 
     @GetMapping("/debitur/upload/hasil")
     public void hasilFormUpload() {
+        // tidak perlu kirim data ke view
     }
 
 }
