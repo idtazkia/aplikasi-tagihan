@@ -84,32 +84,29 @@ public class KafkaSenderService {
     public void prosesNotifikasiTagihan() {
         for(Tagihan tagihan : tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM,
                 PageRequest.of(0, NOTIFICATION_BATCH_SIZE)).getContent()) {
-            if (!getActiveVA(tagihan)) continue;
+            if (!punyaVaAktif(tagihan)) continue;
 
             // notif bill if have active VA..
             sendNotifikasiTagihan(tagihan);
         }
     }
 
-    private boolean getActiveVA(Tagihan tagihan) {
+    private boolean punyaVaAktif(Tagihan tagihan) {
         // tunggu aktivasi VA dulu selama 60 menit
         if (LocalDateTime.now().isBefore(
                 tagihan.getUpdatedAt().plusMinutes(delayNotifikasi))) {
             return false;
         }
 
-        // tidak ada VA, tidak usah kirim notifikasi
         Iterator<VirtualAccount> daftarVa = virtualAccountDao.findByTagihan(tagihan).iterator();
-        Boolean adaVaAktif = false;
         while (daftarVa.hasNext()) {
             VirtualAccount va = daftarVa.next();
             if (VaStatus.AKTIF.equals(va.getVaStatus())) {
-                adaVaAktif = true;
-                break;
+                return true;
             }
         }
 
-        return adaVaAktif;
+        return false;
     }
 
     public void sendNotifikasiTagihan(Tagihan tagihan) {
@@ -147,12 +144,12 @@ public class KafkaSenderService {
 
             tagihan.setStatusNotifikasi(StatusNotifikasi.SUDAH_TERKIRIM);
             tagihanDao.save(tagihan);
-        } catch (Exception err) {
+        } catch (JsonProcessingException err) {
             LOGGER.warn(err.getMessage(), err);
         }
     }
 
-    private void sendNotifikasiTagihan(String email, Tagihan tagihan, String rekeningText, String rekeningHtml) {
+    private void sendNotifikasiTagihan(String email, Tagihan tagihan, String rekeningText, String rekeningHtml) throws JsonProcessingException {
 
         String hp = tagihan.getDebitur().getNoHp();
 
