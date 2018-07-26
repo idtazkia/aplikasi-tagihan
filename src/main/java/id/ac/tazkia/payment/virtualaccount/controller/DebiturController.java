@@ -127,7 +127,7 @@ public class DebiturController {
             String content;
 
             if (adaHeader(pakaiHeader)) {
-                content = reader.readLine();
+                content = reader.readLine(); //NOSONAR
             }
 
             while ((content = reader.readLine()) != null) {
