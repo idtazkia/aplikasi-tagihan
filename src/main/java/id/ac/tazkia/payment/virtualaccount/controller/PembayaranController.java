@@ -7,7 +7,6 @@ import id.ac.tazkia.payment.virtualaccount.entity.Debitur;
 import id.ac.tazkia.payment.virtualaccount.entity.JenisTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.Pembayaran;
 import id.ac.tazkia.payment.virtualaccount.entity.Tagihan;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +16,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/pembayaran")
@@ -46,17 +45,10 @@ public class PembayaranController {
     @PreAuthorize("hasAuthority('EDIT_PEMBAYARAN')")
     @GetMapping("/form")
     public ModelMap displayForm(@RequestParam(value = "id", required = false) String id) {
-        Pembayaran p;
-        Optional<Pembayaran> optPembayaran = pembayaranDao.findById(id);
-        
-        if (id != null && optPembayaran.isPresent()) {
-            p = optPembayaran.get();
-        } else {
-            p = new Pembayaran();
-        }
-
         return new ModelMap()
-                .addAttribute("pembayaran", p);
+                .addAttribute("pembayaran",
+                        StringUtils.hasText(id) ?
+                        pembayaranDao.findById(id).orElse(new Pembayaran()) : new Pembayaran());
     }
 
     @PreAuthorize("hasAuthority('VIEW_PEMBAYARAN')")
