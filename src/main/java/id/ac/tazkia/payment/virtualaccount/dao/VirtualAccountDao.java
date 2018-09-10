@@ -14,4 +14,5 @@ public interface VirtualAccountDao extends PagingAndSortingRepository<VirtualAcc
     List<VirtualAccount> findByVaStatusAndTagihanNomor(VaStatus status, String nomor);
     Page<VirtualAccount> findByTagihan(Tagihan tagihan, Pageable page);
     Iterable<VirtualAccount> findByTagihan(Tagihan tagihan);
+    VirtualAccount findByVaStatusAndTagihanNomorAndBankId(VaStatus status, String invoiceNumber, String bankId);
 }

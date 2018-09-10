@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import id.ac.tazkia.payment.virtualaccount.dao.*;
 import id.ac.tazkia.payment.virtualaccount.dto.*;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
+import id.ac.tazkia.payment.virtualaccount.exception.InvalidPaymentException;
+import id.ac.tazkia.payment.virtualaccount.exception.InvalidBankException;
+import id.ac.tazkia.payment.virtualaccount.exception.InvalidInvoiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -17,6 +20,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -174,19 +178,14 @@ public class KafkaListenerService {
             LOGGER.debug(TERIMA_MESSAGE, message);
             VaResponse vaResponse = objectMapper.readValue(message, VaResponse.class);
 
-            List<VirtualAccount> daftarVa = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.SEDANG_PROSES, vaResponse.getInvoiceNumber());
-            if (daftarVa == null || daftarVa.isEmpty()) {
-                LOGGER.warn("VA untuk tagihan dengan nomor {} tidak ditemukan", vaResponse.getInvoiceNumber());
-                return;
-            }
-
-            VirtualAccount va = getVirtualAccount(vaResponse, daftarVa);
-
+            VirtualAccount va = virtualAccountDao
+                    .findByVaStatusAndTagihanNomorAndBankId(
+                            VaStatus.SEDANG_PROSES,
+                            vaResponse.getInvoiceNumber(),
+                            vaResponse.getBankId());
             if (va == null) {
-                LOGGER.warn("VA untuk tagihan dengan nomor {} dan bank {} tidak ditemukan",
-                        vaResponse.getInvoiceNumber(),
-                        vaResponse.getBankId()
-                );
+                LOGGER.warn("VA untuk tagihan dengan nomor {} untuk bank {} tidak ditemukan",
+                        vaResponse.getInvoiceNumber(), vaResponse.getBankId());
                 return;
             }
 
@@ -204,43 +203,11 @@ public class KafkaListenerService {
                 }
             }
 
-            if (saveVA(vaResponse, va)) {
-                return;
-            }
+            saveVirtualAccountStatus(vaResponse, va);
 
-        } catch (Exception err) {
+        } catch (IOException err) {
             LOGGER.warn(err.getMessage(), err);
         }
-    }
-
-    private VirtualAccount getVirtualAccount(VaResponse vaResponse, List<VirtualAccount> daftarVa) {
-        VirtualAccount va = null;
-        for (VirtualAccount v : daftarVa) {
-            if (vaResponse.getBankId().equals(v.getBank().getId())) {
-                va = v;
-                break;
-            }
-        }
-        return va;
-    }
-
-    private Boolean saveVA(VaResponse vaResponse, VirtualAccount va) {
-        if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
-            va.setVaStatus(VaStatus.ERROR);
-            virtualAccountDao.save(va);
-            return true;
-        }
-
-        if (VaStatus.DELETE.equals(vaResponse.getRequestType())) {
-            va.setVaStatus(VaStatus.NONAKTIF);
-            virtualAccountDao.save(va);
-            return true;
-        }
-
-        va.setNomor(vaResponse.getAccountNumber());
-        va.setVaStatus(VaStatus.AKTIF);
-        virtualAccountDao.save(va);
-        return false;
     }
 
     @KafkaListener(topics = "${kafka.topic.va.payment}", groupId = "${spring.kafka.consumer.group-id}")
@@ -248,19 +215,18 @@ public class KafkaListenerService {
         try {
             LOGGER.debug(TERIMA_MESSAGE, message);
             VaPayment payment = objectMapper.readValue(message, VaPayment.class);
-            Optional<Bank> bank = bankDao.findById(payment.getBankId());
 
-            Tagihan tagihan = tagihanDao.findByNomor(payment.getInvoiceNumber());
+            Bank bank = bankDao.findById(payment.getBankId())
+                    .orElseThrow(() -> new InvalidBankException("Bank Id "+payment.getBankId()+" tidak terdaftar"));
+
+            Tagihan tagihan = tagihanDao.findByNomorAndStatusTagihan(payment.getInvoiceNumber(), StatusTagihan.AKTIF)
+                    .orElseThrow(() -> new InvalidInvoiceException("Invoice # " + payment.getInvoiceNumber() + " tidak terdaftar/tidak aktif"));
 
             List<VirtualAccount> daftarVa = virtualAccountDao.findByVaStatusAndTagihanNomor(VaStatus.AKTIF, tagihan.getNomor());
 
             BigDecimal akumulasiPembayaran = tagihan.getJumlahPembayaran().add(payment.getAmount());
-            
-            if (paymentInvalid(bank, tagihan, daftarVa, payment)) {
-                return;
-            }
-            
-            Bank bankModel = bank.orElse(new Bank());
+
+            validasiPayment(tagihan, daftarVa, payment);
 
             if (pembayaranKurangDariTagihan(akumulasiPembayaran, tagihan)) {
                 tagihan.setStatusPembayaran(StatusPembayaran.DIBAYAR_SEBAGIAN);
@@ -271,31 +237,16 @@ public class KafkaListenerService {
             tagihan.setJumlahPembayaran(akumulasiPembayaran);
 
             // update VA
-            VirtualAccount vaPembayaran = simpanVA(bankModel, tagihan, daftarVa);
-
-            if (vaPembayaran == null) {
-                LOGGER.warn("Virtual account untuk nomor tagihan {} dan bank {} tidak terdaftar",
-                        tagihan.getNomor(), bankModel.getNama());
-                return;
-            }
-
-            Pembayaran p = new Pembayaran();
-            p.setBank(bankModel);
-            p.setTagihan(tagihan);
-            p.setJenisPembayaran(JenisPembayaran.VIRTUAL_ACCOUNT);
-            p.setVirtualAccount(vaPembayaran);
-            p.setJumlah(payment.getAmount());
-            p.setReferensi(payment.getReference());
-            p.setKeterangan("Pembayaran melalui VA Bank " + bankModel.getNama() + " Nomor " + payment.getAccountNumber());
-            p.setWaktuTransaksi(payment.getPaymentTime());
-            pembayaranDao.save(p);
+            Pembayaran p = simpanPembayaran(bank, tagihan, daftarVa, payment);
 
             tagihanDao.save(tagihan);
 
-            LOGGER.info("Pembayaran melalui VA Bank {} Nomor {} telah diterima", bankModel.getNama(), payment.getAccountNumber());
+            LOGGER.info("Pembayaran melalui VA Bank {} Nomor {} telah diterima",
+                    bank.getNama(),
+                    payment.getAccountNumber());
 
             kafkaSenderService.sendNotifikasiPembayaran(p);
-        } catch (Exception err) {
+        } catch (IOException | InvalidBankException | InvalidInvoiceException | InvalidPaymentException err) {
             LOGGER.warn(err.getMessage(), err);
         }
     }
@@ -308,7 +259,23 @@ public class KafkaListenerService {
         return akumulasiPembayaran.compareTo(tagihan.getNilaiTagihan()) > 0;
     }
 
-    private VirtualAccount simpanVA(Bank bank, Tagihan tagihan, List<VirtualAccount> daftarVa) {
+    private void saveVirtualAccountStatus(VaResponse vaResponse, VirtualAccount va) {
+        if (VaRequestStatus.ERROR.equals(vaResponse.getRequestStatus())) {
+            va.setVaStatus(VaStatus.ERROR);
+            virtualAccountDao.save(va);
+        }
+
+        if (VaStatus.DELETE.equals(vaResponse.getRequestType())) {
+            va.setVaStatus(VaStatus.NONAKTIF);
+            virtualAccountDao.save(va);
+        }
+
+        va.setNomor(vaResponse.getAccountNumber());
+        va.setVaStatus(VaStatus.AKTIF);
+        virtualAccountDao.save(va);
+    }
+
+    private Pembayaran simpanPembayaran(Bank bank, Tagihan tagihan, List<VirtualAccount> daftarVa, VaPayment payment) throws InvalidPaymentException {
 
         VirtualAccount vaPembayaran = null;
         for (VirtualAccount va : daftarVa) {
@@ -322,34 +289,41 @@ public class KafkaListenerService {
             }
             virtualAccountDao.save(va);
         }
-        return vaPembayaran;
+
+        if (vaPembayaran == null) {
+            throw new InvalidPaymentException("Virtual account untuk nomor tagihan "+tagihan.getNomor()+" dan bank "+bank.getNama()+" tidak terdaftar");
+        }
+
+        Pembayaran p = new Pembayaran();
+        p.setBank(bank);
+        p.setTagihan(tagihan);
+        p.setJenisPembayaran(JenisPembayaran.VIRTUAL_ACCOUNT);
+        p.setVirtualAccount(vaPembayaran);
+        p.setJumlah(payment.getAmount());
+        p.setReferensi(payment.getReference());
+        p.setKeterangan("Pembayaran melalui VA Bank " + bank.getNama() + " Nomor " + payment.getAccountNumber());
+        p.setWaktuTransaksi(payment.getPaymentTime());
+        pembayaranDao.save(p);
+
+        return p;
     }
 
-    private boolean paymentInvalid(Optional<Bank> bank, Tagihan tagihan, List<VirtualAccount> daftarVa, VaPayment payment) {
-        if (!bank.isPresent()) {
-            LOGGER.warn("Bank dengan ID {} tidak terdaftar", payment.getBankId());
-            return true;
-        }
-        if (tagihan == null) {
-            LOGGER.warn("Tagihan dengan nomor {} tidak terdaftar", payment.getInvoiceNumber());
-            return true;
-        }
+    private void validasiPayment(Tagihan tagihan, List<VirtualAccount> daftarVa, VaPayment payment) throws InvalidInvoiceException {
+
         if (StatusPembayaran.LUNAS.equals(tagihan.getStatusPembayaran())) {
-            LOGGER.warn("Tagihan dengan nomor {} sudah lunas", tagihan.getNomor());
-            return true;
+            throw new InvalidInvoiceException("Invoice # " + payment.getInvoiceNumber() + " sudah lunas");
         }
+
         if (daftarVa == null || daftarVa.isEmpty()) {
-            LOGGER.warn("Nomor tagihan {} tidak memiliki VA", tagihan.getNomor());
-            return true;
+            throw new InvalidInvoiceException("Invoice # " + payment.getInvoiceNumber() + " tidak memiliki va");
         }
         
         BigDecimal akumulasiPembayaran = tagihan.getJumlahPembayaran().add(payment.getAmount());
         if (pembayaranMelebihiTagihan(akumulasiPembayaran, tagihan)) {
-                LOGGER.warn("Nilai pembayaran [{}] lebih besar daripada nilai tagihan [{}] nomor [{}]",
-                        akumulasiPembayaran, tagihan.getNilaiTagihan(), tagihan.getNomor());
-                return true;
+            new InvalidInvoiceException("Invoice # " + payment.getInvoiceNumber()
+                    + " nilai pembayaran [" + akumulasiPembayaran
+                    + "] melebihi nilai tagihan [" + tagihan.getNilaiTagihan() + "]");
         }
         
-        return false;
     }
 }

@@ -2,6 +2,7 @@ package id.ac.tazkia.payment.virtualaccount.dao;
 
 import id.ac.tazkia.payment.virtualaccount.dto.RekapTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
+import org.apache.kafka.common.metrics.Stat;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -11,9 +12,10 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TagihanDao extends PagingAndSortingRepository<Tagihan, String> {
-    Tagihan findByNomor(String nomor);
+    Optional<Tagihan> findByNomorAndStatusTagihan(String nomor, StatusTagihan statusTagihan);
     Iterable<Tagihan> findByJenisTagihanAndStatusTagihanOrderByTanggalTagihan(JenisTagihan jenisTagihan, StatusTagihan status);
     Page<Tagihan> findByJenisTagihanAndStatusTagihanOrderByTanggalTagihan(JenisTagihan jenisTagihan, StatusTagihan status, Pageable pageable);
     Page<Tagihan> findByDebiturAndStatusTagihanOrderByTanggalTagihan(Debitur debitur, StatusTagihan status, Pageable pageable);
