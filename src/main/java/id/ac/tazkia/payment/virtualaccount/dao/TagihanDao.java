@@ -2,7 +2,6 @@ package id.ac.tazkia.payment.virtualaccount.dao;
 
 import id.ac.tazkia.payment.virtualaccount.dto.RekapTagihan;
 import id.ac.tazkia.payment.virtualaccount.entity.*;
-import org.apache.kafka.common.metrics.Stat;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
