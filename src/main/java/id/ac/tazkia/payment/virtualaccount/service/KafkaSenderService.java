@@ -83,8 +83,8 @@ public class KafkaSenderService {
     public void prosesNotifikasiTagihan() {
         tagihanDao.findByStatusNotifikasi(StatusNotifikasi.BELUM_TERKIRIM,
                 PageRequest.of(0, NOTIFICATION_BATCH_SIZE)).getContent().stream()
-                .filter((tagihan) -> punyaVaAktif(tagihan))
-                .forEachOrdered((tagihan) -> sendNotifikasiTagihan(tagihan));
+                .filter(tagihan -> punyaVaAktif(tagihan))
+                .forEachOrdered(tagihan -> sendNotifikasiTagihan(tagihan));
     }
 
     private boolean punyaVaAktif(Tagihan tagihan) {

@@ -72,7 +72,6 @@ public class KafkaListenerService {
     }
 
     @KafkaListener(topics = "${kafka.topic.debitur.request}", groupId = "${spring.kafka.consumer.group-id}")
-
     public void handleDebiturRequest(String message) {
         Map<String, Object> response = new LinkedHashMap<>();
         try {
