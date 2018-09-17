@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+    <springProperty scope="context"
+                    name="kafkaServer"
+                    source="spring.kafka.bootstrap-servers"
+                    defaultValue="localhost:9092"/>
+    <springProperty scope="context"
+                    name="kafkaLogsTopicName"
+                    source="kafka.topic.applicationlog"
+                    defaultValue="appslog"/>
+
+    <appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+        <producerConfig>bootstrap.servers=${kafkaServer}</producerConfig>
+        <topic>${kafkaLogsTopicName}</topic>
+        <appender-ref ref="CONSOLE" />
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <mdc/>
+                <context/>
+                <logLevel/>
+                <loggerName/>
+                <threadName/>
+                <message/>
+                <logstashMarkers/>
+                <arguments/>
+            </providers>
+        </encoder>
+    </appender>
+</included>
