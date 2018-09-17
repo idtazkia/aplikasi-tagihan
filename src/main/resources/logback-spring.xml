@@ -6,6 +6,7 @@
     <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
     <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
     <include resource="kafka-appender.xml" />
+    <include resource="json-appender.xml" />
 
     <springProfile name="production">
         <root level="INFO">
@@ -14,9 +15,15 @@
         </root>
     </springProfile>
 
-    <springProfile name="!production">
+    <springProfile name="default">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="jsonlog">
+        <root level="INFO">
+            <appender-ref ref="JSON"/>
         </root>
     </springProfile>
 
