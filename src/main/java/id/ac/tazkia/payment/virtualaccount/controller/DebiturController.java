@@ -138,6 +138,7 @@ public class DebiturController {
                 Debitur d = new Debitur();
                 d.setNomorDebitur(data[0]);
                 d.setNama(data[1]);
+                d.setEmail(data[2]);
 
                 if (StringUtils.hasText(data[3])) {
                     d.setNoHp(data[3]);
