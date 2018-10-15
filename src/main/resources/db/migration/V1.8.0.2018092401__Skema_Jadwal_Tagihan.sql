@@ -1,13 +1,15 @@
 create table konfigurasi_jadwal_tagihan (
   id                  varchar(36),
   id_jenis_tagihan    varchar(36) not null,
+  id_kode_biaya       varchar(36) not null,
   tanggal_penagihan   int         not null,
   jumlah_penagihan    int         not null,
   tanggal_mulai       date        not null,
   jatuh_tempo_bulan   int         not null,
   otomatis_akumulasi boolean     not null default true,
   primary key (id),
-  foreign key (id_jenis_tagihan) references jenis_tagihan (id)
+  foreign key (id_jenis_tagihan) references jenis_tagihan (id),
+  foreign key (id_kode_biaya) references kode_biaya (id)
 );
 
 

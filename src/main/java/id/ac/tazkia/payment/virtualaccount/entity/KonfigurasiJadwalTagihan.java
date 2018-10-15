@@ -20,6 +20,10 @@ public class KonfigurasiJadwalTagihan {
     @JoinColumn(name = "id_jenis_tagihan")
     private JenisTagihan jenisTagihan;
 
+    @ManyToOne
+    @JoinColumn(name = "id_kode_biaya")
+    private KodeBiaya kodeBiaya;
+
     @NotNull
     @Min(1) @Max(28)
     private Integer tanggalPenagihan;
