@@ -129,7 +129,6 @@ public class PembayaranController {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
         for (RekapPembayaran r : pembayaranDao.rekapPembayaran(mulai.atStartOfDay(), sampai.plusDays(1).atStartOfDay())) {
-            r.setJumlah(r.getJumlah());
             hasil.put(formatter.format(r.getTanggal()), r);
         }
 
